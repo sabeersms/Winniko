@@ -1,0 +1,15 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.winniko.winniko",
+      "sha256_cert_fingerprints": [
+        "7A:1B:BC:CD:A1:BF:62:06:60:A8:64:C5:8C:CB:97:1A:B1:DC:14:39:FD:22:6C:34:F0:4C:2E:77:A4:3F:35:79",
+        "8E:4F:F9:A1:6E:98:A4:8D:9E:5E:12:D7:D2:F1:F3:C8:1F:1B:5F:40:74:13:A1:15:CA:E3:34:43:3A:82:AF:44"
+      ]
+    }
+  }
+]

@@ -1,0 +1,175 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // --- Helper Functions ---
+    
+    // Check if user is signed in
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    // Check if user is the organizer of the competition resource
+    function isOrganizer(resourceData) {
+      return isSignedIn() && resourceData.organizerId == request.auth.uid;
+    }
+    
+    // Check if user is the organizer of the *parent* competition (for subcollections)
+    // NOTE: This requires get(), which costs one read.
+    function isCompetitionOrganizer(competitionId) {
+      return isSignedIn() && 
+             get(/databases/$(database)/documents/competitions/$(competitionId)).data.organizerId == request.auth.uid;
+    }
+
+    // --- USERS Collection ---
+    // Anyone can look up a user profile (for checkUserExists and generic display)
+    match /users/{userId} {
+      allow read: if true; 
+      allow write: if isSignedIn() && request.auth.uid == userId;
+    }
+    
+    // --- PHONE/EMAIL INDICES ---
+    match /phone_indices/{phoneNumber} {
+      allow read: if true;
+      allow create: if isSignedIn();
+      // Allow update if ownership matches OR if the registered user document no longer exists (zombie index)
+      allow update: if isSignedIn() && (
+        (request.auth.token.phone_number == '+' + phoneNumber) ||
+        (!exists(/databases/$(database)/documents/users/$(resource.data.uid)))
+      );
+      allow delete: if false;
+    }
+    match /email_indices/{email} {
+      allow read: if true;
+      allow create: if isSignedIn();
+      allow update: if isSignedIn() && (
+        (request.auth.token.email.lower() == email.lower()) ||
+        (!exists(/databases/$(database)/documents/users/$(resource.data.uid)))
+      );
+      allow delete: if false;
+    }
+
+    // --- PREDICTIONS Collection ---
+    // Users can read/write their own predictions
+    match /predictions/{predictionId} {
+      allow read: if isSignedIn();
+      // Allow create if userId matches auth and match hasn't started
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid &&
+                    get(/databases/$(database)/documents/competitions/$(request.resource.data.competitionId)/matches/$(request.resource.data.matchId)).data.scheduledTime > request.time;
+      // Allow update if userId matches auth AND match hasn't started
+      // OR if organizer (to mark as scored - but stats are in participants)
+      allow update: if isSignedIn() && (
+        (resource.data.userId == request.auth.uid && 
+         get(/databases/$(database)/documents/competitions/$(resource.data.competitionId)/matches/$(resource.data.matchId)).data.scheduledTime > request.time) || 
+        isCompetitionOrganizer(resource.data.competitionId)
+      );
+      // Allow delete if userId matches auth and match hasn't started
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid &&
+                    get(/databases/$(database)/documents/competitions/$(resource.data.competitionId)/matches/$(resource.data.matchId)).data.scheduledTime > request.time;
+    }
+
+    // --- ORGANIZERS Collection (For Team Library) ---
+    match /organizers/{organizerId}/team_library/{teamId} {
+      allow read: if isSignedIn();
+      // Only the organizer can manage their library
+      allow write: if isSignedIn() && request.auth.uid == organizerId;
+    }
+
+    // --- COMPETITIONS Collection ---
+    match /competitions/{competitionId} {
+      // 1. Everyone can read competitions (Public & Private for finding)
+      allow read: if true; 
+
+      // 2. Creation: Anyone signed in can create, provided they list themselves as organizer
+      allow create: if isSignedIn() && request.resource.data.organizerId == request.auth.uid;
+
+      // 3. Update/Delete: Only the Organizer OR specific field updates by participants
+      allow delete: if isOrganizer(resource.data);
+      allow update: if isOrganizer(resource.data) || 
+                    (isSignedIn() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['participantCount']));
+
+      // --- SUBCOLLECTIONS ---
+
+      // TEAMS: Only organizer can manage teams
+      match /teams/{teamId} {
+        allow read: if true;
+        allow write: if isCompetitionOrganizer(competitionId);
+      }
+
+      // MATCHES: Only organizer can manage matches
+      match /matches/{matchId} {
+        allow read: if true;
+        allow write: if isCompetitionOrganizer(competitionId);
+      }
+
+      // STANDINGS: Read-only (Updated via Batch by Organizer)
+      match /standings/{teamId} {
+        allow read: if true;
+        // The batch write from client performs writes here. 
+        // Since the client doing the batch is the organizer, this follows the same logic.
+        allow write: if isCompetitionOrganizer(competitionId);
+      }
+
+      // MESSAGES (Competition Chat)
+      match /messages/{messageId} {
+        allow read: if true; // Public chat can be read by anyone? Or joined only? Assuming public for now.
+        // Anyone joined can write? For now restricting basic spam prevention
+        allow create: if isSignedIn();
+        // Only sender or organizer can delete? Simplification:
+        allow delete: if isSignedIn() && (resource.data.senderId == request.auth.uid || isCompetitionOrganizer(competitionId));
+      }
+
+       // TYPING (Competition Chat)
+      match /typing/{userId} {
+        allow read, write: if isSignedIn();
+      }
+
+      // PARTICIPANTS
+      match /participants/{userId} {
+        allow read: if true;
+        // User can join (create their own doc)
+        allow create: if isSignedIn() && request.auth.uid == userId;
+        // Organizer can remove participants, OR User can leave
+        allow delete: if isSignedIn() && (request.auth.uid == userId || isCompetitionOrganizer(competitionId));
+        // Updates (points etc): Organizer only (User can't give themselves points)
+        // EXCEPTION: User can update their own profile info (display name, photo)
+        allow update: if isCompetitionOrganizer(competitionId) || 
+                       (isSignedIn() && request.auth.uid == userId && 
+                        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['totalPoints', 'perfectScores', 'correctOutcomes', 'rank', 'totalPredictions', 'joinedAt']));
+      }
+      
+      // DIRECT CHATS
+      // Organizer <> Participant
+      // Root doc: stores metadata
+      match /direct_chats/{participantId} {
+         allow read: if isSignedIn() && (request.auth.uid == participantId || isCompetitionOrganizer(competitionId));
+         allow write: if isSignedIn() && (request.auth.uid == participantId || isCompetitionOrganizer(competitionId));
+         
+         match /messages/{msgId} {
+            allow read: if isSignedIn() && (request.auth.uid == participantId || isCompetitionOrganizer(competitionId));
+            allow write: if isSignedIn() && (request.auth.uid == participantId || isCompetitionOrganizer(competitionId));
+         }
+          match /typing/{userId} {
+            allow read, write: if isSignedIn() && (request.auth.uid == participantId || isCompetitionOrganizer(competitionId));
+         }
+      }
+    }
+    // --- COLLECTION GROUP QUERIES ---
+    // Explicitly allow collectionGroup queries for participants
+    match /{path=**}/participants/{participantId} {
+      allow read: if true;
+    }
+
+    // --- APP METADATA ---
+    match /app_metadata/{docId} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn();
+    }
+
+    // --- DISCOVERED TOURNAMENTS ---
+    match /discovered_tournaments/{tournamentId} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn();
+    }
+  }
+}

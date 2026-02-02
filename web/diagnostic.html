@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Firebase Config Diagnostic</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+        .log { background: #f0f0f0; padding: 10px; border: 1px solid #ccc; max-height: 400px; overflow-y: auto; font-family: monospace; white-space: pre-wrap; }
+        .error { color: red; font-weight: bold; }
+        .success { color: green; font-weight: bold; }
+        button { padding: 10px 20px; cursor: pointer; background: #007bff; color: white; border: none; font-size: 16px; margin-top: 10px;}
+    </style>
+    <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+</head>
+<body>
+    <h1>Firebase Auth Diagnostic</h1>
+    <p>This page tests your Firebase Configuration separately from the Flutter app.</p>
+    
+    <div>
+        <input type="email" id="email" placeholder="Email" value="test@test.com">
+        <input type="password" id="password" placeholder="Password" value="password123">
+        <br>
+        <button onclick="testLogin()">Test Login</button>
+    </div>
+
+    <h3>Logs:</h3>
+    <div id="logs" class="log"></div>
+
+    <script>
+        // Config from lib/firebase_options.dart
+        const firebaseConfig = {
+            apiKey: 'AIzaSyDdWXIvY8BFixMk-nNcv_sG7C2zG468O60',
+            appId: '1:688066819982:web:0af680960426c3959396df',
+            messagingSenderId: '688066819982',
+            projectId: 'winniko-579d4',
+            authDomain: 'winniko-579d4.firebaseapp.com',
+            storageBucket: 'winniko-579d4.firebasestorage.app',
+            measurementId: 'G-276VR4KE3Q'
+        };
+
+        function log(msg, type = 'info') {
+            const logs = document.getElementById('logs');
+            const div = document.createElement('div');
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+            if (type === 'error') div.className = 'error';
+            if (type === 'success') div.className = 'success';
+            logs.appendChild(div);
+            console.log(msg);
+        }
+
+        try {
+            log('Initializing Firebase...');
+            firebase.initializeApp(firebaseConfig);
+            log('Firebase Initialized.');
+            log(`ProjectId: ${firebaseConfig.projectId}`);
+            log(`AuthDomain: ${firebaseConfig.authDomain}`);
+        } catch (e) {
+            log(`Init Error: ${e.message}`, 'error');
+        }
+
+        async function testLogin() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            log(`Attempting login with ${email}...`);
+            
+            try {
+                const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
+                log('LOGIN SUCCESSFUL!', 'success');
+                log(`User ID: ${userCredential.user.uid}`);
+            } catch (error) {
+                log('LOGIN FAILED', 'error');
+                log(`Code: ${error.code}`, 'error');
+                log(`Message: ${error.message}`, 'error');
+
+                if (error.code === 'auth/configuration-not-found') {
+                    log('\nDIAGNOSIS:', 'error');
+                    log('1. Check "Sign-in method" in Firebase Console > Authentication.', 'error');
+                    log('2. Ensure "Email/Password" is ENABLED (not just Email Link).', 'error');
+                }
+                if (error.code === 'auth/network-request-failed') {
+                    log('\nDIAGNOSIS:', 'error');
+                    log('1. Check Internet Connection.', 'error');
+                    log('2. Check "Authorized Domains" in Firebase Console > Authentication > Settings.', 'error');
+                    log('3. Add "localhost" and "127.0.0.1" to Authorized Domains.', 'error');
+                }
+            }
+        }
+    </script>
+</body>
+</html>

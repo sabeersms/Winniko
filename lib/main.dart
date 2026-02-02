@@ -14,6 +14,7 @@ import 'services/network_service.dart';
 import 'services/ad_service.dart';
 import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
+import 'screens/privacy_policy_screen.dart';
 import 'widgets/loading_spinner.dart';
 // import 'screens/waiting_verification_screen.dart';
 import 'firebase_options.dart';
@@ -66,6 +67,7 @@ class WinnikoApp extends StatelessWidget {
         theme: AppTheme.darkTheme,
         debugShowCheckedModeBanner: false,
         home: const AuthWrapper(),
+        routes: {'/privacy-policy': (context) => const PrivacyPolicyScreen()},
       ),
     );
   }

@@ -1,0 +1,45 @@
+{
+    "firestore": {
+        "rules": "firestore.rules"
+    },
+    "storage": {
+        "rules": "storage.rules"
+    },
+    "flutter": {
+        "platforms": {
+            "android": {
+                "default": {
+                    "projectId": "winniko-real",
+                    "appId": "1:166236418012:android:da9a8145ba1c8c1b29a919",
+                    "fileOutput": "android/app/google-services.json"
+                }
+            },
+            "dart": {
+                "lib/firebase_options.dart": {
+                    "projectId": "winniko-real",
+                    "configurations": {
+                        "android": "1:166236418012:android:da9a8145ba1c8c1b29a919",
+                        "ios": "1:166236418012:ios:39ba60e8603c2f7029a919",
+                        "macos": "1:166236418012:ios:39ba60e8603c2f7029a919",
+                        "web": "1:166236418012:web:88e941687a21c80429a919",
+                        "windows": "1:166236418012:web:5a3ab36464e8541629a919"
+                    }
+                }
+            }
+        }
+    },
+    "hosting": {
+        "public": "build/web",
+        "ignore": [
+            "firebase.json",
+            "**/.*",
+            "**/node_modules/**"
+        ],
+        "rewrites": [
+            {
+                "source": "**",
+                "destination": "/index.html"
+            }
+        ]
+    }
+}

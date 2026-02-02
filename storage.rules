@@ -1,0 +1,46 @@
+rules_version = '2';
+
+// Craft rules based on data in your Firestore database
+// allow write: if firestore.get(
+//    /databases/(default)/documents/users/$(request.auth.uid)).data.isAdmin;
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Helper: User Must be Signed In
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // --- USER PROFILE PHOTOS ---
+    // users/{userId}/*
+    match /users/{userId}/{allPaths=**} {
+      allow read: if true; // Everyone can see profile pics
+      allow write: if isSignedIn() && request.auth.uid == userId;
+    }
+
+    // --- ORGANIZER TEAM LIBRARY ---
+    // organizers/{organizerId}/team_library/{teamId}/*
+    match /organizers/{organizerId}/team_library/{teamId}/{fileName} {
+      allow read: if true;
+      allow write: if isSignedIn() && request.auth.uid == organizerId;
+    }
+
+    // --- COMPETITION ASSETS ---
+    // competitions/{competitionId}/*
+    // includes: logo/, background/, custom/, teams/, chats/
+    match /competitions/{competitionId}/{allPaths=**} {
+      allow read: if true;
+      
+      // WRITE: Only the Organizer of this competition
+      // We look up the 'competitions' collection in Firestore
+      allow write: if isSignedIn() && 
+                   firestore.get(/databases/(default)/documents/competitions/$(competitionId)).data.organizerId == request.auth.uid;
+    }
+    
+    // --- LEGACY/FALLBACK ---
+    // Block root writes to prevent clutter
+    match /{allPaths=**} {
+      allow read, write: if false; 
+    }
+  }
+}

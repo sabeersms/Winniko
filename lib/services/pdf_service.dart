@@ -281,7 +281,7 @@ class PdfService {
           pw.SizedBox(height: 5),
           pw.Text('Date: ${dateFormat.format(match.scheduledTime)}'),
           if (match.actualScore != null)
-            pw.Text('Final Score: ${_formatScore(match.actualScore!)}'),
+            pw.Text('Final Score: ${_formatScore(match)}'),
         ],
       ),
     );
@@ -381,7 +381,7 @@ class PdfService {
 
         return [
           matchLabel,
-          match?.actualScore != null ? _formatScore(match!.actualScore!) : '-',
+          match?.actualScore != null ? _formatScore(match!) : '-',
           _formatPrediction(p, competition, match),
           '${p.points ?? 0}',
         ];
@@ -389,14 +389,63 @@ class PdfService {
     );
   }
 
-  static String _formatScore(Map<String, dynamic> score) {
-    if (score.containsKey('t1Runs')) {
+  static String _formatScore(MatchModel match) {
+    final score = match.actualScore!;
+    String scoreLine;
+    bool isCricket = score.containsKey('t1Runs');
+
+    if (isCricket) {
       // Cricket
-      return '${score['t1Runs']}/${score['t1Wickets']} vs ${score['t2Runs']}/${score['t2Wickets']}';
+      scoreLine =
+          '${score['t1Runs']}/${score['t1Wickets']} vs ${score['t2Runs']}/${score['t2Wickets']}';
     } else {
       // Football
-      return '${score['team1']} - ${score['team2']}';
+      scoreLine = '${score['team1']} - ${score['team2']}';
     }
+
+    // Add Margin info if available
+    if (score.containsKey('winnerId') &&
+        score['winnerId'] != 'tied' &&
+        score['winnerId'] != 'no_result') {
+      final String winnerId = score['winnerId'];
+      final String winnerName = winnerId == match.team1Id
+          ? match.team1Name
+          : match.team2Name;
+
+      String margin = '';
+      if (score.containsKey('marginType')) {
+        final type = score['marginType'];
+        String val = score['marginValue']?.toString() ?? '';
+
+        if (type == 'runs') {
+          // Calculate exact diff for safety like in MatchResultCard
+          final t1 = int.tryParse(score['t1Runs']?.toString() ?? '0') ?? 0;
+          final t2 = int.tryParse(score['t2Runs']?.toString() ?? '0') ?? 0;
+          val = (t1 - t2).abs().toString();
+          margin = '$val runs';
+        } else if (type == 'wickets') {
+          margin = '$val ${val == '1' ? 'wicket' : 'wickets'}';
+        } else if (type == 'super_over') {
+          margin = 'Super Over';
+        }
+
+        if (margin.isNotEmpty) {
+          // Add newline and result text
+          scoreLine += '\n$winnerName won by $margin';
+        } else {
+          scoreLine += '\n$winnerName won';
+        }
+      } else {
+        // Fallback if no margin type but we have a winner
+        scoreLine += '\n$winnerName won';
+      }
+    } else if (score['winnerId'] == 'tied') {
+      scoreLine += '\nMatch Tied';
+    } else if (score['winnerId'] == 'no_result') {
+      scoreLine += '\nNo Result';
+    }
+
+    return scoreLine;
   }
 
   static String _formatPrediction(
@@ -411,7 +460,36 @@ class PdfService {
                 ? m.team1Name
                 : (winnerId == m.team2Id ? m.team2Name : 'Draw'))
           : 'Unknown';
-      return 'Winner: $winnerName\nRuns: ${p.prediction['runs'] ?? "-"}';
+
+      String detail = '';
+      // If match is completed and we have a margin type, show the RELEVANT prediction
+      if (m != null &&
+          m.status == AppConstants.matchStatusCompleted &&
+          m.actualScore != null &&
+          m.actualScore!.containsKey('marginType')) {
+        final type = m.actualScore!['marginType'];
+        if (type == 'runs') {
+          detail = 'Runs: ${p.prediction['runs'] ?? "-"}';
+        } else if (type == 'wickets') {
+          detail = 'Wickets: ${p.prediction['wickets'] ?? "-"}';
+        } else {
+          // Fallback or Super Over - show both or just runs as default?
+          // Let's show both contextually or just one.
+          // If super over, margin doesn't matter for points usually unless defined.
+          detail = 'Runs: ${p.prediction['runs'] ?? "-"}';
+        }
+      } else {
+        // Pending or Live - Show both if available to be informative
+        final runs = p.prediction['runs'];
+        final wickets = p.prediction['wickets'];
+        if (runs != null && wickets != null) {
+          detail = 'Runs: $runs\nWkts: $wickets';
+        } else {
+          detail = 'Runs: ${runs ?? "-"}';
+        }
+      }
+
+      return 'Winner: $winnerName\n$detail';
     } else {
       return '${p.prediction['team1']} - ${p.prediction['team2']}';
     }
