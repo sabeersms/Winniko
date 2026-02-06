@@ -14,6 +14,8 @@ import 'services/network_service.dart';
 import 'services/ad_service.dart';
 import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
+import 'screens/signup_screen.dart'; // import signup screen
+import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/privacy_policy_screen.dart';
 import 'widgets/loading_spinner.dart';
 // import 'screens/waiting_verification_screen.dart';
@@ -86,9 +88,24 @@ class AuthWrapper extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.active) {
           final user = snapshot.data;
           if (user == null) {
-            return const LoginScreen();
+            // Check if first run
+            return FutureBuilder<bool>(
+              future: _checkFirstRun(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return snapshot.data == true
+                      ? const SignupScreen()
+                      : const LoginScreen();
+                }
+                return const Scaffold(
+                  body: Center(
+                    child: LoadingSpinner(color: AppColors.accentGreen),
+                  ),
+                );
+              },
+            );
           } else {
-            // Email verification check disabled for simplified signup
+            // Email verification check (Disabled)
             // if (!authService.isEmailVerified) {
             //   return const WaitingVerificationScreen();
             // }
@@ -100,5 +117,26 @@ class AuthWrapper extends StatelessWidget {
         );
       },
     );
+  }
+
+  Future<bool> _checkFirstRun() async {
+    final prefs = await SharedPreferences.getInstance();
+    // Default to true if not set
+    bool isFirstRun = prefs.getBool('is_first_run') ?? true;
+    if (isFirstRun) {
+      // Mark as seen so next time it goes to Login (unless they sign up, which logs them in)
+      // Actually, if they don't sign up and close app, we probably still want Signup?
+      // User request: "1st open signup screen, if user did not signup ever."
+      // If they explicitly go to Login, we should remember that?
+      // For now, let's strictly follow: "if user did not signup ever" -> implies no account.
+      // But standard UX is: Show Signup. If they click "Login", show Login.
+      // We will leave 'is_first_run' as is until they successfully sign up or we might toggle it elsewhere.
+      // But to prevent stuck on Signup, usually we set it to false once shown?
+      // Let's keep it simple: defaulting to SignupScreen for null user if no pref set.
+      // NOTE: We should set it to false somewhere if we want to default to Login later.
+      // For now, we only read it.
+      await prefs.setBool('is_first_run', false);
+    }
+    return isFirstRun;
   }
 }

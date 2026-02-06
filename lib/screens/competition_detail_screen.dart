@@ -12,22 +12,21 @@ import '../models/participant_model.dart';
 import '../models/message_model.dart';
 import '../models/match_model.dart';
 import '../services/tournament_data_service.dart';
-import '../models/standing_model.dart';
-import '../widgets/standings_poster.dart';
-import '../utils/share_util.dart';
 
 import 'leaderboard_screen.dart';
 import 'participant_leaderboard_screen.dart';
 import 'matches_list_screen.dart';
 import 'competition_chat_screen.dart';
 import 'organizer_chat_list_screen.dart';
-import 'direct_chat_screen.dart';
+
 import '../widgets/loading_spinner.dart';
 
 import 'terms_and_conditions_screen.dart';
 import '../widgets/share_competition_dialog.dart';
-import 'full_fixtures_screen.dart';
+
 import '../services/ad_service.dart';
+import '../services/pdf_service.dart';
+import 'package:flutter/foundation.dart';
 
 class CompetitionDetailScreen extends StatefulWidget {
   final String competitionId;
@@ -145,8 +144,15 @@ class _CompetitionDetailScreenState extends State<CompetitionDetailScreen>
           _currentUser = user;
           _hasJoined = hasJoined;
           _participant = participant;
+          _participant = participant;
           _isLoading = false;
         });
+
+        if (hasJoined) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) _tabController.animateTo(1);
+          });
+        }
       }
     } catch (e) {
       if (mounted) setState(() => _isLoading = false);
@@ -156,107 +162,114 @@ class _CompetitionDetailScreenState extends State<CompetitionDetailScreen>
   Future<void> _joinCompetition() async {
     if (_currentUser == null || _competition == null) return;
 
-    // Show Ad before Joining
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Please watch this short ad to join the competition!'),
-        duration: Duration(seconds: 2),
-      ),
-    );
+    void proceedToJoin() async {
+      if (!mounted) return;
 
-    AdService().showInterstitialAd(
-      onAdDismissed: () async {
-        if (!mounted) return;
+      // Check for Terms and Conditions
+      if (_competition!.termsAndConditions != null &&
+          _competition!.termsAndConditions!.isNotEmpty) {
+        final participantPrototype = ParticipantModel(
+          userId: _currentUser!.id,
+          userName: _currentUser!.name,
+          photoUrl: _currentUser!.photoUrl,
+          phoneNumber: _currentUser!.phone,
+          competitionId: widget.competitionId,
+          joinedAt: DateTime.now(),
+        );
 
-        // Check for Terms and Conditions
-        if (_competition!.termsAndConditions != null &&
-            _competition!.termsAndConditions!.isNotEmpty) {
-          final participantPrototype = ParticipantModel(
-            userId: _currentUser!.id,
-            userName: _currentUser!.name,
-            photoUrl: _currentUser!.photoUrl,
-            phoneNumber: _currentUser!.phone,
-            competitionId: widget.competitionId,
-            joinedAt: DateTime.now(),
-          );
-
-          // Navigate to T&C Screen
-          await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => TermsAndConditionsScreen(
-                competition: _competition!,
-                participant: participantPrototype,
-              ),
+        // Navigate to T&C Screen
+        await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => TermsAndConditionsScreen(
+              competition: _competition!,
+              participant: participantPrototype,
             ),
-          );
+          ),
+        );
 
-          // Upon return, check if they joined (by refreshing data)
-          _loadData();
-          return;
-        }
+        // Upon return, check if they joined (by refreshing data)
+        _loadData();
+        return;
+      }
+
+      setState(() {
+        _isJoining = true;
+      });
+
+      try {
+        final firestoreService = Provider.of<FirestoreService>(
+          context,
+          listen: false,
+        );
+
+        final participant = ParticipantModel(
+          userId: _currentUser!.id,
+          userName: _currentUser!.name,
+          photoUrl: _currentUser!.photoUrl,
+          phoneNumber: _currentUser!.phone,
+          competitionId: widget.competitionId,
+          joinedAt: DateTime.now(),
+        );
+
+        await firestoreService.joinCompetition(
+          widget.competitionId,
+          participant,
+        );
+
+        // Send System Message
+        try {
+          final sysMsg = MessageModel(
+            id: '',
+            senderId: 'system',
+            senderName: 'System',
+            text: '${_currentUser!.name} joined the competition!',
+            timestamp: DateTime.now(),
+            isOrganizer: false,
+            isSystem: true,
+          );
+          await firestoreService.sendMessage(widget.competitionId, sysMsg);
+        } catch (_) {}
 
         setState(() {
-          _isJoining = true;
+          _hasJoined = true;
+          _isJoining = false;
         });
 
-        try {
-          final firestoreService = Provider.of<FirestoreService>(
+        if (!mounted) return;
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Successfully joined competition!'),
+            backgroundColor: AppColors.success,
+          ),
+        );
+
+        // Auto Navigate to Matches
+        _tabController.animateTo(1);
+      } catch (e) {
+        if (mounted) {
+          setState(() => _isJoining = false);
+          ScaffoldMessenger.of(
             context,
-            listen: false,
-          );
-
-          final participant = ParticipantModel(
-            userId: _currentUser!.id,
-            userName: _currentUser!.name,
-            photoUrl: _currentUser!.photoUrl,
-            phoneNumber: _currentUser!.phone,
-            competitionId: widget.competitionId,
-            joinedAt: DateTime.now(),
-          );
-
-          await firestoreService.joinCompetition(
-            widget.competitionId,
-            participant,
-          );
-
-          // Send System Message
-          try {
-            final sysMsg = MessageModel(
-              id: '',
-              senderId: 'system',
-              senderName: 'System',
-              text: '${_currentUser!.name} joined the competition!',
-              timestamp: DateTime.now(),
-              isOrganizer: false,
-              isSystem: true,
-            );
-            await firestoreService.sendMessage(widget.competitionId, sysMsg);
-          } catch (_) {}
-
-          setState(() {
-            _hasJoined = true;
-            _isJoining = false;
-          });
-
-          if (!mounted) return;
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Successfully joined competition!'),
-              backgroundColor: AppColors.success,
-            ),
-          );
-        } catch (e) {
-          if (mounted) {
-            setState(() => _isJoining = false);
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text('Error joining: $e')));
-          }
+          ).showSnackBar(SnackBar(content: Text('Error joining: $e')));
         }
-      },
-    );
+      }
+    }
+
+    if (kIsWeb) {
+      proceedToJoin();
+    } else {
+      // Show Ad before Joining
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please watch this short ad to join the competition!'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+
+      AdService().showInterstitialAd(onAdDismissed: proceedToJoin);
+    }
   }
 
   Future<void> _leaveCompetition() async {
@@ -265,7 +278,8 @@ class _CompetitionDetailScreenState extends State<CompetitionDetailScreen>
     }
 
     // Check restriction: Cannot leave if made predictions
-    if (_participant!.totalPredictions > 0) {
+    // Only check if participant exists
+    if (_participant != null && _participant!.totalPredictions > 0) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Cannot leave competition after making predictions.'),
@@ -458,29 +472,6 @@ class _CompetitionDetailScreenState extends State<CompetitionDetailScreen>
     }
   }
 
-  Future<void> _generatePdfShim() async {
-    setState(() => _isLoading = true);
-    try {
-      final firestore = Provider.of<FirestoreService>(context, listen: false);
-      final matches = await firestore.getMatches(widget.competitionId).first;
-      if (!mounted) return;
-
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) =>
-              FullFixturesScreen(competition: _competition!, matches: matches),
-        ),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error loading matches: $e')));
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
@@ -521,14 +512,6 @@ class _CompetitionDetailScreenState extends State<CompetitionDetailScreen>
                 _competition!.sponsorName,
                 _competition!.cardBackgroundImageUrl,
               ),
-            ),
-
-          // PDF Download (Matches Tab Only)
-          if (_tabController.index == 1)
-            IconButton(
-              icon: const Icon(Icons.picture_as_pdf),
-              tooltip: 'Download Schedule PDF',
-              onPressed: _generatePdfShim,
             ),
 
           // Manual Standings Refresh (Table Tab Only (Index 3) - Organizer Only)
@@ -624,195 +607,45 @@ class _CompetitionDetailScreenState extends State<CompetitionDetailScreen>
               },
             ),
 
-          if (_tabController.index == 3 &&
-              !(_competition!.format == AppConstants.formatKnockout ||
-                  _competition!.format == AppConstants.formatSingleMatch) &&
-              _currentUser?.id == _competition!.organizerId)
+          // Task 17: PDF Action
+          if (_currentUser?.id == _competition!.organizerId &&
+              _tabController.index == 1) // Matches tab
             IconButton(
-              icon: const Icon(Icons.download),
-              tooltip: 'Download Standings Image',
+              icon: const Icon(Icons.picture_as_pdf, color: Colors.white),
+              tooltip: 'Download Match List',
               onPressed: () async {
-                try {
-                  final firestore = Provider.of<FirestoreService>(
-                    context,
-                    listen: false,
-                  );
-                  // Get latest data
-                  final standings = await firestore
-                      .getStandings(_competition!.id)
-                      .first;
+                // Call PDF Service
+                final matches = await Provider.of<FirestoreService>(
+                  context,
+                  listen: false,
+                ).getMatches(_competition!.id).first;
+                if (context.mounted) {
+                  PdfService.generateMatchListSchedule(_competition!, matches);
+                }
+              },
+            ),
 
-                  // Sort logic
-                  standings.sort((a, b) {
-                    // 1. Points
-                    int cmp = b.points.compareTo(a.points);
-                    if (cmp != 0) return cmp;
-
-                    // 2. Dynamic Rules
-                    for (final rule in _competition!.tieBreakerRules) {
-                      if (rule == AppConstants.tieBreakerGoalDiff) {
-                        cmp = b.goalDifference.compareTo(a.goalDifference);
-                      } else if (rule == AppConstants.tieBreakerGoalsScored) {
-                        cmp = b.goalsFor.compareTo(a.goalsFor);
-                      } else if (rule == AppConstants.tieBreakerWins) {
-                        cmp = b.won.compareTo(a.won);
-                      } else if (rule == AppConstants.tieBreakerNrr) {
-                        cmp = b.netRunRate.compareTo(a.netRunRate);
-                      }
-                      if (cmp != 0) return cmp;
-                    }
-
-                    // 3. Fallbacks
-                    if (_competition!.sport == AppConstants.sportCricket) {
-                      if (!_competition!.tieBreakerRules.contains(
-                        AppConstants.tieBreakerWins,
-                      )) {
-                        cmp = b.won.compareTo(a.won);
-                        if (cmp != 0) return cmp;
-                      }
-                      if (!_competition!.tieBreakerRules.contains(
-                        AppConstants.tieBreakerNrr,
-                      )) {
-                        cmp = b.netRunRate.compareTo(a.netRunRate);
-                        if (cmp != 0) return cmp;
-                      }
-                    } else {
-                      if (!_competition!.tieBreakerRules.contains(
-                        AppConstants.tieBreakerGoalDiff,
-                      )) {
-                        cmp = b.goalDifference.compareTo(a.goalDifference);
-                        if (cmp != 0) return cmp;
-                      }
-                      if (!_competition!.tieBreakerRules.contains(
-                        AppConstants.tieBreakerGoalsScored,
-                      )) {
-                        cmp = b.goalsFor.compareTo(a.goalsFor);
-                        if (cmp != 0) return cmp;
-                      }
-                    }
-
-                    return a.teamName.compareTo(b.teamName);
-                  });
-
-                  // Group Data
-                  final Map<String, List<StandingModel>> groupedData = {};
-                  for (var s in standings) {
-                    final g = s.group ?? 'Other';
-                    groupedData.putIfAbsent(g, () => []).add(s);
-                  }
-
-                  if (!context.mounted) return;
-
-                  // Show Dialog to render and capture
-                  await showDialog(
-                    context: context,
-                    builder: (context) {
-                      final GlobalKey boundaryKey = GlobalKey();
-                      return Dialog(
-                        backgroundColor: Colors.black.withValues(alpha: 0.95),
-                        insetPadding: EdgeInsets.zero,
-                        child: Container(
-                          width: double.infinity,
-                          height: double.infinity,
-                          padding: const EdgeInsets.symmetric(vertical: 24),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              SafeArea(
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      const Text(
-                                        'Poster Preview', // Changed title
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      IconButton(
-                                        icon: const Icon(
-                                          Icons.close,
-                                          color: Colors.white,
-                                        ),
-                                        onPressed: () => Navigator.pop(context),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: Center(
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.vertical,
-                                    child: FittedBox(
-                                      fit: BoxFit.fitWidth,
-                                      child: RepaintBoundary(
-                                        key: boundaryKey,
-                                        child: StandingsPoster(
-                                          competition: _competition!,
-                                          standings: standings,
-                                          groupedData: groupedData,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                              SafeArea(
-                                top: false,
-                                child: ElevatedButton.icon(
-                                  icon: const Icon(Icons.share),
-                                  label: const Text('Share / Save Image'),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppColors.accentGreen,
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 32,
-                                      vertical: 16,
-                                    ),
-                                  ),
-                                  onPressed: () async {
-                                    try {
-                                      // Wait a bit ensuring render
-                                      await Future.delayed(
-                                        const Duration(milliseconds: 100),
-                                      );
-                                      await ShareUtil.shareWidgetAsImage(
-                                        key: boundaryKey,
-                                        fileName:
-                                            '${_competition!.name.replaceAll(' ', '_')}_standings',
-                                        text:
-                                            'Check out the official standings for ${_competition!.name}!',
-                                      );
-                                    } catch (e) {
-                                      debugPrint('Error sharing: $e');
-                                    }
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                } catch (e) {
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(
-                      context,
-                    ).showSnackBar(SnackBar(content: Text('Error: $e')));
-                  }
+          // Task 18: PDF Action (Table/Standings)
+          if (_currentUser?.id == _competition!.organizerId &&
+              _tabController.index == 3 &&
+              !(_competition!.format == AppConstants.formatKnockout ||
+                  _competition!.format == AppConstants.formatSingleMatch))
+            IconButton(
+              icon: const Icon(Icons.picture_as_pdf, color: Colors.white),
+              tooltip: 'Download Standings',
+              onPressed: () async {
+                // Call PDF Service
+                final standings = await Provider.of<FirestoreService>(
+                  context,
+                  listen: false,
+                ).getStandings(_competition!.id).first;
+                if (context.mounted) {
+                  PdfService.generateLeaderboardPdf(_competition!, standings);
                 }
               },
             ),
         ],
+
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: AppColors.accentGreen,
@@ -854,28 +687,7 @@ class _CompetitionDetailScreenState extends State<CompetitionDetailScreen>
               : LeaderboardScreen(competition: _competition!, embed: true),
         ],
       ),
-      floatingActionButton: _tabController.index == 0
-          ? FloatingActionButton.extended(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => Scaffold(
-                      appBar: AppBar(title: const Text('Discussion')),
-                      body: CompetitionChatScreen(
-                        competition: _competition!,
-                        isParticipant: _hasJoined,
-                      ),
-                    ),
-                  ),
-                );
-              },
-              icon: const Icon(Icons.chat_bubble),
-              label: const Text('Chat'),
-              backgroundColor: AppColors.accentGreen,
-              foregroundColor: Colors.white,
-            )
-          : null,
+      floatingActionButton: null,
     );
   }
 
@@ -991,54 +803,78 @@ class _CompetitionDetailScreenState extends State<CompetitionDetailScreen>
                 ),
 
                 // Contact Button (moved closer to content)
-                if (_hasJoined && _currentUser?.id != _competition!.organizerId)
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                        top: 12.0,
-                        left: 52.0,
-                      ), // Align with text
-                      child: OutlinedButton.icon(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => DirectChatScreen(
-                                competitionId: _competition!.id,
-                                participantId: _currentUser!.id,
-                                participantName: _currentUser!.name,
-                                amIOrganizer: false,
+                // 3. Join Button (Moved to top)
+                if (!_hasJoined)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 24.0),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: !_isJoining ? _joinCompetition : null,
+                        child: _isJoining
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: LoadingSpinner(
+                                  size: 20,
+                                  color: AppColors.textPrimary,
+                                ),
+                              )
+                            : const Text(
+                                'Join Competition',
+                                style: TextStyle(fontSize: 16),
                               ),
-                            ),
-                          );
-                        },
-                        icon: const Icon(
-                          Icons.chat_bubble_outline,
-                          size: 16,
-                          color: AppColors.accentGreen,
-                        ),
-                        label: const Text(
-                          'Contact Organizer',
-                          style: TextStyle(color: AppColors.accentGreen),
-                        ),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: AppColors.accentGreen,
-                          side: const BorderSide(color: AppColors.accentGreen),
-                          visualDensity: VisualDensity.compact,
-                        ),
                       ),
                     ),
+                  )
+                else
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 24.0),
+                    child: Column(
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: AppColors.success.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: AppColors.success),
+                          ),
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.check_circle,
+                                color: AppColors.success,
+                              ),
+                              SizedBox(width: 8),
+                              Text(
+                                'You have joined this competition',
+                                style: TextStyle(color: AppColors.success),
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (_currentUser?.id != _competition!.organizerId) ...[
+                          const SizedBox(height: 16),
+                          SizedBox(
+                            width: double.infinity,
+                            height: 50,
+                            child: OutlinedButton(
+                              style: OutlinedButton.styleFrom(
+                                side: const BorderSide(color: AppColors.error),
+                                foregroundColor: AppColors.error,
+                              ),
+                              onPressed: _isLoading ? null : _leaveCompetition,
+                              child: const Text('Leave Competition'),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
                   ),
-              ],
-            ),
-          ),
 
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
                 // Competition Code (Visible to All)
                 if (true)
                   Container(
@@ -1107,7 +943,7 @@ class _CompetitionDetailScreenState extends State<CompetitionDetailScreen>
                         ),
                         if (_currentUser?.id != _competition!.organizerId)
                           const Text(
-                            'Use this code as a template when creating a new competition',
+                            'Share this code to join others', // Updated Text
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: AppColors.textSecondary,
@@ -1143,84 +979,71 @@ class _CompetitionDetailScreenState extends State<CompetitionDetailScreen>
                   const SizedBox(height: 16),
                 ],
 
-                // Stats
+                // Stats & Chat
                 _buildInfoCard(
                   'Participants',
                   '${_competition!.participantCount}',
                   Icons.people,
+                  trailing: SizedBox(
+                    width: 130, // Fixed width for prominence
+                    child: Builder(
+                      builder: (context) {
+                        int unread = 0;
+                        if (_participant != null) {
+                          final total = _competition!.messageCount;
+                          final read = _participant!.lastReadMessageCount;
+                          unread = total - read;
+                        }
+
+                        // Sanity check
+                        if (unread < 0) unread = 0;
+
+                        return Badge(
+                          isLabelVisible: unread > 0,
+                          label: Text(
+                            '$unread',
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          child: ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.accentGreen,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 8,
+                              ),
+                            ),
+                            icon: const Icon(Icons.chat, size: 18),
+                            label: const Text('Group Chat'),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => Scaffold(
+                                    appBar: AppBar(
+                                      title: const Text('Group Chat'),
+                                    ),
+                                    body: CompetitionChatScreen(
+                                      competition: _competition!,
+                                      isParticipant: _hasJoined,
+                                    ),
+                                  ),
+                                ),
+                              ).then((_) {
+                                // Refresh data when returning to update badge
+                                _loadData();
+                              });
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 12),
 
-                // Points System
-                _buildInfoCard(
-                  'Points System',
-                  'Winner: ${_competition!.rules['correctWinner']}pts • ${_competition!.sport == AppConstants.sportCricket ? 'Runs' : 'Score'}: ${_competition!.rules['correctScore']}pts',
-                  Icons.stars,
-                ),
+                // Removed Points System
                 const SizedBox(height: 24),
-
-                // Join Button
-                if (!_hasJoined)
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: !_isJoining ? _joinCompetition : null,
-                      child: _isJoining
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: LoadingSpinner(
-                                size: 20,
-                                color: AppColors.textPrimary,
-                              ),
-                            )
-                          : const Text(
-                              'Join Competition',
-                              style: TextStyle(fontSize: 16),
-                            ),
-                    ),
-                  )
-                else
-                  Column(
-                    children: [
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: AppColors.success.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: AppColors.success),
-                        ),
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.check_circle, color: AppColors.success),
-                            SizedBox(width: 8),
-                            Text(
-                              'You have joined this competition',
-                              style: TextStyle(color: AppColors.success),
-                            ),
-                          ],
-                        ),
-                      ),
-                      if (_currentUser?.id != _competition!.organizerId) ...[
-                        const SizedBox(height: 16),
-                        SizedBox(
-                          width: double.infinity,
-                          height: 50,
-                          child: OutlinedButton(
-                            style: OutlinedButton.styleFrom(
-                              side: const BorderSide(color: AppColors.error),
-                              foregroundColor: AppColors.error,
-                            ),
-                            onPressed: _isLoading ? null : _leaveCompetition,
-                            child: const Text('Leave Competition'),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
               ],
             ),
           ),
@@ -1229,7 +1052,12 @@ class _CompetitionDetailScreenState extends State<CompetitionDetailScreen>
     );
   }
 
-  Widget _buildInfoCard(String title, String value, IconData icon) {
+  Widget _buildInfoCard(
+    String title,
+    String value,
+    IconData icon, {
+    Widget? trailing,
+  }) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -1256,6 +1084,7 @@ class _CompetitionDetailScreenState extends State<CompetitionDetailScreen>
               ],
             ),
           ),
+          if (trailing != null) trailing,
         ],
       ),
     );

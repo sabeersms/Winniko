@@ -86,7 +86,8 @@ service cloud.firestore {
       // 3. Update/Delete: Only the Organizer OR specific field updates by participants
       allow delete: if isOrganizer(resource.data);
       allow update: if isOrganizer(resource.data) || 
-                    (isSignedIn() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['participantCount']));
+                    (isSignedIn() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['participantCount'])) ||
+                    (isSignedIn() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['messageCount']));
 
       // --- SUBCOLLECTIONS ---
 
@@ -135,7 +136,7 @@ service cloud.firestore {
         // EXCEPTION: User can update their own profile info (display name, photo)
         allow update: if isCompetitionOrganizer(competitionId) || 
                        (isSignedIn() && request.auth.uid == userId && 
-                        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['totalPoints', 'perfectScores', 'correctOutcomes', 'rank', 'totalPredictions', 'joinedAt']));
+                        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['totalPoints', 'perfectScores', 'correctOutcomes', 'rank', 'joinedAt']));
       }
       
       // DIRECT CHATS

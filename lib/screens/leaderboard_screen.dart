@@ -33,7 +33,10 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.backgroundDark,
-      floatingActionButton: widget.embed
+      floatingActionButton:
+          (widget.embed &&
+              Provider.of<AuthService>(context, listen: false).currentUserId ==
+                  widget.competition.organizerId)
           ? FloatingActionButton.small(
               onPressed: () => ShareUtil.shareWidgetAsImage(
                 key: _boundaryKey,

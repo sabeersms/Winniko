@@ -44,3 +44,6 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 *.apk
+.gradle_local/
+android/flutter_build_log.txt
+android/build_log.txt

@@ -60,4 +60,30 @@ class MessageModel {
       snapshot.id,
     );
   }
+
+  MessageModel copyWith({
+    String? id,
+    String? senderId,
+    String? senderName,
+    String? text,
+    DateTime? timestamp,
+    bool? isOrganizer,
+    bool? isSystem,
+    String? imageUrl,
+    bool? isPinned,
+    List<String>? readBy,
+  }) {
+    return MessageModel(
+      id: id ?? this.id,
+      senderId: senderId ?? this.senderId,
+      senderName: senderName ?? this.senderName,
+      text: text ?? this.text,
+      timestamp: timestamp ?? this.timestamp,
+      isOrganizer: isOrganizer ?? this.isOrganizer,
+      isSystem: isSystem ?? this.isSystem,
+      imageUrl: imageUrl ?? this.imageUrl,
+      isPinned: isPinned ?? this.isPinned,
+      readBy: readBy ?? this.readBy,
+    );
+  }
 }

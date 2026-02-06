@@ -35,10 +35,29 @@ class _CompetitionChatScreenState extends State<CompetitionChatScreen> {
   DateTime? _lastTypingTime;
 
   @override
+  void initState() {
+    super.initState();
+    _markAsRead();
+  }
+
+  @override
   void dispose() {
+    _markAsRead();
     _messageController.dispose();
     _scrollController.dispose();
     super.dispose();
+  }
+
+  void _markAsRead() {
+    // Fire and forget - mark as read when entering/leaving chat
+    final authService = Provider.of<AuthService>(context, listen: false);
+    final userId = authService.currentUserId;
+    if (userId != null) {
+      Provider.of<FirestoreService>(
+        context,
+        listen: false,
+      ).markCompetitionChatRead(widget.competition.id, userId);
+    }
   }
 
   Future<void> _sendMessage() async {
@@ -664,6 +683,10 @@ class _CompetitionChatScreenState extends State<CompetitionChatScreen> {
   }
 
   Widget _buildInputArea() {
+    final authService = Provider.of<AuthService>(context, listen: false);
+    final isOrganizer =
+        widget.competition.organizerId == authService.currentUserId;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -672,11 +695,13 @@ class _CompetitionChatScreenState extends State<CompetitionChatScreen> {
       ),
       child: Row(
         children: [
-          IconButton(
-            icon: const Icon(Icons.image, color: AppColors.accentGreen),
-            onPressed: _isSending ? null : _pickImage,
-          ),
-          const SizedBox(width: 8),
+          if (isOrganizer) ...[
+            IconButton(
+              icon: const Icon(Icons.image, color: AppColors.accentGreen),
+              onPressed: _isSending ? null : _pickImage,
+            ),
+            const SizedBox(width: 8),
+          ],
           Expanded(
             child: TextField(
               controller: _messageController,

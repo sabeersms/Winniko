@@ -369,15 +369,17 @@ class _ParticipantLeaderboardScreenState
             tooltip: 'Download Full Leaderboard',
             onPressed: () => _downloadFullLeaderboard(participants),
           ),
-        IconButton(
-          icon: const Icon(Icons.share_outlined, color: Colors.white),
-          onPressed: () => ShareUtil.shareWidgetAsImage(
-            key: _boundaryKey,
-            fileName: '${widget.competition.name}_leaderboard',
-            text:
-                'Check out the leaderboard for ${widget.competition.name} on Winniko! ⚽🏆',
+        // Task 17: Screenshot Share (Organizer Only)
+        if (isOrganizer)
+          IconButton(
+            icon: const Icon(Icons.share_outlined, color: Colors.white),
+            onPressed: () => ShareUtil.shareWidgetAsImage(
+              key: _boundaryKey,
+              fileName: '${widget.competition.name}_leaderboard',
+              text:
+                  'Check out the leaderboard for ${widget.competition.name} on Winniko! ⚽🏆',
+            ),
           ),
-        ),
         const SizedBox(width: 8),
       ],
     );

@@ -10,6 +10,7 @@ class ParticipantModel {
   final int correctOutcomes; // Correct result (W/D/L) but wrong score
   final int totalPredictions;
   final DateTime joinedAt;
+  final int lastReadMessageCount;
 
   ParticipantModel({
     required this.userId,
@@ -23,6 +24,7 @@ class ParticipantModel {
     this.correctOutcomes = 0,
     this.totalPredictions = 0,
     required this.joinedAt,
+    this.lastReadMessageCount = 0,
   });
 
   Map<String, dynamic> toMap() {
@@ -38,6 +40,7 @@ class ParticipantModel {
       'correctOutcomes': correctOutcomes,
       'totalPredictions': totalPredictions,
       'joinedAt': joinedAt.toIso8601String(),
+      'lastReadMessageCount': lastReadMessageCount,
     };
   }
 
@@ -54,6 +57,7 @@ class ParticipantModel {
       correctOutcomes: map['correctOutcomes'] ?? 0,
       totalPredictions: map['totalPredictions'] ?? 0,
       joinedAt: DateTime.parse(map['joinedAt']),
+      lastReadMessageCount: map['lastReadMessageCount'] ?? 0,
     );
   }
 
@@ -69,6 +73,7 @@ class ParticipantModel {
     int? correctOutcomes,
     int? totalPredictions,
     DateTime? joinedAt,
+    int? lastReadMessageCount,
   }) {
     return ParticipantModel(
       userId: userId ?? this.userId,
@@ -82,6 +87,7 @@ class ParticipantModel {
       correctOutcomes: correctOutcomes ?? this.correctOutcomes,
       totalPredictions: totalPredictions ?? this.totalPredictions,
       joinedAt: joinedAt ?? this.joinedAt,
+      lastReadMessageCount: lastReadMessageCount ?? this.lastReadMessageCount,
     );
   }
 }

@@ -449,7 +449,8 @@ class _MatchesListScreenState extends State<MatchesListScreen> {
             currentUserId && // Organizer cannot predict
         (match.status == AppConstants.matchStatusScheduled ||
             match.status == AppConstants.matchStatusUpcoming) &&
-        match.scheduledTime.isAfter(DateTime.now());
+        match.scheduledTime.isAfter(DateTime.now()) &&
+        match.scheduledTime.difference(DateTime.now()).inHours <= 24;
 
     final bool hasPredicted = prediction != null;
 
@@ -1027,8 +1028,8 @@ class _MatchesListScreenState extends State<MatchesListScreen> {
                               ? 'Edit Prediction'
                               : (widget.competition.sport ==
                                         AppConstants.sportCricket
-                                    ? 'Predict Runs'
-                                    : 'Predict Score'),
+                                    ? 'Predict Result'
+                                    : 'Predict Result'),
                         ),
                       ),
                     ),

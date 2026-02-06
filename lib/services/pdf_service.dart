@@ -136,6 +136,44 @@ class PdfService {
     );
   }
 
+  // Generate Match List Schedule (Organizer Only)
+  static Future<void> generateMatchListSchedule(
+    CompetitionModel competition,
+    List<MatchModel> matches,
+  ) async {
+    final pdf = pw.Document();
+
+    // Sort by time
+    matches.sort((a, b) => a.scheduledTime.compareTo(b.scheduledTime));
+
+    pdf.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4,
+        margin: const pw.EdgeInsets.all(32),
+        build: (pw.Context context) {
+          return [
+            _buildHeader(title: 'Match Schedule', subtitle: competition.name),
+            pw.SizedBox(height: 20),
+            pw.Text(
+              'Total Matches: ${matches.length}',
+              style: pw.TextStyle(
+                fontWeight: pw.FontWeight.bold,
+                color: PdfColors.grey700,
+              ),
+            ),
+            pw.SizedBox(height: 10),
+            _buildMatchListTable(matches, competition),
+          ];
+        },
+      ),
+    );
+
+    await Printing.sharePdf(
+      bytes: await pdf.save(),
+      filename: '${competition.name}_Schedule.pdf',
+    );
+  }
+
   // Generate Full Leaderboard Report (Organizer Only)
   static Future<void> generateFullLeaderboard(
     CompetitionModel competition,
@@ -538,6 +576,55 @@ class PdfService {
           '${team.points}',
         ];
       }),
+    );
+  }
+
+  static pw.Widget _buildMatchListTable(
+    List<MatchModel> matches,
+    CompetitionModel competition,
+  ) {
+    final dateFormat = DateFormat('dd MMM yyyy, HH:mm');
+
+    // ignore: deprecated_member_use
+    return pw.Table.fromTextArray(
+      headerStyle: pw.TextStyle(
+        fontWeight: pw.FontWeight.bold,
+        color: PdfColors.white,
+        fontSize: 10,
+      ),
+      headerDecoration: const pw.BoxDecoration(color: PdfColors.blueGrey800),
+      rowDecoration: const pw.BoxDecoration(
+        border: pw.Border(bottom: pw.BorderSide(color: PdfColors.grey300)),
+      ),
+      cellStyle: const pw.TextStyle(fontSize: 10),
+      headers: ['Match', 'Date/Time', 'Teams', 'Result'],
+      columnWidths: {
+        0: const pw.FixedColumnWidth(40),
+        1: const pw.FixedColumnWidth(80),
+        2: const pw.FlexColumnWidth(3),
+        3: const pw.FlexColumnWidth(2),
+      },
+      data: matches.map((m) {
+        String matchLabel = m.matchNumber != null ? 'M${m.matchNumber}' : '-';
+        if (m.round != null && m.round!.isNotEmpty && m.round != 'League') {
+          matchLabel += '\n${m.round}';
+        }
+
+        String result = '-';
+        if (m.status == AppConstants.matchStatusCompleted &&
+            m.actualScore != null) {
+          result = _formatScore(m);
+        } else {
+          result = m.status.toUpperCase();
+        }
+
+        return [
+          matchLabel,
+          dateFormat.format(m.scheduledTime),
+          '${m.team1Name} vs ${m.team2Name}',
+          result,
+        ];
+      }).toList(),
     );
   }
 }

@@ -41,6 +41,7 @@ class CompetitionModel {
   final int numberOfGroups;
   final List<String> groups; // ['Group A', 'Group B']
   final String status; // 'draft', 'active', 'archived'
+  final int messageCount; // Total messages in competition chat
 
   CompetitionModel({
     required this.id,
@@ -81,6 +82,7 @@ class CompetitionModel {
     this.numberOfGroups = 0,
     this.groups = const [],
     this.status = 'draft',
+    this.messageCount = 0,
   });
 
   Map<String, dynamic> toMap() {
@@ -123,6 +125,7 @@ class CompetitionModel {
       'termsLanguage': termsLanguage,
       'numberOfGroups': numberOfGroups,
       'groups': groups,
+      'messageCount': messageCount,
     };
   }
 
@@ -193,6 +196,7 @@ class CompetitionModel {
           ? List<String>.from(map['groups'])
           : const [],
       status: map['status'] ?? 'active',
+      messageCount: map['messageCount'] ?? 0,
     );
   }
 
@@ -241,6 +245,7 @@ class CompetitionModel {
     int? numberOfGroups,
     List<String>? groups,
     String? status,
+    int? messageCount,
   }) {
     return CompetitionModel(
       id: id ?? this.id,
@@ -283,6 +288,7 @@ class CompetitionModel {
       numberOfGroups: numberOfGroups ?? this.numberOfGroups,
       groups: groups ?? this.groups,
       status: status ?? this.status,
+      messageCount: messageCount ?? this.messageCount,
     );
   }
 

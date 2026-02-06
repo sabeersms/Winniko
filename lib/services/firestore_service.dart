@@ -37,11 +37,27 @@ class FirestoreService {
   // Send message
   Future<void> sendMessage(String competitionId, MessageModel message) async {
     try {
-      await _firestore
+      final batch = _firestore.batch();
+
+      // 1. Add Message
+      final messageRef = _firestore
           .collection('competitions')
           .doc(competitionId)
           .collection('messages')
-          .add(message.toMap());
+          .doc(); // Generate ID
+
+      // Use the generated ID for the message model
+      final messageWithId = message.copyWith(id: messageRef.id);
+
+      batch.set(messageRef, messageWithId.toMap());
+
+      // 2. Increment Message Count
+      final competitionRef = _firestore
+          .collection('competitions')
+          .doc(competitionId);
+      batch.update(competitionRef, {'messageCount': FieldValue.increment(1)});
+
+      await batch.commit();
     } catch (e) {
       throw Exception('Failed to send message: ${e.toString()}');
     }
@@ -69,6 +85,8 @@ class FirestoreService {
     String messageId,
     String userId,
   ) async {
+    // Legacy support: We still mark individual messages as read for now
+    // but primary mechanism is now the participant counter.
     try {
       await _firestore
           .collection('competitions')
@@ -80,6 +98,33 @@ class FirestoreService {
           });
     } catch (e) {
       debugPrint('Error marking message read: $e');
+    }
+  }
+
+  // Mark all competition messages as read for a user
+  Future<void> markCompetitionChatRead(
+    String competitionId,
+    String userId,
+  ) async {
+    try {
+      // 1. Get current competition message count
+      final compDoc = await _firestore
+          .collection('competitions')
+          .doc(competitionId)
+          .get();
+      if (!compDoc.exists) return;
+
+      final messageCount = compDoc.data()?['messageCount'] ?? 0;
+
+      // 2. Update participant's last read count
+      await _firestore
+          .collection('competitions')
+          .doc(competitionId)
+          .collection('participants')
+          .doc(userId)
+          .update({'lastReadMessageCount': messageCount});
+    } catch (e) {
+      debugPrint('Error marking competition chat read: $e');
     }
   }
 
