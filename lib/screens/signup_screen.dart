@@ -268,8 +268,9 @@ class _SignupScreenState extends State<SignupScreen> {
                 ),
               ),
               validator: (value) {
-                if (value == null || value.isEmpty)
+                if (value == null || value.isEmpty) {
                   return 'Please confirm email';
+                }
                 if (value != _emailController.text) {
                   return 'Emails do not match';
                 }

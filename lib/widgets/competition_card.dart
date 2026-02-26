@@ -168,7 +168,7 @@ class CompetitionCard extends StatelessWidget {
                     children: [
                       _buildStat(
                         Icons.people,
-                        '${competition.participantCount} Participants',
+                        '${competition.displayParticipantCount} Participants',
                         Colors.white.withValues(alpha: 0.7),
                       ),
                     ],
@@ -231,9 +231,11 @@ class CompetitionCard extends StatelessWidget {
                             minimumSize: const Size(0, 32),
                             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                           ),
-                          child: const Text(
-                            'View Details',
-                            style: TextStyle(
+                          child: Text(
+                            competition.isFinished
+                                ? 'FINISHED'
+                                : 'View Details',
+                            style: const TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
                             ),

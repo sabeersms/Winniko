@@ -258,6 +258,7 @@ class AppDrawer extends StatelessWidget {
                             userId: user!.id,
                             userName: user!.name,
                             userPhone: user!.phone,
+                            userPhotoUrl: user!.photoUrl,
                           ),
                         ),
                       );

@@ -1,176 +1,245 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    // --- HELPER FUNCTIONS ---
     
-    // --- Helper Functions ---
-    
-    // Check if user is signed in
-    function isSignedIn() {
+    // Check if user is authenticated
+    function isAuthenticated() {
       return request.auth != null;
     }
-    
-    // Check if user is the organizer of the competition resource
-    function isOrganizer(resourceData) {
-      return isSignedIn() && resourceData.organizerId == request.auth.uid;
-    }
-    
-    // Check if user is the organizer of the *parent* competition (for subcollections)
-    // NOTE: This requires get(), which costs one read.
-    function isCompetitionOrganizer(competitionId) {
-      return isSignedIn() && 
-             get(/databases/$(database)/documents/competitions/$(competitionId)).data.organizerId == request.auth.uid;
+
+    // Check if user is the owner of the resource (e.g. User Profile)
+    function isOwner(userId) {
+      return request.auth.uid == userId;
     }
 
-    // --- USERS Collection ---
-    // Anyone can look up a user profile (for checkUserExists and generic display)
+    // Check if the user is the organizer of the competition (for updates/deletes)
+    function isOrganizer() {
+      return resource.data.organizerId == request.auth.uid;
+    }
+
+    // Check if the user trying to create a document is setting themselves as organizer
+    function isOrganizerCreate() {
+      return request.resource.data.organizerId == request.auth.uid;
+    }
+    
+    // Master Admin Check
+    // Checks token email (for email/password logins) OR a dedicated 'admins' 
+    // Firestore collection entry (for phone-authenticated admins).
+    function isMasterAdmin() {
+      return (request.auth.token.email != null && request.auth.token.email in [
+        'sabeersms@gmail.com', 
+        'teamwinniko@gmail.com', 
+        '2mobilecampus@gmail.com'
+      ]) || exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+
+    // --- USERS COLLECTION ---
     match /users/{userId} {
-      allow read: if true; 
-      allow write: if isSignedIn() && request.auth.uid == userId;
+      // Anyone logged in can read users (for leaderboards/profiles)
+      allow read: if isAuthenticated();
+      // Only the user themselves or a Master Admin can update their profile
+      allow write: if isAuthenticated() && (isOwner(userId) || isMasterAdmin());
     }
-    
-    // --- PHONE/EMAIL INDICES ---
-    match /phone_indices/{phoneNumber} {
-      allow read: if true;
-      allow create: if isSignedIn();
-      // Allow update if ownership matches OR if the registered user document no longer exists (zombie index)
-      allow update: if isSignedIn() && (
-        (request.auth.token.phone_number == '+' + phoneNumber) ||
-        (!exists(/databases/$(database)/documents/users/$(resource.data.uid)))
-      );
-      allow delete: if false;
-    }
+
+    // --- INDICES (For existence checks) ---
     match /email_indices/{email} {
+      // Allow read for presence check (can be unauthenticated)
       allow read: if true;
-      allow create: if isSignedIn();
-      allow update: if isSignedIn() && (
-        (request.auth.token.email.lower() == email.lower()) ||
-        (!exists(/databases/$(database)/documents/users/$(resource.data.uid)))
-      );
-      allow delete: if false;
+      // Allow write if authenticated and setting/deleting their own UID
+      allow create, update: if isAuthenticated() && (request.resource.data.uid == request.auth.uid || isMasterAdmin());
+      allow delete: if isAuthenticated() && (resource.data.uid == request.auth.uid || isMasterAdmin());
     }
 
-    // --- PREDICTIONS Collection ---
-    // Users can read/write their own predictions
-    match /predictions/{predictionId} {
-      allow read: if isSignedIn();
-      // Allow create if userId matches auth and match hasn't started
-      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid &&
-                    get(/databases/$(database)/documents/competitions/$(request.resource.data.competitionId)/matches/$(request.resource.data.matchId)).data.scheduledTime > request.time;
-      // Allow update if userId matches auth AND match hasn't started
-      // OR if organizer (to mark as scored - but stats are in participants)
-      allow update: if isSignedIn() && (
-        (resource.data.userId == request.auth.uid && 
-         get(/databases/$(database)/documents/competitions/$(resource.data.competitionId)/matches/$(resource.data.matchId)).data.scheduledTime > request.time) || 
-        isCompetitionOrganizer(resource.data.competitionId)
-      );
-      // Allow delete if userId matches auth and match hasn't started
-      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid &&
-                    get(/databases/$(database)/documents/competitions/$(resource.data.competitionId)/matches/$(resource.data.matchId)).data.scheduledTime > request.time;
+    match /phone_indices/{phone} {
+      // Allow read for presence check (can be unauthenticated)
+      allow read: if true;
+      // Allow write if authenticated and setting/deleting their own UID
+      allow create, update: if isAuthenticated() && (request.resource.data.uid == request.auth.uid || isMasterAdmin());
+      allow delete: if isAuthenticated() && (resource.data.uid == request.auth.uid || isMasterAdmin());
     }
 
-    // --- ORGANIZERS Collection (For Team Library) ---
-    match /organizers/{organizerId}/team_library/{teamId} {
-      allow read: if isSignedIn();
-      // Only the organizer can manage their library
-      allow write: if isSignedIn() && request.auth.uid == organizerId;
-    }
-
-    // --- COMPETITIONS Collection ---
+    // --- COMPETITIONS COLLECTION ---
     match /competitions/{competitionId} {
-      // 1. Everyone can read competitions (Public & Private for finding)
-      allow read: if true; 
-
-      // 2. Creation: Anyone signed in can create, provided they list themselves as organizer
-      allow create: if isSignedIn() && request.resource.data.organizerId == request.auth.uid;
-
-      // 3. Update/Delete: Only the Organizer OR specific field updates by participants
-      allow delete: if isOrganizer(resource.data);
-      allow update: if isOrganizer(resource.data) || 
-                    (isSignedIn() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['participantCount'])) ||
-                    (isSignedIn() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['messageCount']));
-
-      // --- SUBCOLLECTIONS ---
-
-      // TEAMS: Only organizer can manage teams
-      match /teams/{teamId} {
-        allow read: if true;
-        allow write: if isCompetitionOrganizer(competitionId);
-      }
-
-      // MATCHES: Only organizer can manage matches
-      match /matches/{matchId} {
-        allow read: if true;
-        allow write: if isCompetitionOrganizer(competitionId);
-      }
-
-      // STANDINGS: Read-only (Updated via Batch by Organizer)
-      match /standings/{teamId} {
-        allow read: if true;
-        // The batch write from client performs writes here. 
-        // Since the client doing the batch is the organizer, this follows the same logic.
-        allow write: if isCompetitionOrganizer(competitionId);
-      }
-
-      // MESSAGES (Competition Chat)
-      match /messages/{messageId} {
-        allow read: if true; // Public chat can be read by anyone? Or joined only? Assuming public for now.
-        // Anyone joined can write? For now restricting basic spam prevention
-        allow create: if isSignedIn();
-        // Only sender or organizer can delete? Simplification:
-        allow delete: if isSignedIn() && (resource.data.senderId == request.auth.uid || isCompetitionOrganizer(competitionId));
-      }
-
-       // TYPING (Competition Chat)
-      match /typing/{userId} {
-        allow read, write: if isSignedIn();
-      }
-
-      // PARTICIPANTS
-      match /participants/{userId} {
-        allow read: if true;
-        // User can join (create their own doc)
-        allow create: if isSignedIn() && request.auth.uid == userId;
-        // Organizer can remove participants, OR User can leave
-        allow delete: if isSignedIn() && (request.auth.uid == userId || isCompetitionOrganizer(competitionId));
-        // Updates (points etc): Organizer only (User can't give themselves points)
-        // EXCEPTION: User can update their own profile info (display name, photo)
-        allow update: if isCompetitionOrganizer(competitionId) || 
-                       (isSignedIn() && request.auth.uid == userId && 
-                        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['totalPoints', 'perfectScores', 'correctOutcomes', 'rank', 'joinedAt']));
-      }
+      // Public read access for competitions (discovery)
+      allow read: if true;
       
-      // DIRECT CHATS
-      // Organizer <> Participant
-      // Root doc: stores metadata
-      match /direct_chats/{participantId} {
-         allow read: if isSignedIn() && (request.auth.uid == participantId || isCompetitionOrganizer(competitionId));
-         allow write: if isSignedIn() && (request.auth.uid == participantId || isCompetitionOrganizer(competitionId));
+      // Create: Allowed if authenticated and identifying self as organizer
+      allow create: if isAuthenticated() && isOrganizerCreate();
+      
+      // Update: Organizer, Master Admin, OR any authenticated user updating only allowed fields
+      allow update: if isAuthenticated() && (
+        isOrganizer() || 
+        isMasterAdmin() ||
+        (request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'participantCount', 
+          'participantsCount', 
+          'messageCount', 
+          'totalPredictions',
+          'lastMessageAt',
+          'lastMessageText',
+          'lastMessageUser',
+          'lastReadMessageCount',
+          'participantUnreadCount',
+          'lastUpdatedAt',
+          'updatedAt',
+          'lastMessageAt_ms'
+        ]))
+      );
+      
+      // Delete: Only Organizer or Master Admin
+      allow delete: if isAuthenticated() && (isOrganizer() || isMasterAdmin());
+
+      // --- SUB-COLLECTIONS ---
+      
+      // Matches: Only Organizer/Admin can manage matches
+      match /matches/{matchId} {
+         allow read: if true;
+         allow write: if isAuthenticated() && (
+            get(/databases/$(database)/documents/competitions/$(competitionId)).data.organizerId == request.auth.uid ||
+            isMasterAdmin()
+         );
+      }
+
+      // Teams: Only Organizer/Admin can manage teams
+      match /teams/{teamId} {
+         allow read: if true;
+         allow write: if isAuthenticated() && (
+            get(/databases/$(database)/documents/competitions/$(competitionId)).data.organizerId == request.auth.uid || 
+            isMasterAdmin()
+         );
+       }
+      
+      // Participants: Users join/leave themselves
+      match /participants/{participantId} {
+         allow read: if true;
+         // Allow creating/updating/deleting if documented ID matches UID OR data.userId matches UID
+         allow create, update, delete: if isAuthenticated() && (
+            participantId == request.auth.uid ||
+            request.auth.uid == participantId ||
+            (resource != null && (resource.data.userId == request.auth.uid || resource.data.id == request.auth.uid)) ||
+            (request.resource != null && (request.resource.data.userId == request.auth.uid || request.resource.data.id == request.auth.uid)) ||
+            get(/databases/$(database)/documents/competitions/$(competitionId)).data.organizerId == request.auth.uid ||
+            isMasterAdmin()
+         );
+      }
+
+      // --- CHAT & REALTIME FEATURES ---
+      
+      // Messages (Group Chat)
+      match /messages/{messageId} {
+        allow read: if isAuthenticated();
+        // Allow create if participant? For now assume authenticated is enough or upgrade to check participation
+        allow create: if isAuthenticated(); 
+        // Allow delete if owner of message or organizer/admin
+        allow delete: if isAuthenticated() && (
+             resource.data.senderId == request.auth.uid ||
+             get(/databases/$(database)/documents/competitions/$(competitionId)).data.organizerId == request.auth.uid ||
+             isMasterAdmin()
+        );
+      }
+
+      // Typing Indicators
+      match /typing/{userId} {
+        allow read, write: if isAuthenticated();
+      }
+
+      // Direct Chats
+      match /direct_chats/{chatId} {
+         allow read, write: if isAuthenticated(); // Simplified for now, can be stricter
          
          match /messages/{msgId} {
-            allow read: if isSignedIn() && (request.auth.uid == participantId || isCompetitionOrganizer(competitionId));
-            allow write: if isSignedIn() && (request.auth.uid == participantId || isCompetitionOrganizer(competitionId));
+            allow read, write: if isAuthenticated();
          }
-          match /typing/{userId} {
-            allow read, write: if isSignedIn() && (request.auth.uid == participantId || isCompetitionOrganizer(competitionId));
+         match /typing/{tId} {
+            allow read, write: if isAuthenticated();
          }
       }
     }
+
+    // --- PREDICTIONS COLLECTION (Root Level) ---
+    match /predictions/{predictionId} {
+      allow read: if isAuthenticated();
+      // Only create/update own predictions
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isAuthenticated() && (
+        resource.data.userId == request.auth.uid || 
+        isMasterAdmin() ||
+        get(/databases/$(database)/documents/competitions/$(resource.data.competitionId)).data.organizerId == request.auth.uid
+      );
+    }
+    
     // --- COLLECTION GROUP QUERIES ---
-    // Explicitly allow collectionGroup queries for participants
+    // Specifically for 'predictions' queries across all competitions/users if nested
+    match /{path=**}/predictions/{predictionId} {
+      allow read: if isAuthenticated();
+    }
+
     match /{path=**}/participants/{participantId} {
-      allow read: if true;
+      allow read: if isAuthenticated() && (resource == null || resource.data.userId == request.auth.uid || isMasterAdmin());
+    }
+    
+    // --- ADMIN REGISTRY ---
+    // Admins collection stores UIDs of master admins (useful for phone auth users)
+    match /admins/{adminId} {
+      allow read: if isAuthenticated();
+      // Only an existing admin (by email token) can add/remove admins
+      allow write: if request.auth.token.email != null && request.auth.token.email in [
+        'sabeersms@gmail.com',
+        'teamwinniko@gmail.com',
+        '2mobilecampus@gmail.com'
+      ];
+    }
+
+    // --- OFFICIAL TOURNAMENTS (Master Admin Only) ---
+    match /discovered_tournaments/{docId} {
+      allow read: if isAuthenticated();
+      allow write: if isMasterAdmin();
+    }
+    
+    match /blacklisted_tournaments/{docId} {
+      allow read: if isAuthenticated();
+      allow write: if isMasterAdmin();
+    }
+    
+    match /official_leagues/{leagueId} {
+      allow read: if isAuthenticated();
+      allow write: if isMasterAdmin();
+      
+      match /matches/{matchId} {
+        allow read: if isAuthenticated();
+        // Allow Master Admin to manage matches in official leagues
+        allow write: if isMasterAdmin();
+      }
+      
+      match /meta/{docId} {
+        allow read: if isAuthenticated();
+        allow write: if isMasterAdmin() || isAuthenticated(); // Allow sync lock acquisition by clients? 
+        // Sync lock logic uses "runTransaction" to set lock. 
+        // If regular users trigger sync (they don't anymore), they need write.
+        // But our function runs on server (Admin SDK bypasses rules).
+        // Clients might read lock.
+      }
+
+      // Soft Copy Matches (Master Admin Verification Workflow)
+      match /soft_matches/{matchId} {
+        allow read: if isMasterAdmin(); 
+        allow write: if isMasterAdmin();
+      }
     }
 
     // --- APP METADATA ---
     match /app_metadata/{docId} {
-      allow read: if isSignedIn();
-      allow write: if isSignedIn();
+      allow read: if isAuthenticated();
+      // Allow lock acquisition/release if client-side sync is still used anywhere
+      allow write: if isMasterAdmin() || (docId == 'tournament_sync_lock' && isAuthenticated());
     }
-
-    // --- DISCOVERED TOURNAMENTS ---
-    match /discovered_tournaments/{tournamentId} {
-      allow read: if isSignedIn();
-      allow write: if isSignedIn();
+    
+    // Default Deny
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }

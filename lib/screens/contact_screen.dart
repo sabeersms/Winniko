@@ -42,8 +42,8 @@ class ContactScreen extends StatelessWidget {
             _buildContactCard(
               icon: Icons.email_outlined,
               title: 'Email Us',
-              subtitle: 'sabeersms@gmail.com',
-              onTap: () => _launchUrl('mailto:sabeersms@gmail.com'),
+              subtitle: 'teamwinniko@gmail.com',
+              onTap: () => _launchUrl('mailto:teamwinniko@gmail.com'),
             ),
             const SizedBox(height: 16),
             _buildContactCard(
@@ -52,13 +52,7 @@ class ContactScreen extends StatelessWidget {
               subtitle: '@Teamwinniko',
               onTap: () => _launchUrl('https://t.me/Teamwinniko'),
             ),
-            const SizedBox(height: 16),
-            _buildContactCard(
-              icon: Icons.language_outlined,
-              title: 'Website',
-              subtitle: 'www.winniko.com',
-              onTap: () => _launchUrl('https://www.winniko.com'),
-            ),
+
             const SizedBox(height: 32),
             const Text(
               'Follow Us',

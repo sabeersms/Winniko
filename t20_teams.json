@@ -1,0 +1,160 @@
+{
+  "documents": [
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/teams/04907987-ad98-45b0-b271-9acd2927483d",
+      "fields": {
+        "group": {
+          "nullValue": null
+        },
+        "id": {
+          "stringValue": "04907987-ad98-45b0-b271-9acd2927483d"
+        },
+        "competitionName": {
+          "nullValue": null
+        },
+        "createdAt": {
+          "timestampValue": "2026-02-01T12:18:05.835404Z"
+        },
+        "name": {
+          "stringValue": "USA"
+        },
+        "shortName": {
+          "stringValue": "USA"
+        },
+        "logoUrl": {
+          "nullValue": null
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        }
+      },
+      "createTime": "2026-02-01T12:18:06.825098Z",
+      "updateTime": "2026-02-01T12:18:06.825098Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/teams/04e844d6-cda8-47c9-8e9e-58843972d4dd",
+      "fields": {
+        "group": {
+          "nullValue": null
+        },
+        "competitionName": {
+          "nullValue": null
+        },
+        "id": {
+          "stringValue": "04e844d6-cda8-47c9-8e9e-58843972d4dd"
+        },
+        "shortName": {
+          "stringValue": "NZE"
+        },
+        "logoUrl": {
+          "stringValue": "https://flagcdn.com/w160/nz.png"
+        },
+        "name": {
+          "stringValue": "New Zealand"
+        },
+        "createdAt": {
+          "timestampValue": "2026-02-01T12:18:04.600941Z"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        }
+      },
+      "createTime": "2026-02-01T12:18:05.613260Z",
+      "updateTime": "2026-02-01T12:18:05.613260Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/teams/170382c5-c795-4c4c-888a-f886b85c287e",
+      "fields": {
+        "group": {
+          "nullValue": null
+        },
+        "competitionName": {
+          "nullValue": null
+        },
+        "id": {
+          "stringValue": "170382c5-c795-4c4c-888a-f886b85c287e"
+        },
+        "createdAt": {
+          "timestampValue": "2026-02-01T12:18:04.794548Z"
+        },
+        "name": {
+          "stringValue": "Oman"
+        },
+        "shortName": {
+          "stringValue": "OMA"
+        },
+        "logoUrl": {
+          "stringValue": "https://flagcdn.com/w160/om.png"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        }
+      },
+      "createTime": "2026-02-01T12:18:05.793787Z",
+      "updateTime": "2026-02-01T12:18:05.793787Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/teams/1f1f59f8-4f47-443e-ad91-8e59191ea7ff",
+      "fields": {
+        "createdAt": {
+          "timestampValue": "2026-02-01T12:18:04.971679Z"
+        },
+        "name": {
+          "stringValue": "Pakistan"
+        },
+        "shortName": {
+          "stringValue": "PAK"
+        },
+        "logoUrl": {
+          "stringValue": "https://flagcdn.com/w160/pk.png"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "group": {
+          "nullValue": null
+        },
+        "id": {
+          "stringValue": "1f1f59f8-4f47-443e-ad91-8e59191ea7ff"
+        },
+        "competitionName": {
+          "nullValue": null
+        }
+      },
+      "createTime": "2026-02-01T12:18:05.946923Z",
+      "updateTime": "2026-02-01T12:18:05.946923Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/teams/2ad5450d-9d51-4126-84d5-c6c04ea2999c",
+      "fields": {
+        "createdAt": {
+          "timestampValue": "2026-02-01T12:18:03.870242Z"
+        },
+        "name": {
+          "stringValue": "Italy"
+        },
+        "shortName": {
+          "stringValue": "ITA"
+        },
+        "logoUrl": {
+          "stringValue": "https://flagcdn.com/w160/it.png"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "group": {
+          "nullValue": null
+        },
+        "competitionName": {
+          "nullValue": null
+        },
+        "id": {
+          "stringValue": "2ad5450d-9d51-4126-84d5-c6c04ea2999c"
+        }
+      },
+      "createTime": "2026-02-01T12:18:04.871356Z",
+      "updateTime": "2026-02-01T12:18:04.871356Z"
+    }
+  ],
+  "nextPageToken": "AFTOeJzmt8epqysGPx52O1y73hK_6biMuiLtHjUbVIg3JJfnQpflkMqYZAl8xXT-1reCbPXrPYCg6ClgYnjJ4xiOh_O6gOmY16GHi2psR9ID0ArEd-QQQtDKYF0Vtb6ZRri-0iHqXzYwGtjKgmS9s-tzjq6LdSSWUfZKhyWC9crnTBwzWfD_WkrljmbJc1s_-0OEFRXPw6N6BcEPY9EyUAsK32addIutPOiaKREk"
+}

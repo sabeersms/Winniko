@@ -1,0 +1,693 @@
+{
+  "documents": [
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/participants/0JaDnBTaiwTgnhOqb6Xr9SdaH0N2",
+      "fields": {
+        "joinedAt": {
+          "stringValue": "2026-02-01T17:47:21.588381"
+        },
+        "userName": {
+          "stringValue": "Teamwinniko"
+        },
+        "correctOutcomes": {
+          "integerValue": "0"
+        },
+        "totalPoints": {
+          "integerValue": "0"
+        },
+        "rank": {
+          "integerValue": "1"
+        },
+        "perfectScores": {
+          "integerValue": "0"
+        },
+        "phoneNumber": {
+          "nullValue": null
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "totalPredictions": {
+          "integerValue": "0"
+        },
+        "userId": {
+          "stringValue": "0JaDnBTaiwTgnhOqb6Xr9SdaH0N2"
+        },
+        "photoUrl": {
+          "nullValue": null
+        },
+        "lastReadMessageCount": {
+          "integerValue": "1"
+        }
+      },
+      "createTime": "2026-02-01T12:17:22.911572Z",
+      "updateTime": "2026-02-21T18:59:12.788388Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/participants/BnIxJhU6kIfeaiTgUqsoFlQbU6y2",
+      "fields": {
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "totalPredictions": {
+          "integerValue": "0"
+        },
+        "userId": {
+          "stringValue": "BnIxJhU6kIfeaiTgUqsoFlQbU6y2"
+        },
+        "photoUrl": {
+          "nullValue": null
+        },
+        "lastReadMessageCount": {
+          "integerValue": "0"
+        },
+        "joinedAt": {
+          "stringValue": "2026-02-19T10:32:29.801558"
+        },
+        "userName": {
+          "stringValue": "Test3"
+        },
+        "totalPoints": {
+          "integerValue": "0"
+        },
+        "correctOutcomes": {
+          "integerValue": "0"
+        },
+        "rank": {
+          "integerValue": "1"
+        },
+        "perfectScores": {
+          "integerValue": "0"
+        },
+        "phoneNumber": {
+          "stringValue": "+918129535451"
+        }
+      },
+      "createTime": "2026-02-19T05:02:33.108285Z",
+      "updateTime": "2026-02-22T12:16:59.932066Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/participants/IcGCNZBa26YKRFEVBcDC1GdO6Hn2",
+      "fields": {
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "totalPredictions": {
+          "integerValue": "0"
+        },
+        "userId": {
+          "stringValue": "IcGCNZBa26YKRFEVBcDC1GdO6Hn2"
+        },
+        "photoUrl": {
+          "nullValue": null
+        },
+        "userName": {
+          "stringValue": "Midlaj K"
+        },
+        "joinedAt": {
+          "stringValue": "2026-02-06T18:05:44.619598"
+        },
+        "rank": {
+          "integerValue": "1"
+        },
+        "correctOutcomes": {
+          "integerValue": "0"
+        },
+        "totalPoints": {
+          "integerValue": "0"
+        },
+        "phoneNumber": {
+          "stringValue": "+917034221374"
+        },
+        "perfectScores": {
+          "integerValue": "0"
+        }
+      },
+      "createTime": "2026-02-06T12:35:51.842267Z",
+      "updateTime": "2026-02-22T12:16:59.932066Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/participants/KCtOGGFS6BO9S9TZ0Zpz5LPmROr2",
+      "fields": {
+        "userId": {
+          "stringValue": "KCtOGGFS6BO9S9TZ0Zpz5LPmROr2"
+        },
+        "photoUrl": {
+          "nullValue": null
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "totalPredictions": {
+          "integerValue": "0"
+        },
+        "perfectScores": {
+          "integerValue": "0"
+        },
+        "phoneNumber": {
+          "stringValue": "+919181295356"
+        },
+        "joinedAt": {
+          "stringValue": "2026-02-06T15:40:59.693660"
+        },
+        "userName": {
+          "stringValue": "Test1"
+        },
+        "correctOutcomes": {
+          "integerValue": "0"
+        },
+        "totalPoints": {
+          "integerValue": "0"
+        },
+        "rank": {
+          "integerValue": "1"
+        }
+      },
+      "createTime": "2026-02-06T10:11:03.606420Z",
+      "updateTime": "2026-02-22T12:16:59.932066Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/participants/NhkXAXkdsndgkQLvvWpuUTCFkWO2",
+      "fields": {
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "totalPredictions": {
+          "integerValue": "0"
+        },
+        "userId": {
+          "stringValue": "NhkXAXkdsndgkQLvvWpuUTCFkWO2"
+        },
+        "photoUrl": {
+          "nullValue": null
+        },
+        "joinedAt": {
+          "stringValue": "2026-02-04T22:47:19.855181"
+        },
+        "userName": {
+          "stringValue": "Jasheer"
+        },
+        "totalPoints": {
+          "integerValue": "0"
+        },
+        "correctOutcomes": {
+          "integerValue": "0"
+        },
+        "rank": {
+          "integerValue": "1"
+        },
+        "perfectScores": {
+          "integerValue": "0"
+        },
+        "phoneNumber": {
+          "stringValue": "+918139040441"
+        }
+      },
+      "createTime": "2026-02-04T17:17:23.453849Z",
+      "updateTime": "2026-02-22T12:16:59.932066Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/participants/QYbeWOWQClfovYbJp6IHlXC6Vda2",
+      "fields": {
+        "joinedAt": {
+          "stringValue": "2026-02-06T18:12:13.673723"
+        },
+        "userName": {
+          "stringValue": "Noushad"
+        },
+        "correctOutcomes": {
+          "integerValue": "0"
+        },
+        "totalPoints": {
+          "integerValue": "0"
+        },
+        "rank": {
+          "integerValue": "1"
+        },
+        "perfectScores": {
+          "integerValue": "0"
+        },
+        "phoneNumber": {
+          "stringValue": "+919645129191"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "totalPredictions": {
+          "integerValue": "0"
+        },
+        "userId": {
+          "stringValue": "QYbeWOWQClfovYbJp6IHlXC6Vda2"
+        },
+        "photoUrl": {
+          "nullValue": null
+        }
+      },
+      "createTime": "2026-02-06T12:42:19.992348Z",
+      "updateTime": "2026-02-22T12:16:59.932066Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/participants/UxxNGnWr5IcVlRoMJkXkzrY12zi2",
+      "fields": {
+        "photoUrl": {
+          "nullValue": null
+        },
+        "userId": {
+          "stringValue": "UxxNGnWr5IcVlRoMJkXkzrY12zi2"
+        },
+        "totalPredictions": {
+          "integerValue": "0"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "phoneNumber": {
+          "stringValue": "+918129535659"
+        },
+        "perfectScores": {
+          "integerValue": "0"
+        },
+        "rank": {
+          "integerValue": "1"
+        },
+        "correctOutcomes": {
+          "integerValue": "0"
+        },
+        "totalPoints": {
+          "integerValue": "0"
+        },
+        "userName": {
+          "stringValue": "Shifna"
+        },
+        "joinedAt": {
+          "stringValue": "2026-02-08T21:49:55.029493"
+        }
+      },
+      "createTime": "2026-02-08T16:20:07.490652Z",
+      "updateTime": "2026-02-22T12:16:59.932066Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/participants/ZD0roYmxMEeV1Qb96yXGKinbtB32",
+      "fields": {
+        "userId": {
+          "stringValue": "ZD0roYmxMEeV1Qb96yXGKinbtB32"
+        },
+        "photoUrl": {
+          "nullValue": null
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "totalPredictions": {
+          "integerValue": "0"
+        },
+        "phoneNumber": {
+          "stringValue": "+918129535457"
+        },
+        "perfectScores": {
+          "integerValue": "0"
+        },
+        "userName": {
+          "stringValue": "Campus"
+        },
+        "joinedAt": {
+          "stringValue": "2026-02-02T14:37:24.238980"
+        },
+        "rank": {
+          "integerValue": "1"
+        },
+        "correctOutcomes": {
+          "integerValue": "0"
+        },
+        "totalPoints": {
+          "integerValue": "0"
+        }
+      },
+      "createTime": "2026-02-02T09:08:35.891474Z",
+      "updateTime": "2026-02-22T12:16:59.932066Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/participants/deTazMD0f2TEfIYeqIOraPe35MN2",
+      "fields": {
+        "totalPoints": {
+          "integerValue": "0"
+        },
+        "correctOutcomes": {
+          "integerValue": "0"
+        },
+        "rank": {
+          "integerValue": "1"
+        },
+        "joinedAt": {
+          "stringValue": "2026-02-04T21:13:26.326909"
+        },
+        "userName": {
+          "stringValue": "Abdul Karim"
+        },
+        "perfectScores": {
+          "integerValue": "0"
+        },
+        "phoneNumber": {
+          "stringValue": "+919846312022"
+        },
+        "totalPredictions": {
+          "integerValue": "0"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "photoUrl": {
+          "nullValue": null
+        },
+        "userId": {
+          "stringValue": "deTazMD0f2TEfIYeqIOraPe35MN2"
+        }
+      },
+      "createTime": "2026-02-04T15:43:31.254319Z",
+      "updateTime": "2026-02-21T18:59:12.788388Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/participants/eSxltYYhsFdmyI8BExKGUirXiQp2",
+      "fields": {
+        "joinedAt": {
+          "stringValue": "2026-02-04T22:55:57.657515"
+        },
+        "userName": {
+          "stringValue": "Ishan"
+        },
+        "correctOutcomes": {
+          "integerValue": "0"
+        },
+        "totalPoints": {
+          "integerValue": "0"
+        },
+        "rank": {
+          "integerValue": "1"
+        },
+        "perfectScores": {
+          "integerValue": "0"
+        },
+        "phoneNumber": {
+          "stringValue": "+918139040506"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "totalPredictions": {
+          "integerValue": "0"
+        },
+        "userId": {
+          "stringValue": "eSxltYYhsFdmyI8BExKGUirXiQp2"
+        },
+        "photoUrl": {
+          "nullValue": null
+        }
+      },
+      "createTime": "2026-02-04T17:26:00.501559Z",
+      "updateTime": "2026-02-22T12:16:59.932066Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/participants/gFj57YVA2HQ5KnjSCi5rKLyfZ2o1",
+      "fields": {
+        "perfectScores": {
+          "integerValue": "0"
+        },
+        "phoneNumber": {
+          "stringValue": "+919446943170"
+        },
+        "correctOutcomes": {
+          "integerValue": "0"
+        },
+        "totalPoints": {
+          "integerValue": "0"
+        },
+        "rank": {
+          "integerValue": "1"
+        },
+        "joinedAt": {
+          "stringValue": "2026-02-05T10:50:23.369421"
+        },
+        "userName": {
+          "stringValue": "Imshad"
+        },
+        "photoUrl": {
+          "nullValue": null
+        },
+        "userId": {
+          "stringValue": "gFj57YVA2HQ5KnjSCi5rKLyfZ2o1"
+        },
+        "totalPredictions": {
+          "integerValue": "0"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        }
+      },
+      "createTime": "2026-02-05T05:20:26.575063Z",
+      "updateTime": "2026-02-22T12:16:59.932066Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/participants/ncJXsChdNfZGtSGryMKNWlu4Bcn2",
+      "fields": {
+        "phoneNumber": {
+          "stringValue": "+919567824400"
+        },
+        "perfectScores": {
+          "integerValue": "0"
+        },
+        "rank": {
+          "integerValue": "1"
+        },
+        "correctOutcomes": {
+          "integerValue": "0"
+        },
+        "totalPoints": {
+          "integerValue": "0"
+        },
+        "userName": {
+          "stringValue": "Ummer"
+        },
+        "joinedAt": {
+          "stringValue": "2026-02-04T21:35:18.492611"
+        },
+        "photoUrl": {
+          "nullValue": null
+        },
+        "userId": {
+          "stringValue": "ncJXsChdNfZGtSGryMKNWlu4Bcn2"
+        },
+        "totalPredictions": {
+          "integerValue": "0"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        }
+      },
+      "createTime": "2026-02-04T16:05:23.557156Z",
+      "updateTime": "2026-02-22T12:16:59.932066Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/participants/uLJy2dWe2ZVtPij5FJtoq6J0uj02",
+      "fields": {
+        "userId": {
+          "stringValue": "uLJy2dWe2ZVtPij5FJtoq6J0uj02"
+        },
+        "photoUrl": {
+          "nullValue": null
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "totalPredictions": {
+          "integerValue": "0"
+        },
+        "phoneNumber": {
+          "stringValue": "+918129535457"
+        },
+        "perfectScores": {
+          "integerValue": "0"
+        },
+        "userName": {
+          "stringValue": "Test2"
+        },
+        "joinedAt": {
+          "stringValue": "2026-02-06T16:58:15.365869"
+        },
+        "rank": {
+          "integerValue": "1"
+        },
+        "totalPoints": {
+          "integerValue": "0"
+        },
+        "correctOutcomes": {
+          "integerValue": "0"
+        }
+      },
+      "createTime": "2026-02-06T11:28:18.034295Z",
+      "updateTime": "2026-02-21T18:59:12.788388Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/participants/uRXK5b9T4ScAqFkSE76ObdE7XT32",
+      "fields": {
+        "correctOutcomes": {
+          "integerValue": "0"
+        },
+        "totalPoints": {
+          "integerValue": "0"
+        },
+        "rank": {
+          "integerValue": "1"
+        },
+        "joinedAt": {
+          "stringValue": "2026-02-04T19:29:35.780353"
+        },
+        "userName": {
+          "stringValue": "Jamsheer"
+        },
+        "perfectScores": {
+          "integerValue": "0"
+        },
+        "phoneNumber": {
+          "stringValue": "+918129585858"
+        },
+        "totalPredictions": {
+          "integerValue": "0"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "photoUrl": {
+          "nullValue": null
+        },
+        "userId": {
+          "stringValue": "uRXK5b9T4ScAqFkSE76ObdE7XT32"
+        }
+      },
+      "createTime": "2026-02-04T13:59:56.531607Z",
+      "updateTime": "2026-02-22T12:16:59.932066Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/participants/yAciX6wmSlailinntKYo5T4Yuv73",
+      "fields": {
+        "photoUrl": {
+          "stringValue": "https://firebasestorage.googleapis.com/v0/b/winniko-real.firebasestorage.app/o/users%2FyAciX6wmSlailinntKYo5T4Yuv73%2F4a085648-8326-4e1a-9a79-9741cacb7652.jpg?alt=media&token=86050363-6e95-4289-8c6f-a3890e7b7775"
+        },
+        "lastReadMessageCount": {
+          "integerValue": "1"
+        },
+        "userId": {
+          "stringValue": "yAciX6wmSlailinntKYo5T4Yuv73"
+        },
+        "totalPredictions": {
+          "integerValue": "0"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "perfectScores": {
+          "integerValue": "0"
+        },
+        "phoneNumber": {
+          "stringValue": "+918129535455"
+        },
+        "correctOutcomes": {
+          "integerValue": "0"
+        },
+        "totalPoints": {
+          "integerValue": "0"
+        },
+        "rank": {
+          "integerValue": "1"
+        },
+        "joinedAt": {
+          "stringValue": "2026-02-04T17:07:02.671260"
+        },
+        "userName": {
+          "stringValue": "Sabeer"
+        }
+      },
+      "createTime": "2026-02-04T11:37:29.854847Z",
+      "updateTime": "2026-02-22T12:16:59.932066Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/participants/ymdkTdtMZgak53psNdtVhJhnuvA3",
+      "fields": {
+        "correctOutcomes": {
+          "integerValue": "0"
+        },
+        "totalPoints": {
+          "integerValue": "0"
+        },
+        "rank": {
+          "integerValue": "1"
+        },
+        "joinedAt": {
+          "stringValue": "2026-02-05T08:56:58.243675"
+        },
+        "userName": {
+          "stringValue": "Harshad Kp"
+        },
+        "perfectScores": {
+          "integerValue": "0"
+        },
+        "phoneNumber": {
+          "stringValue": "+919946490649"
+        },
+        "totalPredictions": {
+          "integerValue": "0"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "photoUrl": {
+          "nullValue": null
+        },
+        "userId": {
+          "stringValue": "ymdkTdtMZgak53psNdtVhJhnuvA3"
+        }
+      },
+      "createTime": "2026-02-05T05:57:05.732982Z",
+      "updateTime": "2026-02-22T12:16:59.932066Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/participants/zVcdmTctkycOqP0dMJIm7n3KHp63",
+      "fields": {
+        "phoneNumber": {
+          "stringValue": "+919633219221"
+        },
+        "perfectScores": {
+          "integerValue": "0"
+        },
+        "userName": {
+          "stringValue": "Shamil"
+        },
+        "joinedAt": {
+          "stringValue": "2026-02-05T21:28:48.755218"
+        },
+        "rank": {
+          "integerValue": "1"
+        },
+        "totalPoints": {
+          "integerValue": "0"
+        },
+        "correctOutcomes": {
+          "integerValue": "0"
+        },
+        "userId": {
+          "stringValue": "zVcdmTctkycOqP0dMJIm7n3KHp63"
+        },
+        "photoUrl": {
+          "nullValue": null
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "totalPredictions": {
+          "integerValue": "0"
+        }
+      },
+      "createTime": "2026-02-05T15:58:52.652708Z",
+      "updateTime": "2026-02-22T12:16:59.932066Z"
+    }
+  ]
+}

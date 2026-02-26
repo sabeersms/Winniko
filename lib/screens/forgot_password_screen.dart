@@ -250,7 +250,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           ),
           const SizedBox(height: 12),
           Text(
-            "Please check ${_emailController.text} for instructions to reset your password.",
+            "Please check ${_emailController.text} for instructions to reset your password. (Don't forget to check your spam folder!)",
             textAlign: TextAlign.center,
             style: const TextStyle(color: AppColors.textSecondary),
           ),

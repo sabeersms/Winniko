@@ -11,17 +11,20 @@ import '../services/notification_service.dart';
 import '../services/network_service.dart';
 import '../models/competition_model.dart';
 import '../models/user_model.dart';
-// Keep for search results or vertical lists if needed
-import '../widgets/mini_competition_card.dart';
-import '../widgets/loading_spinner.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../widgets/app_drawer.dart';
 import 'competition_detail_screen.dart';
-import 'competition_create_screen.dart';
 import 'organizer_dashboard_screen.dart';
-import '../utils/web_utils.dart'; // Abstraction for PWA
+import 'competition_create_screen.dart';
+import '../utils/web_utils.dart';
+import '../widgets/mini_competition_card.dart';
+import '../widgets/featured_carousel.dart';
+import '../widgets/loading_spinner.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../services/ad_service.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'master_verification_screen.dart';
+import '../main.dart' show routeObserver;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -30,11 +33,12 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with RouteAware {
   int _currentIndex = 0;
   final TextEditingController _searchController = TextEditingController();
   UserModel? _currentUser;
   bool _isLoading = true;
+  int _carouselResetKey = 0;
 
   Timer? _pwaCheckTimer;
   BannerAd? _bannerAd;
@@ -60,6 +64,9 @@ class _HomeScreenState extends State<HomeScreen> {
     if (kIsWeb) {
       _startPwaCheck();
       _checkAndShowPromotion();
+    } else {
+      // Mobile: Check for Force Update
+      WidgetsBinding.instance.addPostFrameCallback((_) => _checkForceUpdate());
     }
     // Mobile Ad
     if (!kIsWeb) {
@@ -73,6 +80,88 @@ class _HomeScreenState extends State<HomeScreen> {
         },
       )..load();
     }
+  }
+
+  Future<void> _checkForceUpdate() async {
+    try {
+      final firestoreService = Provider.of<FirestoreService>(
+        context,
+        listen: false,
+      );
+
+      Map<String, dynamic>? data;
+
+      // 1. Try fetching standard 'force_update' doc
+      final doc = await firestoreService.firestore
+          .collection('app_metadata')
+          .doc('force_update')
+          .get();
+
+      if (doc.exists) {
+        data = doc.data();
+      } else {
+        // 2. Fallback: Check if config is under an auto-generated ID
+        // (User might have used "Add Document" without ID)
+        final snapshot = await firestoreService.firestore
+            .collection('app_metadata')
+            .limit(1)
+            .get();
+
+        if (snapshot.docs.isNotEmpty) {
+          data = snapshot.docs.first.data();
+        }
+      }
+
+      if (data == null) return;
+
+      int minBuild = data['min_build_number'] ?? 0;
+      bool forceUpdate = data['force_update'] ?? false;
+      String storeUrl =
+          data['store_url'] ??
+          'https://play.google.com/store/apps/details?id=com.winniko.winniko';
+
+      PackageInfo packageInfo = await PackageInfo.fromPlatform();
+      int currentBuild = int.tryParse(packageInfo.buildNumber) ?? 0;
+
+      debugPrint(
+        'Force Update Check: Current=$currentBuild, Min=$minBuild, Force=$forceUpdate',
+      );
+
+      if (forceUpdate && currentBuild < minBuild) {
+        if (!mounted) return;
+        _showUpdateDialog(storeUrl, data['message']);
+      }
+    } catch (e) {
+      debugPrint('Error checking for updates: $e');
+    }
+  }
+
+  void _showUpdateDialog(String url, String? message) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => PopScope(
+        canPop: false,
+        child: AlertDialog(
+          title: const Text('Update Required'),
+          content: Text(
+            message ??
+                'A new version of Winniko is available. Please update to continue using the app.',
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () async {
+                final Uri uri = Uri.parse(url);
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                }
+              },
+              child: const Text('Update Now'),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   void _startPwaCheck() {
@@ -207,9 +296,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   if (isPwaInstallAvailable()) {
                     showPwaInstallPrompt();
                   } else {
-                    // Fallback: show instructions inline or just close
-                    // Since this is a minor case, let's just close for now
-                    // or keep it simple
                     debugPrint('PWA Install not available as fallback');
                   }
                 },
@@ -222,7 +308,27 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final route = ModalRoute.of(context);
+    if (route is ModalRoute<void>) {
+      routeObserver.subscribe(this, route);
+    }
+  }
+
+  @override
+  void didPopNext() {
+    // Called when a screen pops back to this screen
+    if (mounted) {
+      setState(() {
+        _carouselResetKey++;
+      });
+    }
+  }
+
+  @override
   void dispose() {
+    routeObserver.unsubscribe(this);
     _pwaCheckTimer?.cancel();
     _bannerAd?.dispose();
     _searchController.dispose();
@@ -257,7 +363,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('BUILDING HOMESCREEN with index $_currentIndex');
     final authService = Provider.of<AuthService>(context);
     // ignore: unused_local_variable
     final firestoreService = Provider.of<FirestoreService>(
@@ -328,6 +433,26 @@ class _HomeScreenState extends State<HomeScreen> {
             ? null
             : AppBar(
                 actions: [
+                  if (_currentUser != null &&
+                      _currentUser!.email.isNotEmpty &&
+                      AppConstants.adminEmails.contains(
+                        _currentUser!.email.toLowerCase(),
+                      ))
+                    IconButton(
+                      icon: const Icon(
+                        Icons.verified_user,
+                        color: AppColors.textSecondary,
+                      ),
+                      tooltip: 'Master Verification',
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const MasterVerificationScreen(),
+                          ),
+                        );
+                      },
+                    ),
                   if (kIsWeb && !isRunningStandalone())
                     Padding(
                       padding: const EdgeInsets.only(right: 16.0),
@@ -556,18 +681,20 @@ class _HomeScreenState extends State<HomeScreen> {
                           comp.joinCode.toLowerCase().contains(query);
                     }).toList();
 
-                    // Categorize
-                    final majorTournaments = filteredCompetitions
-                        .where(
-                          (c) => c.leagueId != null && c.leagueId!.isNotEmpty,
-                        )
-                        .toList();
+                    // Categorize: Custom = Not Major AND Not Single Match
                     final singleMatchContests = filteredCompetitions
                         .where(
                           (c) => c.format == AppConstants.formatSingleMatch,
                         )
                         .toList();
-                    // Custom = Not Major AND Not Single Match
+                    final officialTournaments = filteredCompetitions
+                        .where(
+                          (c) =>
+                              c.leagueId != null &&
+                              c.leagueId!.isNotEmpty &&
+                              c.format != AppConstants.formatSingleMatch,
+                        )
+                        .toList();
                     final customTournaments = filteredCompetitions
                         .where(
                           (c) =>
@@ -577,18 +704,100 @@ class _HomeScreenState extends State<HomeScreen> {
                         .toList();
 
                     return SingleChildScrollView(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      padding: const EdgeInsets.symmetric(vertical: 0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // ROW 1: Major Tournaments
-                          if (majorTournaments.isNotEmpty) ...[
-                            _buildSectionHeader('Major Tournaments'),
-                            _buildHorizontalList(majorTournaments),
+                          // ROW 1: Featured Carousel (Interleaved: Joined/Top)
+                          StreamBuilder<List<CompetitionModel>>(
+                            stream: Provider.of<FirestoreService>(
+                              context,
+                              listen: false,
+                            ).getJoinedCompetitions(_currentUser?.id ?? ''),
+                            builder: (context, joinedSnapshot) {
+                              final joinedCompetitions =
+                                  joinedSnapshot.data ?? [];
+                              final joinedIds = joinedCompetitions
+                                  .map((c) => c.id)
+                                  .toSet();
+
+                              final sourceList = filteredCompetitions.isNotEmpty
+                                  ? filteredCompetitions
+                                  : allCompetitions;
+
+                              // Sort both lists by participant count (already sorted, but ensure)
+                              final joinedList =
+                                  sourceList
+                                      .where((c) => joinedIds.contains(c.id))
+                                      .toList()
+                                    ..sort(
+                                      (a, b) => b.participantCount.compareTo(
+                                        a.participantCount,
+                                      ),
+                                    );
+
+                              final notJoinedList =
+                                  sourceList
+                                      .where((c) => !joinedIds.contains(c.id))
+                                      .toList()
+                                    ..sort(
+                                      (a, b) => b.participantCount.compareTo(
+                                        a.participantCount,
+                                      ),
+                                    );
+
+                              // Build ordered list: [notJoined...] [topJoined] [restJoined...]
+                              // Center card = joined with most participants
+                              final List<CompetitionModel> featuredList = [];
+                              int initialPage = 0;
+
+                              if (joinedList.isNotEmpty) {
+                                // Left side: not-joined competitions
+                                featuredList.addAll(notJoinedList);
+                                // Center: top joined competition
+                                initialPage = featuredList.length;
+                                featuredList.add(joinedList.first);
+                                // Right side: remaining joined competitions
+                                if (joinedList.length > 1) {
+                                  featuredList.addAll(joinedList.sublist(1));
+                                }
+                              } else {
+                                // No joined competitions — just show all by participant count
+                                featuredList.addAll(notJoinedList);
+                                initialPage = 0;
+                              }
+
+                              final displayList = featuredList
+                                  .take(10)
+                                  .toList();
+                              // Adjust initialPage if it exceeds displayList
+                              if (initialPage >= displayList.length) {
+                                initialPage = 0;
+                              }
+
+                              if (displayList.isEmpty)
+                                return const SizedBox.shrink();
+
+                              return FeaturedCarousel(
+                                key: ValueKey(
+                                  'carousel_${initialPage}_${displayList.length}_$_carouselResetKey',
+                                ),
+                                competitions: displayList,
+                                initialPage: initialPage,
+                              );
+                            },
+                          ),
+
+                          const SizedBox(height: 24),
+
+                          // ROW 2: Official Tournaments
+                          if (officialTournaments.isNotEmpty) ...[
+                            _buildSectionHeader('Official Tournaments'),
+                            _buildHorizontalList(officialTournaments),
                             const SizedBox(height: 24),
                           ],
 
-                          // ROW 2: Custom Tournaments
+                          // ROW 3: Custom Tournaments
                           if (customTournaments.isNotEmpty) ...[
                             _buildSectionHeader('Custom Tournaments'),
                             _buildHorizontalList(customTournaments),

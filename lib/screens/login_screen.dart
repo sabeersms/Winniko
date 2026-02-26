@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../constants/app_constants.dart';
 import '../services/auth_service.dart';
+import '../services/firestore_service.dart';
 import '../widgets/loading_spinner.dart';
 import '../services/network_service.dart';
 import 'signup_screen.dart';
@@ -27,6 +30,93 @@ class _LoginScreenState extends State<LoginScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _checkForceUpdate());
+  }
+
+  Future<void> _checkForceUpdate() async {
+    if (!mounted) return;
+    try {
+      final firestoreService = Provider.of<FirestoreService>(
+        context,
+        listen: false,
+      );
+
+      Map<String, dynamic>? data;
+
+      // 1. Try fetching standard 'force_update' doc
+      final doc = await firestoreService.firestore
+          .collection('app_metadata')
+          .doc('force_update')
+          .get();
+
+      if (doc.exists) {
+        data = doc.data();
+      } else {
+        // 2. Fallback
+        final snapshot = await firestoreService.firestore
+            .collection('app_metadata')
+            .limit(1)
+            .get();
+        if (snapshot.docs.isNotEmpty) {
+          data = snapshot.docs.first.data();
+        }
+      }
+
+      if (data == null) return;
+
+      int minBuild = data['min_build_number'] ?? 0;
+      bool forceUpdate = data['force_update'] ?? false;
+      String storeUrl =
+          data['store_url'] ??
+          'https://play.google.com/store/apps/details?id=com.winniko.winniko';
+
+      PackageInfo packageInfo = await PackageInfo.fromPlatform();
+      int currentBuild = int.tryParse(packageInfo.buildNumber) ?? 0;
+
+      debugPrint(
+        'LoginScreen Force Update Check: Current=$currentBuild, Min=$minBuild',
+      );
+
+      if (forceUpdate && currentBuild < minBuild) {
+        if (!mounted) return;
+        _showUpdateDialog(storeUrl, data['message']);
+      }
+    } catch (e) {
+      debugPrint('Error checking for updates on login: $e');
+    }
+  }
+
+  void _showUpdateDialog(String url, String? message) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => PopScope(
+        canPop: false,
+        child: AlertDialog(
+          title: const Text('Update Required'),
+          content: Text(
+            message ??
+                'A new version of Winniko is available. Please update to continue.',
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () async {
+                final Uri uri = Uri.parse(url);
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                }
+              },
+              child: const Text('Update Now'),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> _login() async {

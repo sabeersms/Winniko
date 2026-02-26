@@ -1,56 +1,70 @@
 {
-    "firestore": {
-        "rules": "firestore.rules"
-    },
-    "storage": {
-        "rules": "storage.rules"
-    },
-    "flutter": {
-        "platforms": {
-            "android": {
-                "default": {
-                    "projectId": "winniko-real",
-                    "appId": "1:166236418012:android:da9a8145ba1c8c1b29a919",
-                    "fileOutput": "android/app/google-services.json"
-                }
-            },
-            "dart": {
-                "lib/firebase_options.dart": {
-                    "projectId": "winniko-real",
-                    "configurations": {
-                        "android": "1:166236418012:android:da9a8145ba1c8c1b29a919",
-                        "ios": "1:166236418012:ios:39ba60e8603c2f7029a919",
-                        "macos": "1:166236418012:ios:39ba60e8603c2f7029a919",
-                        "web": "1:166236418012:web:88e941687a21c80429a919",
-                        "windows": "1:166236418012:web:5a3ab36464e8541629a919"
-                    }
-                }
-            }
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "storage": {
+    "rules": "storage.rules"
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "winniko-real",
+          "appId": "1:166236418012:android:da9a8145ba1c8c1b29a919",
+          "fileOutput": "android/app/google-services.json"
         }
-    },
-    "hosting": {
-        "public": "build/web",
-        "ignore": [
-            "firebase.json",
-            "**/.*",
-            "**/node_modules/**"
-        ],
-        "headers": [
-            {
-                "source": "/.well-known/assetlinks.json",
-                "headers": [
-                    {
-                        "key": "Content-Type",
-                        "value": "application/json"
-                    }
-                ]
-            }
-        ],
-        "rewrites": [
-            {
-                "source": "**",
-                "destination": "/index.html"
-            }
-        ]
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "winniko-real",
+          "configurations": {
+            "android": "1:166236418012:android:da9a8145ba1c8c1b29a919",
+            "ios": "1:166236418012:ios:39ba60e8603c2f7029a919",
+            "macos": "1:166236418012:ios:39ba60e8603c2f7029a919",
+            "web": "1:166236418012:web:88e941687a21c80429a919",
+            "windows": "1:166236418012:web:5a3ab36464e8541629a919"
+          }
+        }
+      }
     }
+  },
+  "hosting": {
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "headers": [
+      {
+        "source": "/.well-known/assetlinks.json",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ]
+      }
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "disallowLegacyRuntimeConfig": true,
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ]
+    }
+  ]
 }

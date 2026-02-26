@@ -135,6 +135,57 @@ class _RecycleBinScreenState extends State<RecycleBinScreen> {
     }
   }
 
+  Future<void> _deleteAll(List<CompetitionModel> competitions) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.cardBackground,
+        title: const Text(
+          'Delete All Forever?',
+          style: TextStyle(color: AppColors.error),
+        ),
+        content: Text(
+          'This will permanently delete ${competitions.length} competition(s). This action CANNOT be undone.',
+          style: const TextStyle(color: AppColors.textSecondary),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text(
+              'Delete All Forever',
+              style: TextStyle(color: AppColors.error),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm != true) return;
+
+    if (!context.mounted) return;
+    final firestore = Provider.of<FirestoreService>(context, listen: false);
+    int deleted = 0;
+    for (final comp in competitions) {
+      try {
+        await firestore.permanentDeleteCompetition(comp.id);
+        deleted++;
+      } catch (e) {
+        debugPrint('Error deleting ${comp.name}: $e');
+      }
+    }
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('$deleted competition(s) permanently deleted.'),
+        backgroundColor: AppColors.textSecondary,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final firestore = Provider.of<FirestoreService>(context, listen: false);
@@ -176,50 +227,79 @@ class _RecycleBinScreenState extends State<RecycleBinScreen> {
             );
           }
 
-          return ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: deletedCompetitions.length,
-            itemBuilder: (context, index) {
-              final comp = deletedCompetitions[index];
-              return Card(
-                color: AppColors.cardBackground,
-                margin: const EdgeInsets.only(bottom: 12),
-                child: ListTile(
-                  title: Text(
-                    comp.name,
-                    style: const TextStyle(
-                      color: Colors.white54,
-                      decoration: TextDecoration.lineThrough,
+          return Column(
+            children: [
+              // Delete All button
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () => _deleteAll(deletedCompetitions),
+                    icon: const Icon(
+                      Icons.delete_sweep,
+                      color: AppColors.error,
+                    ),
+                    label: Text(
+                      'Delete All (${deletedCompetitions.length})',
+                      style: const TextStyle(color: AppColors.error),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: AppColors.error),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
                   ),
-                  subtitle: Text(
-                    _getRemainingTime(comp.deletedAt!),
-                    style: const TextStyle(color: AppColors.error),
-                  ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(
-                          Icons.restore,
-                          color: AppColors.accentGreen,
-                        ),
-                        tooltip: 'Restore',
-                        onPressed: () => _restoreCompetition(comp),
-                      ),
-                      IconButton(
-                        icon: const Icon(
-                          Icons.delete_forever,
-                          color: AppColors.error,
-                        ),
-                        tooltip: 'Delete Forever',
-                        onPressed: () => _permanentDelete(comp),
-                      ),
-                    ],
-                  ),
                 ),
-              );
-            },
+              ),
+              // List
+              Expanded(
+                child: ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: deletedCompetitions.length,
+                  itemBuilder: (context, index) {
+                    final comp = deletedCompetitions[index];
+                    return Card(
+                      color: AppColors.cardBackground,
+                      margin: const EdgeInsets.only(bottom: 12),
+                      child: ListTile(
+                        title: Text(
+                          comp.name,
+                          style: const TextStyle(
+                            color: Colors.white54,
+                            decoration: TextDecoration.lineThrough,
+                          ),
+                        ),
+                        subtitle: Text(
+                          _getRemainingTime(comp.deletedAt!),
+                          style: const TextStyle(color: AppColors.error),
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: const Icon(
+                                Icons.restore,
+                                color: AppColors.accentGreen,
+                              ),
+                              tooltip: 'Restore',
+                              onPressed: () => _restoreCompetition(comp),
+                            ),
+                            IconButton(
+                              icon: const Icon(
+                                Icons.delete_forever,
+                                color: AppColors.error,
+                              ),
+                              tooltip: 'Delete Forever',
+                              onPressed: () => _permanentDelete(comp),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           );
         },
       ),

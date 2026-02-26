@@ -21,6 +21,8 @@ import 'widgets/loading_spinner.dart';
 // import 'screens/waiting_verification_screen.dart';
 import 'firebase_options.dart';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -34,6 +36,85 @@ void main() async {
     webProvider: ReCaptchaV3Provider('pass-key'),
   );
 
+  // --- TEMPORARY LEADERBOARD REFRESH ---
+  try {
+    final db = FirebaseFirestore.instance;
+    final fs = FirestoreService();
+    final leagueId = 'mens-t20-world-cup-2026';
+
+    // Check if we already ran it
+    final metaDoc = await db
+        .collection('app_metadata')
+        .doc('t20_leaderboard_refresh5')
+        .get();
+    if (!metaDoc.exists) {
+      debugPrint(
+        '🔄 SCRUBBING ALL DUMMY MATCHES AND REFRESHING LEADERBOARDS... 🔄',
+      );
+
+      final compsSnap = await db
+          .collection('competitions')
+          .where('leagueId', isEqualTo: leagueId)
+          .get();
+
+      int cleanedCount = 0;
+
+      // 1. Scrub Hard Copy
+      final hardDocs = await db
+          .collection('official_leagues')
+          .doc(leagueId)
+          .collection('matches')
+          .get();
+      for (var doc in hardDocs.docs) {
+        final data = doc.data();
+        if (data['actualScore'] != null ||
+            (data['status'] != 'upcoming' && data['status'] != 'scheduled')) {
+          await doc.reference.update({
+            'actualScore': null,
+            'status': 'upcoming',
+            'winnerId': null,
+          });
+        }
+      }
+
+      for (var comp in compsSnap.docs) {
+        // 2. Scrub Competition Matches
+        final compMatchesSnap = await db
+            .collection('competitions')
+            .doc(comp.id)
+            .collection('matches')
+            .get();
+        for (var doc in compMatchesSnap.docs) {
+          final data = doc.data();
+          if (data['actualScore'] != null ||
+              (data['status'] != 'upcoming' && data['status'] != 'scheduled')) {
+            await doc.reference.update({
+              'actualScore': null,
+              'status': 'upcoming',
+              'winnerId': null,
+            });
+            cleanedCount++;
+          }
+        }
+
+        // 3. Recalculate correctly!
+        await fs.recalculateStandings(comp.id);
+        debugPrint('✅ Refreshed Standings for: \${comp.id}');
+      }
+
+      // Record completion so we never run this again
+      await db.collection('app_metadata').doc('t20_leaderboard_refresh5').set({
+        'ran': true,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+      debugPrint(
+        '🎉 ALL $cleanedCount SCORING BUGS WIPED AND STANDINGS REFRESHED! 🎉',
+      );
+    }
+  } catch (e) {
+    debugPrint('Error refreshing standings: $e');
+  }
+
   // Initialize Notifications
   final notificationService = NotificationService();
   notificationService.initialize();
@@ -46,6 +127,10 @@ void main() async {
 
   runApp(WinnikoApp(notificationService: notificationService));
 }
+
+// Global RouteObserver for detecting navigation events
+final RouteObserver<ModalRoute<void>> routeObserver =
+    RouteObserver<ModalRoute<void>>();
 
 class WinnikoApp extends StatelessWidget {
   final NotificationService notificationService;
@@ -68,6 +153,7 @@ class WinnikoApp extends StatelessWidget {
         title: AppConstants.appName,
         theme: AppTheme.darkTheme,
         debugShowCheckedModeBanner: false,
+        navigatorObservers: [routeObserver],
         home: const AuthWrapper(),
         routes: {'/privacy-policy': (context) => const PrivacyPolicyScreen()},
       ),
@@ -105,10 +191,9 @@ class AuthWrapper extends StatelessWidget {
               },
             );
           } else {
-            // Email verification check (Disabled)
-            // if (!authService.isEmailVerified) {
-            //   return const WaitingVerificationScreen();
-            // }
+            // Register admin UID in Firestore (needed for Firestore security rules)
+            // This is safe to call every time — it's a no-op if user is not admin.
+            authService.registerAdminUidIfNeeded();
             return const HomeScreen();
           }
         }

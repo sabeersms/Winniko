@@ -112,6 +112,25 @@ class AppTheme {
 // App Constants
 class AppConstants {
   static const String appName = 'Winniko';
+
+  // Admin Configuration
+  static const List<String> adminEmails = [
+    'sabeersms@gmail.com',
+    'teamwinniko@gmail.com',
+    '2mobilecampus@gmail.com',
+  ];
+
+  static const String cricApiKey = '3df386fb-a73f-44a5-a174-ed6801ad6d33';
+
+  // AllSportsApi (RapidAPI)
+  static const String allSportsApiKey =
+      '04a2aaf5d7msh17a87f735bae4c66p1c2dbjsned2c6683a1s59'; // Your API key from screenshot
+  static const String allSportsApiHost = 'allsportsapi2.p.rapidapi.com';
+
+  // Legacy RapidAPI (now used for Cricket Live Data)
+  static const String rapidApiKey =
+      '04a2aaf5d7msh17a87f35bae4c66p1bc2dbjsned2c663a1669';
+  static const String rapidApiHost = 'cricket-highlights-api.p.rapidapi.com';
   static const String defaultCompetitionLogo = 'assets/images/app_logo.png';
   static const String defaultCompetitionBackground =
       'assets/images/default_background.png';
@@ -129,6 +148,7 @@ class AppConstants {
   static const String matchStatusScheduled = 'scheduled';
   static const String matchStatusUpcoming = 'upcoming';
   static const String matchStatusLive = 'live';
+  static const String matchStatusProgressing = 'progressing';
   static const String matchStatusCompleted = 'completed';
 
   // Location Restriction Types

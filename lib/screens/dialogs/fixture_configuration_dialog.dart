@@ -53,7 +53,7 @@ class _FixtureConfigurationDialogState
               ),
               value: _doubleRoundRobin,
               onChanged: (val) => setState(() => _doubleRoundRobin = val),
-              activeColor: AppColors.accentGreen,
+              activeThumbColor: AppColors.accentGreen,
               contentPadding: EdgeInsets.zero,
             ),
 
@@ -71,7 +71,7 @@ class _FixtureConfigurationDialogState
               ),
               value: _randomSeed,
               onChanged: (val) => setState(() => _randomSeed = val),
-              activeColor: AppColors.accentGreen,
+              activeThumbColor: AppColors.accentGreen,
               contentPadding: EdgeInsets.zero,
             ),
         ],

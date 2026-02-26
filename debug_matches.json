@@ -1,0 +1,5749 @@
+{
+  "documents": [
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/04907987-ad98-45b0-b271-9acd2927483d_877771b9-02a5-4bdb-b1a7-bb881dbe890e",
+      "fields": {
+        "location": {
+          "stringValue": "MA Chidambaram Stadium, Chennai"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-13T13:30:00Z"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "team1": {
+                "integerValue": "196"
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "t1Wickets": {
+                "integerValue": "6"
+              },
+              "t2Wickets": {
+                "integerValue": "10"
+              },
+              "t2Overs": {
+                "doubleValue": 15.5
+              },
+              "battingFirstId": {
+                "stringValue": "usa"
+              },
+              "t1Runs": {
+                "integerValue": "196"
+              },
+              "battingFirstName": {
+                "stringValue": "USA"
+              },
+              "t2Runs": {
+                "integerValue": "103"
+              },
+              "verified": {
+                "booleanValue": true
+              },
+              "team2": {
+                "integerValue": "103"
+              },
+              "marginType": {
+                "stringValue": "runs"
+              },
+              "t1Overs": {
+                "doubleValue": 20
+              },
+              "winnerId": {
+                "stringValue": "usa"
+              },
+              "marginValue": {
+                "stringValue": "93"
+              }
+            }
+          }
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/nl.png"
+        },
+        "team1Id": {
+          "stringValue": "04907987-ad98-45b0-b271-9acd2927483d"
+        },
+        "team2Id": {
+          "stringValue": "877771b9-02a5-4bdb-b1a7-bb881dbe890e"
+        },
+        "matchNumber": {
+          "integerValue": "21"
+        },
+        "team1LogoUrl": {
+          "stringValue": ""
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1Name": {
+          "stringValue": "USA"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "status": {
+          "stringValue": "completed"
+        },
+        "team2Name": {
+          "stringValue": "Netherlands"
+        },
+        "group": {
+          "stringValue": "Group A"
+        },
+        "round": {
+          "stringValue": "Round 3"
+        },
+        "id": {
+          "stringValue": "04907987-ad98-45b0-b271-9acd2927483d_877771b9-02a5-4bdb-b1a7-bb881dbe890e"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/04907987-ad98-45b0-b271-9acd2927483d_ab435725-e7bc-4bb0-a896-15b07f03ad6e",
+      "fields": {
+        "id": {
+          "stringValue": "04907987-ad98-45b0-b271-9acd2927483d_ab435725-e7bc-4bb0-a896-15b07f03ad6e"
+        },
+        "round": {
+          "stringValue": "Round 4"
+        },
+        "team2Name": {
+          "stringValue": "Namibia"
+        },
+        "group": {
+          "stringValue": "Group A"
+        },
+        "status": {
+          "stringValue": "completed"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "team1Name": {
+          "stringValue": "USA"
+        },
+        "matchNumber": {
+          "integerValue": "26"
+        },
+        "team1LogoUrl": {
+          "stringValue": ""
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team2Id": {
+          "stringValue": "ab435725-e7bc-4bb0-a896-15b07f03ad6e"
+        },
+        "team1Id": {
+          "stringValue": "04907987-ad98-45b0-b271-9acd2927483d"
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/na.png"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "team1": {
+                "integerValue": "199"
+              },
+              "t1Wickets": {
+                "integerValue": "4"
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "t1Runs": {
+                "integerValue": "199"
+              },
+              "battingFirstId": {
+                "stringValue": "usa"
+              },
+              "t2Wickets": {
+                "integerValue": "6"
+              },
+              "t2Overs": {
+                "doubleValue": 20
+              },
+              "marginType": {
+                "stringValue": "runs"
+              },
+              "t2Runs": {
+                "integerValue": "168"
+              },
+              "battingFirstName": {
+                "stringValue": "USA"
+              },
+              "team2": {
+                "integerValue": "168"
+              },
+              "verified": {
+                "booleanValue": true
+              },
+              "marginValue": {
+                "stringValue": "31"
+              },
+              "t1Overs": {
+                "doubleValue": 20
+              },
+              "winnerId": {
+                "stringValue": "usa"
+              }
+            }
+          }
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-15T09:30:00Z"
+        },
+        "location": {
+          "stringValue": "MA Chidambaram Stadium, Chennai"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/04e844d6-cda8-47c9-8e9e-58843972d4dd_1f1f59f8-4f47-443e-ad91-8e59191ea7ff",
+      "fields": {
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/pk.png"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "marginValue": {
+                "stringValue": ""
+              },
+              "winnerId": {
+                "stringValue": "no_result"
+              },
+              "battingFirstId": {
+                "nullValue": null
+              },
+              "t1Overs": {
+                "nullValue": null
+              },
+              "t2Overs": {
+                "nullValue": null
+              },
+              "t2Wickets": {
+                "integerValue": "0"
+              },
+              "marginType": {
+                "stringValue": "runs"
+              },
+              "t1Wickets": {
+                "integerValue": "0"
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "verified": {
+                "booleanValue": true
+              }
+            }
+          }
+        },
+        "location": {
+          "stringValue": "R.Premadasa Stadium, Colombo"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-21T13:30:00Z"
+        },
+        "matchNumber": {
+          "integerValue": "41"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/nz.png"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team2Id": {
+          "stringValue": "1f1f59f8-4f47-443e-ad91-8e59191ea7ff"
+        },
+        "team1Id": {
+          "stringValue": "04e844d6-cda8-47c9-8e9e-58843972d4dd"
+        },
+        "status": {
+          "stringValue": "cancelled"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "team1Name": {
+          "stringValue": "New Zealand"
+        },
+        "id": {
+          "stringValue": "04e844d6-cda8-47c9-8e9e-58843972d4dd_1f1f59f8-4f47-443e-ad91-8e59191ea7ff"
+        },
+        "round": {
+          "stringValue": "Round 6"
+        },
+        "team2Name": {
+          "stringValue": "Pakistan"
+        },
+        "group": {
+          "nullValue": null
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/04e844d6-cda8-47c9-8e9e-58843972d4dd_36cd5f74-bce4-41cd-8af7-63705d34d825",
+      "fields": {
+        "team2Name": {
+          "stringValue": "South Africa"
+        },
+        "group": {
+          "stringValue": "Group D"
+        },
+        "round": {
+          "stringValue": "Round 3"
+        },
+        "id": {
+          "stringValue": "04e844d6-cda8-47c9-8e9e-58843972d4dd_36cd5f74-bce4-41cd-8af7-63705d34d825"
+        },
+        "team1Name": {
+          "stringValue": "New Zealand"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "status": {
+          "stringValue": "completed"
+        },
+        "team1Id": {
+          "stringValue": "04e844d6-cda8-47c9-8e9e-58843972d4dd"
+        },
+        "team2Id": {
+          "stringValue": "36cd5f74-bce4-41cd-8af7-63705d34d825"
+        },
+        "matchNumber": {
+          "integerValue": "24"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/nz.png"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "location": {
+          "stringValue": "Narendra Modi Stadium, Ahmedabad"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-14T13:30:00Z"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "t1Overs": {
+                "doubleValue": 20
+              },
+              "winnerId": {
+                "stringValue": "south_africa"
+              },
+              "marginValue": {
+                "stringValue": "7"
+              },
+              "battingFirstName": {
+                "stringValue": "New Zealand"
+              },
+              "t2Runs": {
+                "integerValue": "178"
+              },
+              "verified": {
+                "booleanValue": true
+              },
+              "team2": {
+                "integerValue": "178"
+              },
+              "marginType": {
+                "stringValue": "wickets"
+              },
+              "t2Wickets": {
+                "integerValue": "3"
+              },
+              "t2Overs": {
+                "doubleValue": 17.1
+              },
+              "t1Runs": {
+                "integerValue": "175"
+              },
+              "battingFirstId": {
+                "stringValue": "new_zealand"
+              },
+              "team1": {
+                "integerValue": "175"
+              },
+              "t1Wickets": {
+                "integerValue": "7"
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              }
+            }
+          }
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/za.png"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/04e844d6-cda8-47c9-8e9e-58843972d4dd_55bcf213-92b9-493c-b8b2-a853701c7444",
+      "fields": {
+        "id": {
+          "stringValue": "04e844d6-cda8-47c9-8e9e-58843972d4dd_55bcf213-92b9-493c-b8b2-a853701c7444"
+        },
+        "team2Name": {
+          "stringValue": "United Arab Emirates"
+        },
+        "group": {
+          "stringValue": "Group D"
+        },
+        "round": {
+          "stringValue": "Round 2"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "status": {
+          "stringValue": "completed"
+        },
+        "team1Name": {
+          "stringValue": "New Zealand"
+        },
+        "team2Id": {
+          "stringValue": "55bcf213-92b9-493c-b8b2-a853701c7444"
+        },
+        "matchNumber": {
+          "integerValue": "11"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/nz.png"
+        },
+        "team1Id": {
+          "stringValue": "04e844d6-cda8-47c9-8e9e-58843972d4dd"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "marginType": {
+                "stringValue": "wickets"
+              },
+              "verified": {
+                "booleanValue": true
+              },
+              "team2": {
+                "integerValue": "173"
+              },
+              "battingFirstName": {
+                "stringValue": "United Arab Emirates"
+              },
+              "t2Runs": {
+                "integerValue": "173"
+              },
+              "marginValue": {
+                "stringValue": "10"
+              },
+              "winnerId": {
+                "stringValue": "new_zealand"
+              },
+              "t1Overs": {
+                "doubleValue": 15.2
+              },
+              "t1Wickets": {
+                "integerValue": "0"
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "team1": {
+                "integerValue": "175"
+              },
+              "t2Overs": {
+                "doubleValue": 20
+              },
+              "t2Wickets": {
+                "integerValue": "6"
+              },
+              "t1Runs": {
+                "integerValue": "175"
+              },
+              "battingFirstId": {
+                "stringValue": "united_arab_emirates"
+              }
+            }
+          }
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/ae.png"
+        },
+        "location": {
+          "stringValue": "MA Chidambaram Stadium, Chennai"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-10T09:30:00Z"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/04e844d6-cda8-47c9-8e9e-58843972d4dd_8d71a8a3-1b2c-465a-abb1-fea4fe77152a",
+      "fields": {
+        "winnerId": {
+          "nullValue": null
+        },
+        "status": {
+          "stringValue": "completed"
+        },
+        "team1Name": {
+          "stringValue": "New Zealand"
+        },
+        "id": {
+          "stringValue": "04e844d6-cda8-47c9-8e9e-58843972d4dd_8d71a8a3-1b2c-465a-abb1-fea4fe77152a"
+        },
+        "team2Name": {
+          "stringValue": "Canada"
+        },
+        "group": {
+          "stringValue": "Group D"
+        },
+        "round": {
+          "stringValue": "Round 4"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "t2Runs": {
+                "integerValue": "173"
+              },
+              "battingFirstName": {
+                "stringValue": "Canada"
+              },
+              "team2": {
+                "integerValue": "173"
+              },
+              "verified": {
+                "booleanValue": true
+              },
+              "marginType": {
+                "stringValue": "wickets"
+              },
+              "t1Overs": {
+                "doubleValue": 15.1
+              },
+              "winnerId": {
+                "stringValue": "new_zealand"
+              },
+              "marginValue": {
+                "stringValue": "8"
+              },
+              "team1": {
+                "integerValue": "176"
+              },
+              "t1Wickets": {
+                "integerValue": "2"
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "t1Runs": {
+                "integerValue": "176"
+              },
+              "battingFirstId": {
+                "stringValue": "canada"
+              },
+              "t2Overs": {
+                "doubleValue": 20
+              },
+              "t2Wickets": {
+                "integerValue": "4"
+              }
+            }
+          }
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/ca.png"
+        },
+        "location": {
+          "stringValue": "MA Chidambaram Stadium, Chennai"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-17T05:30:00Z"
+        },
+        "team2Id": {
+          "stringValue": "8d71a8a3-1b2c-465a-abb1-fea4fe77152a"
+        },
+        "matchNumber": {
+          "integerValue": "31"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/nz.png"
+        },
+        "team1Id": {
+          "stringValue": "04e844d6-cda8-47c9-8e9e-58843972d4dd"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/04e844d6-cda8-47c9-8e9e-58843972d4dd_f13db68f-fd76-4f0b-8528-2e418f628e8a",
+      "fields": {
+        "team2Id": {
+          "stringValue": "f13db68f-fd76-4f0b-8528-2e418f628e8a"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/nz.png"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "matchNumber": {
+          "integerValue": "4"
+        },
+        "team1Id": {
+          "stringValue": "04e844d6-cda8-47c9-8e9e-58843972d4dd"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "t1Wickets": {
+                "integerValue": "5"
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "team1": {
+                "integerValue": "183"
+              },
+              "t1Runs": {
+                "integerValue": "183"
+              },
+              "battingFirstId": {
+                "stringValue": "afghanistan"
+              },
+              "t2Overs": {
+                "doubleValue": 20
+              },
+              "t2Wickets": {
+                "integerValue": "6"
+              },
+              "team2": {
+                "integerValue": "182"
+              },
+              "verified": {
+                "booleanValue": true
+              },
+              "t2Runs": {
+                "integerValue": "182"
+              },
+              "battingFirstName": {
+                "stringValue": "Afghanistan"
+              },
+              "marginType": {
+                "stringValue": "wickets"
+              },
+              "winnerId": {
+                "stringValue": "new_zealand"
+              },
+              "t1Overs": {
+                "doubleValue": 17.5
+              },
+              "marginValue": {
+                "stringValue": "5"
+              }
+            }
+          }
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/af.png"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-08T05:30:00Z"
+        },
+        "location": {
+          "stringValue": "MA Chidambaram Stadium, Chennai"
+        },
+        "id": {
+          "stringValue": "04e844d6-cda8-47c9-8e9e-58843972d4dd_f13db68f-fd76-4f0b-8528-2e418f628e8a"
+        },
+        "group": {
+          "stringValue": "Group D"
+        },
+        "team2Name": {
+          "stringValue": "Afghanistan"
+        },
+        "round": {
+          "stringValue": "Round 1"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "status": {
+          "stringValue": "completed"
+        },
+        "team1Name": {
+          "stringValue": "New Zealand"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/1f1f59f8-4f47-443e-ad91-8e59191ea7ff_04907987-ad98-45b0-b271-9acd2927483d",
+      "fields": {
+        "location": {
+          "stringValue": "Sinhalese Sports Club, Colombo"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-10T13:30:00Z"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "t2Overs": {
+                "doubleValue": 20
+              },
+              "t2Wickets": {
+                "integerValue": "8"
+              },
+              "t1Runs": {
+                "integerValue": "190"
+              },
+              "battingFirstId": {
+                "stringValue": "pakistan"
+              },
+              "team1": {
+                "integerValue": "190"
+              },
+              "t1Wickets": {
+                "integerValue": "9"
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "marginValue": {
+                "stringValue": "32"
+              },
+              "t1Overs": {
+                "doubleValue": 20
+              },
+              "winnerId": {
+                "stringValue": "pakistan"
+              },
+              "marginType": {
+                "stringValue": "runs"
+              },
+              "battingFirstName": {
+                "stringValue": "Pakistan"
+              },
+              "t2Runs": {
+                "integerValue": "158"
+              },
+              "verified": {
+                "booleanValue": true
+              },
+              "team2": {
+                "integerValue": "158"
+              }
+            }
+          }
+        },
+        "team2LogoUrl": {
+          "stringValue": ""
+        },
+        "team1Id": {
+          "stringValue": "1f1f59f8-4f47-443e-ad91-8e59191ea7ff"
+        },
+        "team2Id": {
+          "stringValue": "04907987-ad98-45b0-b271-9acd2927483d"
+        },
+        "matchNumber": {
+          "integerValue": "12"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/pk.png"
+        },
+        "team1Name": {
+          "stringValue": "Pakistan"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "status": {
+          "stringValue": "completed"
+        },
+        "team2Name": {
+          "stringValue": "USA"
+        },
+        "group": {
+          "stringValue": "Group A"
+        },
+        "round": {
+          "stringValue": "Round 2"
+        },
+        "id": {
+          "stringValue": "1f1f59f8-4f47-443e-ad91-8e59191ea7ff_04907987-ad98-45b0-b271-9acd2927483d"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/1f1f59f8-4f47-443e-ad91-8e59191ea7ff_877771b9-02a5-4bdb-b1a7-bb881dbe890e",
+      "fields": {
+        "team1Id": {
+          "stringValue": "1f1f59f8-4f47-443e-ad91-8e59191ea7ff"
+        },
+        "team2Id": {
+          "stringValue": "877771b9-02a5-4bdb-b1a7-bb881dbe890e"
+        },
+        "matchNumber": {
+          "integerValue": "1"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/pk.png"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-07T05:30:00Z"
+        },
+        "location": {
+          "stringValue": "Sinhalese Sports Club, Colombo"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "t2Runs": {
+                "integerValue": "147"
+              },
+              "verified": {
+                "booleanValue": true
+              },
+              "team2": {
+                "integerValue": "147"
+              },
+              "marginType": {
+                "stringValue": "wickets"
+              },
+              "t1Overs": {
+                "doubleValue": 19.3
+              },
+              "winnerId": {
+                "stringValue": "pakistan"
+              },
+              "marginValue": {
+                "stringValue": "3"
+              },
+              "team1": {
+                "integerValue": "148"
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "t1Wickets": {
+                "integerValue": "7"
+              },
+              "t2Wickets": {
+                "integerValue": "10"
+              },
+              "t2Overs": {
+                "doubleValue": 19.5
+              },
+              "battingFirstId": {
+                "stringValue": "netherlands"
+              },
+              "t1Runs": {
+                "integerValue": "148"
+              }
+            }
+          }
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/nl.png"
+        },
+        "team2Name": {
+          "stringValue": "Netherlands"
+        },
+        "group": {
+          "nullValue": null
+        },
+        "round": {
+          "stringValue": "Group Stage"
+        },
+        "id": {
+          "stringValue": "1f1f59f8-4f47-443e-ad91-8e59191ea7ff_877771b9-02a5-4bdb-b1a7-bb881dbe890e"
+        },
+        "team1Name": {
+          "stringValue": "Pakistan"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "status": {
+          "stringValue": "completed"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/1f1f59f8-4f47-443e-ad91-8e59191ea7ff_ab435725-e7bc-4bb0-a896-15b07f03ad6e",
+      "fields": {
+        "scheduledTime": {
+          "timestampValue": "2026-02-18T09:30:00Z"
+        },
+        "location": {
+          "stringValue": "Sinhalese Sports Club, Colombo"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "marginValue": {
+                "stringValue": "102"
+              },
+              "winnerId": {
+                "stringValue": "pakistan"
+              },
+              "t1Overs": {
+                "doubleValue": 20
+              },
+              "marginType": {
+                "stringValue": "runs"
+              },
+              "team2": {
+                "integerValue": "97"
+              },
+              "verified": {
+                "booleanValue": true
+              },
+              "t2Runs": {
+                "integerValue": "97"
+              },
+              "battingFirstName": {
+                "stringValue": "Pakistan"
+              },
+              "t1Runs": {
+                "integerValue": "199"
+              },
+              "battingFirstId": {
+                "stringValue": "pakistan"
+              },
+              "t2Overs": {
+                "doubleValue": 17.3
+              },
+              "t2Wickets": {
+                "integerValue": "10"
+              },
+              "t1Wickets": {
+                "integerValue": "3"
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "team1": {
+                "integerValue": "199"
+              }
+            }
+          }
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/na.png"
+        },
+        "team1Id": {
+          "stringValue": "1f1f59f8-4f47-443e-ad91-8e59191ea7ff"
+        },
+        "team2Id": {
+          "stringValue": "ab435725-e7bc-4bb0-a896-15b07f03ad6e"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/pk.png"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "matchNumber": {
+          "integerValue": "35"
+        },
+        "team1Name": {
+          "stringValue": "Pakistan"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "status": {
+          "stringValue": "completed"
+        },
+        "group": {
+          "stringValue": "Group A"
+        },
+        "team2Name": {
+          "stringValue": "Namibia"
+        },
+        "round": {
+          "stringValue": "Round 5"
+        },
+        "id": {
+          "stringValue": "1f1f59f8-4f47-443e-ad91-8e59191ea7ff_ab435725-e7bc-4bb0-a896-15b07f03ad6e"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/36cd5f74-bce4-41cd-8af7-63705d34d825_55bcf213-92b9-493c-b8b2-a853701c7444",
+      "fields": {
+        "team1Name": {
+          "stringValue": "South Africa"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "status": {
+          "stringValue": "completed"
+        },
+        "team2Name": {
+          "stringValue": "United Arab Emirates"
+        },
+        "group": {
+          "stringValue": "Group D"
+        },
+        "round": {
+          "stringValue": "Round 5"
+        },
+        "id": {
+          "stringValue": "36cd5f74-bce4-41cd-8af7-63705d34d825_55bcf213-92b9-493c-b8b2-a853701c7444"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-18T05:30:00Z"
+        },
+        "location": {
+          "stringValue": "Arun Jaitley Stadium, Delhi"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "t1Wickets": {
+                "integerValue": "4"
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "team1": {
+                "integerValue": "123"
+              },
+              "t1Runs": {
+                "integerValue": "123"
+              },
+              "battingFirstId": {
+                "stringValue": "united_arab_emirates"
+              },
+              "t2Wickets": {
+                "integerValue": "6"
+              },
+              "t2Overs": {
+                "doubleValue": 20
+              },
+              "marginType": {
+                "stringValue": "wickets"
+              },
+              "team2": {
+                "integerValue": "122"
+              },
+              "verified": {
+                "booleanValue": true
+              },
+              "t2Runs": {
+                "integerValue": "122"
+              },
+              "battingFirstName": {
+                "stringValue": "United Arab Emirates"
+              },
+              "marginValue": {
+                "stringValue": "6"
+              },
+              "winnerId": {
+                "stringValue": "south_africa"
+              },
+              "t1Overs": {
+                "doubleValue": 13.2
+              }
+            }
+          }
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/ae.png"
+        },
+        "team1Id": {
+          "stringValue": "36cd5f74-bce4-41cd-8af7-63705d34d825"
+        },
+        "team2Id": {
+          "stringValue": "55bcf213-92b9-493c-b8b2-a853701c7444"
+        },
+        "matchNumber": {
+          "integerValue": "34"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/za.png"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/36cd5f74-bce4-41cd-8af7-63705d34d825_8d71a8a3-1b2c-465a-abb1-fea4fe77152a",
+      "fields": {
+        "team1Name": {
+          "stringValue": "South Africa"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "status": {
+          "stringValue": "completed"
+        },
+        "team2Name": {
+          "stringValue": "Canada"
+        },
+        "group": {
+          "stringValue": "Group D"
+        },
+        "round": {
+          "stringValue": "Round 1"
+        },
+        "id": {
+          "stringValue": "36cd5f74-bce4-41cd-8af7-63705d34d825_8d71a8a3-1b2c-465a-abb1-fea4fe77152a"
+        },
+        "location": {
+          "stringValue": "Narendra Modi Stadium, Ahmedabad"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-09T13:30:00Z"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "team1": {
+                "integerValue": "213"
+              },
+              "t1Wickets": {
+                "integerValue": "4"
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "t2Wickets": {
+                "integerValue": "8"
+              },
+              "t2Overs": {
+                "doubleValue": 20
+              },
+              "battingFirstId": {
+                "stringValue": "south_africa"
+              },
+              "t1Runs": {
+                "integerValue": "213"
+              },
+              "battingFirstName": {
+                "stringValue": "South Africa"
+              },
+              "t2Runs": {
+                "integerValue": "156"
+              },
+              "verified": {
+                "booleanValue": true
+              },
+              "team2": {
+                "integerValue": "156"
+              },
+              "marginType": {
+                "stringValue": "runs"
+              },
+              "t1Overs": {
+                "doubleValue": 20
+              },
+              "winnerId": {
+                "stringValue": "south_africa"
+              },
+              "marginValue": {
+                "stringValue": "57"
+              }
+            }
+          }
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/ca.png"
+        },
+        "team1Id": {
+          "stringValue": "36cd5f74-bce4-41cd-8af7-63705d34d825"
+        },
+        "team2Id": {
+          "stringValue": "8d71a8a3-1b2c-465a-abb1-fea4fe77152a"
+        },
+        "matchNumber": {
+          "integerValue": "9"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/za.png"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/36cd5f74-bce4-41cd-8af7-63705d34d825_f13db68f-fd76-4f0b-8528-2e418f628e8a",
+      "fields": {
+        "id": {
+          "stringValue": "36cd5f74-bce4-41cd-8af7-63705d34d825_f13db68f-fd76-4f0b-8528-2e418f628e8a"
+        },
+        "round": {
+          "stringValue": "Round 2"
+        },
+        "team2Name": {
+          "stringValue": "Afghanistan"
+        },
+        "group": {
+          "stringValue": "Group D"
+        },
+        "status": {
+          "stringValue": "completed"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "team1Name": {
+          "stringValue": "South Africa"
+        },
+        "matchNumber": {
+          "integerValue": "13"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/za.png"
+        },
+        "team2Id": {
+          "stringValue": "f13db68f-fd76-4f0b-8528-2e418f628e8a"
+        },
+        "team1Id": {
+          "stringValue": "36cd5f74-bce4-41cd-8af7-63705d34d825"
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/af.png"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "t2Overs": {
+                "doubleValue": 19.4
+              },
+              "t2Wickets": {
+                "integerValue": "10"
+              },
+              "battingFirstId": {
+                "stringValue": "south_africa"
+              },
+              "t1Runs": {
+                "integerValue": "187"
+              },
+              "team1": {
+                "integerValue": "187"
+              },
+              "t1Wickets": {
+                "integerValue": "6"
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "marginValue": {
+                "stringValue": ""
+              },
+              "t1Overs": {
+                "doubleValue": 20
+              },
+              "winnerId": {
+                "stringValue": "tied"
+              },
+              "winnerName": {
+                "stringValue": "tied"
+              },
+              "marginType": {
+                "stringValue": "runs"
+              },
+              "battingFirstName": {
+                "stringValue": "South Africa"
+              },
+              "t2Runs": {
+                "integerValue": "187"
+              },
+              "verified": {
+                "booleanValue": true
+              },
+              "team2": {
+                "integerValue": "187"
+              }
+            }
+          }
+        },
+        "location": {
+          "stringValue": "Narendra Modi Stadium, Ahmedabad"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-11T05:30:00Z"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/4a7de6dd-f10c-4bf5-8a59-058793c7332a_2ad5450d-9d51-4126-84d5-c6c04ea2999c",
+      "fields": {
+        "team1Name": {
+          "stringValue": "West Indies"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "status": {
+          "stringValue": "completed"
+        },
+        "team2Name": {
+          "stringValue": "Italy"
+        },
+        "group": {
+          "stringValue": "Group C"
+        },
+        "round": {
+          "stringValue": "Round 5"
+        },
+        "id": {
+          "stringValue": "4a7de6dd-f10c-4bf5-8a59-058793c7332a_2ad5450d-9d51-4126-84d5-c6c04ea2999c"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-19T05:30:00Z"
+        },
+        "location": {
+          "stringValue": "Eden Gardens, Kolkata"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "t1Wickets": {
+                "integerValue": "6"
+              },
+              "team1": {
+                "integerValue": "165"
+              },
+              "battingFirstId": {
+                "stringValue": "west_indies"
+              },
+              "t1Runs": {
+                "integerValue": "165"
+              },
+              "t2Wickets": {
+                "integerValue": "10"
+              },
+              "t2Overs": {
+                "doubleValue": 18
+              },
+              "team2": {
+                "integerValue": "123"
+              },
+              "verified": {
+                "booleanValue": true
+              },
+              "t2Runs": {
+                "integerValue": "123"
+              },
+              "battingFirstName": {
+                "stringValue": "West Indies"
+              },
+              "marginType": {
+                "stringValue": "runs"
+              },
+              "winnerId": {
+                "stringValue": "west_indies"
+              },
+              "t1Overs": {
+                "doubleValue": 20
+              },
+              "marginValue": {
+                "stringValue": "42"
+              }
+            }
+          }
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/it.png"
+        },
+        "team1Id": {
+          "stringValue": "4a7de6dd-f10c-4bf5-8a59-058793c7332a"
+        },
+        "team2Id": {
+          "stringValue": "2ad5450d-9d51-4126-84d5-c6c04ea2999c"
+        },
+        "matchNumber": {
+          "integerValue": "37"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/jm.png"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/4a7de6dd-f10c-4bf5-8a59-058793c7332a_36cd5f74-bce4-41cd-8af7-63705d34d825",
+      "fields": {
+        "winnerId": {
+          "nullValue": null
+        },
+        "status": {
+          "stringValue": "upcoming"
+        },
+        "team1Name": {
+          "stringValue": "West Indies"
+        },
+        "id": {
+          "stringValue": "4a7de6dd-f10c-4bf5-8a59-058793c7332a_36cd5f74-bce4-41cd-8af7-63705d34d825"
+        },
+        "team2Name": {
+          "stringValue": "South Africa"
+        },
+        "group": {
+          "nullValue": null
+        },
+        "round": {
+          "stringValue": "Super 8"
+        },
+        "actualScore": {
+          "nullValue": null
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/za.png"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-26T09:30:00Z"
+        },
+        "location": {
+          "stringValue": "Narendra Modi Stadium, Ahmedabad"
+        },
+        "team2Id": {
+          "stringValue": "36cd5f74-bce4-41cd-8af7-63705d34d825"
+        },
+        "matchNumber": {
+          "integerValue": "47"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/jm.png"
+        },
+        "team1Id": {
+          "stringValue": "4a7de6dd-f10c-4bf5-8a59-058793c7332a"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/4a7de6dd-f10c-4bf5-8a59-058793c7332a_52081ab3-adec-40bc-ba85-d9fd91ddc398",
+      "fields": {
+        "status": {
+          "stringValue": "completed"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "team1Name": {
+          "stringValue": "West Indies"
+        },
+        "id": {
+          "stringValue": "4a7de6dd-f10c-4bf5-8a59-058793c7332a_52081ab3-adec-40bc-ba85-d9fd91ddc398"
+        },
+        "round": {
+          "stringValue": "Round 4"
+        },
+        "team2Name": {
+          "stringValue": "Nepal"
+        },
+        "group": {
+          "stringValue": "Group C"
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/np.png"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "t1Wickets": {
+                "integerValue": "1"
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "team1": {
+                "integerValue": "134"
+              },
+              "t2Overs": {
+                "doubleValue": 20
+              },
+              "t2Wickets": {
+                "integerValue": "8"
+              },
+              "t1Runs": {
+                "integerValue": "134"
+              },
+              "battingFirstId": {
+                "stringValue": "nepal"
+              },
+              "verified": {
+                "booleanValue": true
+              },
+              "team2": {
+                "integerValue": "133"
+              },
+              "battingFirstName": {
+                "stringValue": "Nepal"
+              },
+              "t2Runs": {
+                "integerValue": "133"
+              },
+              "marginType": {
+                "stringValue": "wickets"
+              },
+              "winnerId": {
+                "stringValue": "west_indies"
+              },
+              "t1Overs": {
+                "doubleValue": 15.2
+              },
+              "marginValue": {
+                "stringValue": "9"
+              }
+            }
+          }
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-15T05:30:00Z"
+        },
+        "location": {
+          "stringValue": "Wankhede Stadium, Mumbai"
+        },
+        "matchNumber": {
+          "integerValue": "25"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/jm.png"
+        },
+        "team2Id": {
+          "stringValue": "52081ab3-adec-40bc-ba85-d9fd91ddc398"
+        },
+        "team1Id": {
+          "stringValue": "4a7de6dd-f10c-4bf5-8a59-058793c7332a"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/4a7de6dd-f10c-4bf5-8a59-058793c7332a_d2117dfc-5e44-4070-afdd-75f8c6a5cef6",
+      "fields": {
+        "team2Name": {
+          "stringValue": "Scotland"
+        },
+        "group": {
+          "stringValue": "Group C"
+        },
+        "round": {
+          "stringValue": "Round 1"
+        },
+        "id": {
+          "stringValue": "4a7de6dd-f10c-4bf5-8a59-058793c7332a_d2117dfc-5e44-4070-afdd-75f8c6a5cef6"
+        },
+        "team1Name": {
+          "stringValue": "West Indies"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "status": {
+          "stringValue": "completed"
+        },
+        "team1Id": {
+          "stringValue": "4a7de6dd-f10c-4bf5-8a59-058793c7332a"
+        },
+        "team2Id": {
+          "stringValue": "d2117dfc-5e44-4070-afdd-75f8c6a5cef6"
+        },
+        "matchNumber": {
+          "integerValue": "2"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/jm.png"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-07T09:30:00Z"
+        },
+        "location": {
+          "stringValue": "Eden Gardens, Kolkata"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "t1Runs": {
+                "integerValue": "182"
+              },
+              "battingFirstId": {
+                "stringValue": "west_indies"
+              },
+              "t2Wickets": {
+                "integerValue": "10"
+              },
+              "t2Overs": {
+                "doubleValue": 18.5
+              },
+              "t1Wickets": {
+                "integerValue": "5"
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "team1": {
+                "integerValue": "182"
+              },
+              "marginValue": {
+                "stringValue": "35"
+              },
+              "winnerId": {
+                "stringValue": "west_indies"
+              },
+              "t1Overs": {
+                "doubleValue": 20
+              },
+              "marginType": {
+                "stringValue": "runs"
+              },
+              "team2": {
+                "integerValue": "147"
+              },
+              "verified": {
+                "booleanValue": true
+              },
+              "t2Runs": {
+                "integerValue": "147"
+              },
+              "battingFirstName": {
+                "stringValue": "West Indies"
+              }
+            }
+          }
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/gb-sct.png"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/52081ab3-adec-40bc-ba85-d9fd91ddc398_2ad5450d-9d51-4126-84d5-c6c04ea2999c",
+      "fields": {
+        "team1Id": {
+          "stringValue": "52081ab3-adec-40bc-ba85-d9fd91ddc398"
+        },
+        "matchNumber": {
+          "integerValue": "17"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/np.png"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team2Id": {
+          "stringValue": "2ad5450d-9d51-4126-84d5-c6c04ea2999c"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-12T09:30:00Z"
+        },
+        "location": {
+          "stringValue": "Wankhede Stadium, Mumbai"
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/it.png"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "t1Overs": {
+                "doubleValue": 19.3
+              },
+              "winnerId": {
+                "stringValue": "italy"
+              },
+              "marginValue": {
+                "stringValue": "10"
+              },
+              "t2Runs": {
+                "integerValue": "124"
+              },
+              "battingFirstName": {
+                "stringValue": "Nepal"
+              },
+              "team2": {
+                "integerValue": "124"
+              },
+              "verified": {
+                "booleanValue": true
+              },
+              "marginType": {
+                "stringValue": "wickets"
+              },
+              "battingFirstId": {
+                "stringValue": "nepal"
+              },
+              "t1Runs": {
+                "integerValue": "123"
+              },
+              "t2Wickets": {
+                "integerValue": "0"
+              },
+              "t2Overs": {
+                "doubleValue": 12.4
+              },
+              "team1": {
+                "integerValue": "123"
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "t1Wickets": {
+                "integerValue": "10"
+              }
+            }
+          }
+        },
+        "round": {
+          "stringValue": "Round 3"
+        },
+        "team2Name": {
+          "stringValue": "Italy"
+        },
+        "group": {
+          "stringValue": "Group C"
+        },
+        "id": {
+          "stringValue": "52081ab3-adec-40bc-ba85-d9fd91ddc398_2ad5450d-9d51-4126-84d5-c6c04ea2999c"
+        },
+        "team1Name": {
+          "stringValue": "Nepal"
+        },
+        "status": {
+          "stringValue": "completed"
+        },
+        "winnerId": {
+          "nullValue": null
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/79565c70-cb21-40f3-ac7f-c1f462f95ff0_04907987-ad98-45b0-b271-9acd2927483d",
+      "fields": {
+        "location": {
+          "stringValue": "Wankhede Stadium, Mumbai"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-07T13:30:00Z"
+        },
+        "team2LogoUrl": {
+          "stringValue": ""
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "marginValue": {
+                "stringValue": "29"
+              },
+              "winnerId": {
+                "stringValue": "india"
+              },
+              "t1Overs": {
+                "doubleValue": 20
+              },
+              "marginType": {
+                "stringValue": "runs"
+              },
+              "team2": {
+                "integerValue": "132"
+              },
+              "verified": {
+                "booleanValue": true
+              },
+              "t2Runs": {
+                "integerValue": "132"
+              },
+              "battingFirstName": {
+                "stringValue": "India"
+              },
+              "battingFirstId": {
+                "stringValue": "india"
+              },
+              "t1Runs": {
+                "integerValue": "161"
+              },
+              "t2Wickets": {
+                "integerValue": "8"
+              },
+              "t2Overs": {
+                "doubleValue": 20
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "t1Wickets": {
+                "integerValue": "9"
+              },
+              "team1": {
+                "integerValue": "161"
+              }
+            }
+          }
+        },
+        "team1Id": {
+          "stringValue": "79565c70-cb21-40f3-ac7f-c1f462f95ff0"
+        },
+        "matchNumber": {
+          "integerValue": "3"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/in.png"
+        },
+        "team2Id": {
+          "stringValue": "04907987-ad98-45b0-b271-9acd2927483d"
+        },
+        "team1Name": {
+          "stringValue": "India"
+        },
+        "status": {
+          "stringValue": "completed"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "round": {
+          "stringValue": "Round 1"
+        },
+        "team2Name": {
+          "stringValue": "USA"
+        },
+        "group": {
+          "stringValue": "Group A"
+        },
+        "id": {
+          "stringValue": "79565c70-cb21-40f3-ac7f-c1f462f95ff0_04907987-ad98-45b0-b271-9acd2927483d"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/79565c70-cb21-40f3-ac7f-c1f462f95ff0_1f1f59f8-4f47-443e-ad91-8e59191ea7ff",
+      "fields": {
+        "team1Id": {
+          "stringValue": "79565c70-cb21-40f3-ac7f-c1f462f95ff0"
+        },
+        "team2Id": {
+          "stringValue": "1f1f59f8-4f47-443e-ad91-8e59191ea7ff"
+        },
+        "matchNumber": {
+          "integerValue": "27"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/in.png"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-15T13:30:00Z"
+        },
+        "location": {
+          "stringValue": "R.Premadasa Stadium, Colombo"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "t2Wickets": {
+                "integerValue": "10"
+              },
+              "t2Overs": {
+                "doubleValue": 18
+              },
+              "battingFirstId": {
+                "stringValue": "india"
+              },
+              "t1Runs": {
+                "integerValue": "175"
+              },
+              "team1": {
+                "integerValue": "175"
+              },
+              "t1Wickets": {
+                "integerValue": "7"
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "t1Overs": {
+                "doubleValue": 20
+              },
+              "winnerId": {
+                "stringValue": "india"
+              },
+              "marginValue": {
+                "stringValue": "61"
+              },
+              "battingFirstName": {
+                "stringValue": "India"
+              },
+              "t2Runs": {
+                "integerValue": "114"
+              },
+              "verified": {
+                "booleanValue": true
+              },
+              "team2": {
+                "integerValue": "114"
+              },
+              "marginType": {
+                "stringValue": "runs"
+              }
+            }
+          }
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/pk.png"
+        },
+        "team2Name": {
+          "stringValue": "Pakistan"
+        },
+        "group": {
+          "stringValue": "Group A"
+        },
+        "round": {
+          "stringValue": "Round 4"
+        },
+        "id": {
+          "stringValue": "79565c70-cb21-40f3-ac7f-c1f462f95ff0_1f1f59f8-4f47-443e-ad91-8e59191ea7ff"
+        },
+        "team1Name": {
+          "stringValue": "India"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "status": {
+          "stringValue": "completed"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/79565c70-cb21-40f3-ac7f-c1f462f95ff0_36cd5f74-bce4-41cd-8af7-63705d34d825",
+      "fields": {
+        "round": {
+          "stringValue": "Super 8"
+        },
+        "team2Name": {
+          "stringValue": "South Africa"
+        },
+        "group": {
+          "nullValue": null
+        },
+        "id": {
+          "stringValue": "79565c70-cb21-40f3-ac7f-c1f462f95ff0_36cd5f74-bce4-41cd-8af7-63705d34d825"
+        },
+        "team1Name": {
+          "stringValue": "India"
+        },
+        "status": {
+          "stringValue": "upcoming"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "team1Id": {
+          "stringValue": "79565c70-cb21-40f3-ac7f-c1f462f95ff0"
+        },
+        "matchNumber": {
+          "integerValue": "43"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/in.png"
+        },
+        "team2Id": {
+          "stringValue": "36cd5f74-bce4-41cd-8af7-63705d34d825"
+        },
+        "location": {
+          "stringValue": "Narendra Modi Stadium, Ahmedabad"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-22T13:30:00Z"
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/za.png"
+        },
+        "actualScore": {
+          "nullValue": null
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/79565c70-cb21-40f3-ac7f-c1f462f95ff0_4a7de6dd-f10c-4bf5-8a59-058793c7332a",
+      "fields": {
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/jm.png"
+        },
+        "actualScore": {
+          "nullValue": null
+        },
+        "location": {
+          "stringValue": "Eden Gardens, Kolkata"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-03-01T13:30:00Z"
+        },
+        "matchNumber": {
+          "integerValue": "52"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/in.png"
+        },
+        "team2Id": {
+          "stringValue": "4a7de6dd-f10c-4bf5-8a59-058793c7332a"
+        },
+        "team1Id": {
+          "stringValue": "79565c70-cb21-40f3-ac7f-c1f462f95ff0"
+        },
+        "status": {
+          "stringValue": "upcoming"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "team1Name": {
+          "stringValue": "India"
+        },
+        "id": {
+          "stringValue": "79565c70-cb21-40f3-ac7f-c1f462f95ff0_4a7de6dd-f10c-4bf5-8a59-058793c7332a"
+        },
+        "round": {
+          "stringValue": "Super 8"
+        },
+        "team2Name": {
+          "stringValue": "West Indies"
+        },
+        "group": {
+          "nullValue": null
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/79565c70-cb21-40f3-ac7f-c1f462f95ff0_877771b9-02a5-4bdb-b1a7-bb881dbe890e",
+      "fields": {
+        "team2Id": {
+          "stringValue": "877771b9-02a5-4bdb-b1a7-bb881dbe890e"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/in.png"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "matchNumber": {
+          "integerValue": "36"
+        },
+        "team1Id": {
+          "stringValue": "79565c70-cb21-40f3-ac7f-c1f462f95ff0"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "marginValue": {
+                "stringValue": "17"
+              },
+              "t1Overs": {
+                "doubleValue": 20
+              },
+              "winnerId": {
+                "stringValue": "india"
+              },
+              "marginType": {
+                "stringValue": "runs"
+              },
+              "t2Runs": {
+                "integerValue": "176"
+              },
+              "battingFirstName": {
+                "stringValue": "India"
+              },
+              "team2": {
+                "integerValue": "176"
+              },
+              "verified": {
+                "booleanValue": true
+              },
+              "battingFirstId": {
+                "stringValue": "india"
+              },
+              "t1Runs": {
+                "integerValue": "193"
+              },
+              "t2Wickets": {
+                "integerValue": "7"
+              },
+              "t2Overs": {
+                "doubleValue": 20
+              },
+              "team1": {
+                "integerValue": "193"
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "t1Wickets": {
+                "integerValue": "6"
+              }
+            }
+          }
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/nl.png"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-18T13:30:00Z"
+        },
+        "location": {
+          "stringValue": "Narendra Modi Stadium, Ahmedabad"
+        },
+        "id": {
+          "stringValue": "79565c70-cb21-40f3-ac7f-c1f462f95ff0_877771b9-02a5-4bdb-b1a7-bb881dbe890e"
+        },
+        "group": {
+          "stringValue": "Group A"
+        },
+        "team2Name": {
+          "stringValue": "Netherlands"
+        },
+        "round": {
+          "stringValue": "Round 5"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "status": {
+          "stringValue": "completed"
+        },
+        "team1Name": {
+          "stringValue": "India"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/79565c70-cb21-40f3-ac7f-c1f462f95ff0_ab435725-e7bc-4bb0-a896-15b07f03ad6e",
+      "fields": {
+        "id": {
+          "stringValue": "79565c70-cb21-40f3-ac7f-c1f462f95ff0_ab435725-e7bc-4bb0-a896-15b07f03ad6e"
+        },
+        "team2Name": {
+          "stringValue": "Namibia"
+        },
+        "group": {
+          "stringValue": "Group A"
+        },
+        "round": {
+          "stringValue": "Round 3"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "status": {
+          "stringValue": "completed"
+        },
+        "team1Name": {
+          "stringValue": "India"
+        },
+        "team2Id": {
+          "stringValue": "ab435725-e7bc-4bb0-a896-15b07f03ad6e"
+        },
+        "matchNumber": {
+          "integerValue": "18"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/in.png"
+        },
+        "team1Id": {
+          "stringValue": "79565c70-cb21-40f3-ac7f-c1f462f95ff0"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "winnerId": {
+                "stringValue": "india"
+              },
+              "t1Overs": {
+                "doubleValue": 20
+              },
+              "marginValue": {
+                "stringValue": "93"
+              },
+              "verified": {
+                "booleanValue": true
+              },
+              "team2": {
+                "integerValue": "116"
+              },
+              "battingFirstName": {
+                "stringValue": "India"
+              },
+              "t2Runs": {
+                "integerValue": "116"
+              },
+              "marginType": {
+                "stringValue": "runs"
+              },
+              "t2Wickets": {
+                "integerValue": "10"
+              },
+              "t2Overs": {
+                "doubleValue": 18.2
+              },
+              "t1Runs": {
+                "integerValue": "209"
+              },
+              "battingFirstId": {
+                "stringValue": "india"
+              },
+              "t1Wickets": {
+                "integerValue": "9"
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "team1": {
+                "integerValue": "209"
+              }
+            }
+          }
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/na.png"
+        },
+        "location": {
+          "stringValue": "Arun Jaitley Stadium, Delhi"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-12T13:30:00Z"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/79565c70-cb21-40f3-ac7f-c1f462f95ff0_e61f4e01-95cb-4b12-95a0-90ad35cdf151",
+      "fields": {
+        "actualScore": {
+          "nullValue": null
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/zw.png"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-26T13:30:00Z"
+        },
+        "location": {
+          "stringValue": "MA Chidambaram Stadium, Chennai"
+        },
+        "team2Id": {
+          "stringValue": "e61f4e01-95cb-4b12-95a0-90ad35cdf151"
+        },
+        "matchNumber": {
+          "integerValue": "48"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/in.png"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1Id": {
+          "stringValue": "79565c70-cb21-40f3-ac7f-c1f462f95ff0"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "status": {
+          "stringValue": "upcoming"
+        },
+        "team1Name": {
+          "stringValue": "India"
+        },
+        "id": {
+          "stringValue": "79565c70-cb21-40f3-ac7f-c1f462f95ff0_e61f4e01-95cb-4b12-95a0-90ad35cdf151"
+        },
+        "team2Name": {
+          "stringValue": "Zimbabwe"
+        },
+        "group": {
+          "nullValue": null
+        },
+        "round": {
+          "stringValue": "Super 8"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/877771b9-02a5-4bdb-b1a7-bb881dbe890e_ab435725-e7bc-4bb0-a896-15b07f03ad6e",
+      "fields": {
+        "winnerId": {
+          "nullValue": null
+        },
+        "status": {
+          "stringValue": "completed"
+        },
+        "team1Name": {
+          "stringValue": "Netherlands"
+        },
+        "id": {
+          "stringValue": "877771b9-02a5-4bdb-b1a7-bb881dbe890e_ab435725-e7bc-4bb0-a896-15b07f03ad6e"
+        },
+        "group": {
+          "stringValue": "Group A"
+        },
+        "team2Name": {
+          "stringValue": "Namibia"
+        },
+        "round": {
+          "stringValue": "Round 2"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "team1": {
+                "integerValue": "159"
+              },
+              "t1Wickets": {
+                "integerValue": "3"
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "t2Wickets": {
+                "integerValue": "8"
+              },
+              "t2Overs": {
+                "doubleValue": 20
+              },
+              "t1Runs": {
+                "integerValue": "159"
+              },
+              "battingFirstId": {
+                "stringValue": "namibia"
+              },
+              "marginType": {
+                "stringValue": "wickets"
+              },
+              "battingFirstName": {
+                "stringValue": "Namibia"
+              },
+              "t2Runs": {
+                "integerValue": "156"
+              },
+              "verified": {
+                "booleanValue": true
+              },
+              "team2": {
+                "integerValue": "156"
+              },
+              "marginValue": {
+                "stringValue": "7"
+              },
+              "t1Overs": {
+                "doubleValue": 18
+              },
+              "winnerId": {
+                "stringValue": "netherlands"
+              }
+            }
+          }
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/na.png"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-10T05:30:00Z"
+        },
+        "location": {
+          "stringValue": "Arun Jaitley Stadium, Delhi"
+        },
+        "team2Id": {
+          "stringValue": "ab435725-e7bc-4bb0-a896-15b07f03ad6e"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/nl.png"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "matchNumber": {
+          "integerValue": "10"
+        },
+        "team1Id": {
+          "stringValue": "877771b9-02a5-4bdb-b1a7-bb881dbe890e"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/8JxT4VwLyFSsxs8qx695",
+      "fields": {
+        "team1Id": {
+          "stringValue": "e604d308-32bb-4d58-983c-6ef5b0eb0b04"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/gb-eng.png"
+        },
+        "matchNumber": {
+          "integerValue": "1"
+        },
+        "team2Id": {
+          "stringValue": "c19088da-4d78-4340-bd72-0194461bfb05"
+        },
+        "location": {
+          "stringValue": "Edgbaston, Birmingham"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-06-12T17:30:00Z"
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/lk.png"
+        },
+        "actualScore": {
+          "nullValue": null
+        },
+        "round": {
+          "stringValue": "Group Stage"
+        },
+        "group": {
+          "nullValue": null
+        },
+        "team2Name": {
+          "stringValue": "Sri Lanka"
+        },
+        "id": {
+          "stringValue": "8JxT4VwLyFSsxs8qx695"
+        },
+        "team1Name": {
+          "stringValue": "England"
+        },
+        "status": {
+          "stringValue": "upcoming"
+        },
+        "winnerId": {
+          "nullValue": null
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/8bf2b02a-648a-4eba-8ea0-807fb6479791_170382c5-c795-4c4c-888a-f886b85c287e",
+      "fields": {
+        "winnerId": {
+          "nullValue": null
+        },
+        "status": {
+          "stringValue": "completed"
+        },
+        "team1Name": {
+          "stringValue": "Ireland"
+        },
+        "id": {
+          "stringValue": "8bf2b02a-648a-4eba-8ea0-807fb6479791_170382c5-c795-4c4c-888a-f886b85c287e"
+        },
+        "team2Name": {
+          "stringValue": "Oman"
+        },
+        "group": {
+          "stringValue": "Group B"
+        },
+        "round": {
+          "stringValue": "Round 3"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "verified": {
+                "booleanValue": true
+              },
+              "team2": {
+                "integerValue": "139"
+              },
+              "battingFirstName": {
+                "stringValue": "Ireland"
+              },
+              "t2Runs": {
+                "integerValue": "139"
+              },
+              "marginType": {
+                "stringValue": "runs"
+              },
+              "winnerId": {
+                "stringValue": "ireland"
+              },
+              "t1Overs": {
+                "doubleValue": 20
+              },
+              "marginValue": {
+                "stringValue": "96"
+              },
+              "t1Wickets": {
+                "integerValue": "5"
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "team1": {
+                "integerValue": "235"
+              },
+              "t2Overs": {
+                "doubleValue": 18
+              },
+              "t2Wickets": {
+                "integerValue": "10"
+              },
+              "t1Runs": {
+                "integerValue": "235"
+              },
+              "battingFirstId": {
+                "stringValue": "ireland"
+              }
+            }
+          }
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/om.png"
+        },
+        "location": {
+          "stringValue": "Sinhalese Sports Club, Colombo"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-14T05:30:00Z"
+        },
+        "team2Id": {
+          "stringValue": "170382c5-c795-4c4c-888a-f886b85c287e"
+        },
+        "matchNumber": {
+          "integerValue": "22"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/ie.png"
+        },
+        "team1Id": {
+          "stringValue": "8bf2b02a-648a-4eba-8ea0-807fb6479791"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/8bf2b02a-648a-4eba-8ea0-807fb6479791_e61f4e01-95cb-4b12-95a0-90ad35cdf151",
+      "fields": {
+        "id": {
+          "stringValue": "8bf2b02a-648a-4eba-8ea0-807fb6479791_e61f4e01-95cb-4b12-95a0-90ad35cdf151"
+        },
+        "round": {
+          "stringValue": "Round 4"
+        },
+        "group": {
+          "stringValue": "Group B"
+        },
+        "team2Name": {
+          "stringValue": "Zimbabwe"
+        },
+        "status": {
+          "stringValue": "cancelled"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "team1Name": {
+          "stringValue": "Ireland"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/ie.png"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "matchNumber": {
+          "integerValue": "32"
+        },
+        "team2Id": {
+          "stringValue": "e61f4e01-95cb-4b12-95a0-90ad35cdf151"
+        },
+        "team1Id": {
+          "stringValue": "8bf2b02a-648a-4eba-8ea0-807fb6479791"
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/zw.png"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "marginValue": {
+                "stringValue": ""
+              },
+              "winnerId": {
+                "stringValue": "no_result"
+              },
+              "t1Overs": {
+                "nullValue": null
+              },
+              "battingFirstId": {
+                "nullValue": null
+              },
+              "t2Overs": {
+                "nullValue": null
+              },
+              "t2Wickets": {
+                "integerValue": "0"
+              },
+              "marginType": {
+                "stringValue": "runs"
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "t1Wickets": {
+                "integerValue": "0"
+              },
+              "verified": {
+                "booleanValue": true
+              }
+            }
+          }
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-17T09:30:00Z"
+        },
+        "location": {
+          "stringValue": "Pallekele International Cricket Stadium, Kandy"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/8c0717e8-4023-4a8f-af26-e27af5d879a1_8c0717e8-4023-4a8f-af26-e27af5d879a1",
+      "fields": {
+        "status": {
+          "stringValue": "upcoming"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "team1Name": {
+          "stringValue": "To be announced"
+        },
+        "id": {
+          "stringValue": "8c0717e8-4023-4a8f-af26-e27af5d879a1_8c0717e8-4023-4a8f-af26-e27af5d879a1"
+        },
+        "round": {
+          "stringValue": "Round 10"
+        },
+        "team2Name": {
+          "stringValue": "To be announced"
+        },
+        "group": {
+          "nullValue": null
+        },
+        "team2LogoUrl": {
+          "nullValue": null
+        },
+        "actualScore": {
+          "nullValue": null
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-03-08T13:30:00Z"
+        },
+        "location": {
+          "stringValue": "Ahmedabad/Colombo (To be Confirmed)"
+        },
+        "matchNumber": {
+          "integerValue": "55"
+        },
+        "team1LogoUrl": {
+          "nullValue": null
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team2Id": {
+          "stringValue": "8c0717e8-4023-4a8f-af26-e27af5d879a1"
+        },
+        "team1Id": {
+          "stringValue": "8c0717e8-4023-4a8f-af26-e27af5d879a1"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/8d71a8a3-1b2c-465a-abb1-fea4fe77152a_55bcf213-92b9-493c-b8b2-a853701c7444",
+      "fields": {
+        "scheduledTime": {
+          "timestampValue": "2026-02-13T09:30:00Z"
+        },
+        "location": {
+          "stringValue": "Arun Jaitley Stadium, Delhi"
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/ae.png"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "battingFirstId": {
+                "stringValue": "canada"
+              },
+              "t1Runs": {
+                "integerValue": "150"
+              },
+              "t2Overs": {
+                "doubleValue": 19.4
+              },
+              "t2Wickets": {
+                "integerValue": "5"
+              },
+              "team1": {
+                "integerValue": "150"
+              },
+              "t1Wickets": {
+                "integerValue": "7"
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "t1Overs": {
+                "doubleValue": 20
+              },
+              "winnerId": {
+                "stringValue": "united_arab_emirates"
+              },
+              "marginValue": {
+                "stringValue": "5"
+              },
+              "t2Runs": {
+                "integerValue": "151"
+              },
+              "battingFirstName": {
+                "stringValue": "Canada"
+              },
+              "team2": {
+                "integerValue": "151"
+              },
+              "verified": {
+                "booleanValue": true
+              },
+              "marginType": {
+                "stringValue": "wickets"
+              }
+            }
+          }
+        },
+        "team1Id": {
+          "stringValue": "8d71a8a3-1b2c-465a-abb1-fea4fe77152a"
+        },
+        "matchNumber": {
+          "integerValue": "20"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/ca.png"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team2Id": {
+          "stringValue": "55bcf213-92b9-493c-b8b2-a853701c7444"
+        },
+        "team1Name": {
+          "stringValue": "Canada"
+        },
+        "status": {
+          "stringValue": "completed"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "round": {
+          "stringValue": "Round 3"
+        },
+        "team2Name": {
+          "stringValue": "United Arab Emirates"
+        },
+        "group": {
+          "stringValue": "Group D"
+        },
+        "id": {
+          "stringValue": "8d71a8a3-1b2c-465a-abb1-fea4fe77152a_55bcf213-92b9-493c-b8b2-a853701c7444"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/8kRAbTzHsH5MRoXomO5X",
+      "fields": {
+        "location": {
+          "stringValue": "Edgbaston, Birmingham"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-06-14T13:30:00Z"
+        },
+        "actualScore": {
+          "nullValue": null
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/pk.png"
+        },
+        "team1Id": {
+          "stringValue": "79565c70-cb21-40f3-ac7f-c1f462f95ff0"
+        },
+        "team2Id": {
+          "stringValue": "1f1f59f8-4f47-443e-ad91-8e59191ea7ff"
+        },
+        "matchNumber": {
+          "integerValue": "6"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/in.png"
+        },
+        "team1Name": {
+          "stringValue": "India"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "status": {
+          "stringValue": "upcoming"
+        },
+        "team2Name": {
+          "stringValue": "Pakistan"
+        },
+        "group": {
+          "nullValue": null
+        },
+        "round": {
+          "stringValue": "Group Stage"
+        },
+        "id": {
+          "stringValue": "8kRAbTzHsH5MRoXomO5X"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/9HaiA965eGVEoDe7FYFT",
+      "fields": {
+        "status": {
+          "stringValue": "upcoming"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "team1Name": {
+          "stringValue": "New Zealand"
+        },
+        "id": {
+          "stringValue": "9HaiA965eGVEoDe7FYFT"
+        },
+        "round": {
+          "stringValue": "Group Stage"
+        },
+        "group": {
+          "nullValue": null
+        },
+        "team2Name": {
+          "stringValue": "Sri Lanka"
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/lk.png"
+        },
+        "actualScore": {
+          "nullValue": null
+        },
+        "location": {
+          "stringValue": "The Rose Bowl, Southampton"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-06-16T13:30:00Z"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/nz.png"
+        },
+        "matchNumber": {
+          "integerValue": "7"
+        },
+        "team2Id": {
+          "stringValue": "c19088da-4d78-4340-bd72-0194461bfb05"
+        },
+        "team1Id": {
+          "stringValue": "04e844d6-cda8-47c9-8e9e-58843972d4dd"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/AAxySFQYJ8QyPl5367DR",
+      "fields": {
+        "id": {
+          "stringValue": "AAxySFQYJ8QyPl5367DR"
+        },
+        "round": {
+          "stringValue": "Group Stage"
+        },
+        "team2Name": {
+          "stringValue": "Sri Lanka"
+        },
+        "group": {
+          "nullValue": null
+        },
+        "status": {
+          "stringValue": "completed"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "team1Name": {
+          "stringValue": "West Indies"
+        },
+        "matchNumber": {
+          "integerValue": "17"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/jm.png"
+        },
+        "team2Id": {
+          "stringValue": "c19088da-4d78-4340-bd72-0194461bfb05"
+        },
+        "team1Id": {
+          "stringValue": "4a7de6dd-f10c-4bf5-8a59-058793c7332a"
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/lk.png"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "t1Runs": {
+                "integerValue": "123"
+              },
+              "battingFirstId": {
+                "stringValue": "nepal"
+              },
+              "t2Wickets": {
+                "integerValue": "0"
+              },
+              "t2Overs": {
+                "doubleValue": 12.4
+              },
+              "t1Wickets": {
+                "integerValue": "10"
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "team1": {
+                "integerValue": "123"
+              },
+              "winnerId": {
+                "stringValue": "italy"
+              },
+              "t1Overs": {
+                "doubleValue": 19.3
+              },
+              "marginValue": {
+                "stringValue": "10"
+              },
+              "team2": {
+                "integerValue": "124"
+              },
+              "verified": {
+                "booleanValue": true
+              },
+              "t2Runs": {
+                "integerValue": "124"
+              },
+              "battingFirstName": {
+                "stringValue": "Nepal"
+              },
+              "marginType": {
+                "stringValue": "wickets"
+              }
+            }
+          }
+        },
+        "location": {
+          "stringValue": "County Ground, Bristol"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-06-21T09:30:00Z"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/Dohtq3ZkIOdoJRpwOZjR",
+      "fields": {
+        "location": {
+          "stringValue": "The Rose Bowl, Southampton"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-06-13T17:30:00Z"
+        },
+        "actualScore": {
+          "nullValue": null
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/nz.png"
+        },
+        "team1Id": {
+          "stringValue": "4a7de6dd-f10c-4bf5-8a59-058793c7332a"
+        },
+        "team2Id": {
+          "stringValue": "04e844d6-cda8-47c9-8e9e-58843972d4dd"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/jm.png"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "matchNumber": {
+          "integerValue": "4"
+        },
+        "team1Name": {
+          "stringValue": "West Indies"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "status": {
+          "stringValue": "upcoming"
+        },
+        "group": {
+          "nullValue": null
+        },
+        "team2Name": {
+          "stringValue": "New Zealand"
+        },
+        "round": {
+          "stringValue": "Group Stage"
+        },
+        "id": {
+          "stringValue": "Dohtq3ZkIOdoJRpwOZjR"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/I7CRnHdBtks2pVIicyOY",
+      "fields": {
+        "team1Name": {
+          "stringValue": "South Africa"
+        },
+        "status": {
+          "stringValue": "upcoming"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "round": {
+          "stringValue": "Group Stage"
+        },
+        "team2Name": {
+          "stringValue": "Pakistan"
+        },
+        "group": {
+          "nullValue": null
+        },
+        "id": {
+          "stringValue": "I7CRnHdBtks2pVIicyOY"
+        },
+        "location": {
+          "stringValue": "Edgbaston, Birmingham"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-06-17T17:30:00Z"
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/pk.png"
+        },
+        "actualScore": {
+          "nullValue": null
+        },
+        "team1Id": {
+          "stringValue": "36cd5f74-bce4-41cd-8af7-63705d34d825"
+        },
+        "matchNumber": {
+          "integerValue": "11"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/za.png"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team2Id": {
+          "stringValue": "1f1f59f8-4f47-443e-ad91-8e59191ea7ff"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/TRYkyf8jKIyvtrC6LFrr",
+      "fields": {
+        "team1Id": {
+          "stringValue": "e604d308-32bb-4d58-983c-6ef5b0eb0b04"
+        },
+        "matchNumber": {
+          "integerValue": "22"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/gb-eng.png"
+        },
+        "team2Id": {
+          "stringValue": "4a7de6dd-f10c-4bf5-8a59-058793c7332a"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-06-24T17:30:00Z"
+        },
+        "location": {
+          "stringValue": "Lord's, London"
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/jm.png"
+        },
+        "actualScore": {
+          "nullValue": null
+        },
+        "round": {
+          "stringValue": "Group Stage"
+        },
+        "team2Name": {
+          "stringValue": "West Indies"
+        },
+        "group": {
+          "nullValue": null
+        },
+        "id": {
+          "stringValue": "TRYkyf8jKIyvtrC6LFrr"
+        },
+        "team1Name": {
+          "stringValue": "England"
+        },
+        "status": {
+          "stringValue": "upcoming"
+        },
+        "winnerId": {
+          "nullValue": null
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/Vl1s5aU0WKIopBLpAbyN",
+      "fields": {
+        "winnerId": {
+          "nullValue": null
+        },
+        "status": {
+          "stringValue": "upcoming"
+        },
+        "team1Name": {
+          "stringValue": "England"
+        },
+        "id": {
+          "stringValue": "Vl1s5aU0WKIopBLpAbyN"
+        },
+        "group": {
+          "nullValue": null
+        },
+        "team2Name": {
+          "stringValue": "New Zealand"
+        },
+        "round": {
+          "stringValue": "Group Stage"
+        },
+        "actualScore": {
+          "nullValue": null
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/nz.png"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-06-27T17:30:00Z"
+        },
+        "location": {
+          "stringValue": "Kennington Oval, London"
+        },
+        "team2Id": {
+          "stringValue": "04e844d6-cda8-47c9-8e9e-58843972d4dd"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/gb-eng.png"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "matchNumber": {
+          "integerValue": "28"
+        },
+        "team1Id": {
+          "stringValue": "e604d308-32bb-4d58-983c-6ef5b0eb0b04"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/ZHkPVUNZYRrNtdBQHWt5",
+      "fields": {
+        "round": {
+          "stringValue": "Group Stage"
+        },
+        "team2Name": {
+          "stringValue": "Oman"
+        },
+        "group": {
+          "nullValue": null
+        },
+        "id": {
+          "stringValue": "ZHkPVUNZYRrNtdBQHWt5"
+        },
+        "team1Name": {
+          "stringValue": "Sri Lanka"
+        },
+        "status": {
+          "stringValue": "completed"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "team1Id": {
+          "stringValue": "c19088da-4d78-4340-bd72-0194461bfb05"
+        },
+        "matchNumber": {
+          "integerValue": "4"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/lk.png"
+        },
+        "team2Id": {
+          "stringValue": "170382c5-c795-4c4c-888a-f886b85c287e"
+        },
+        "location": {
+          "stringValue": "Colombo Cricket Club Ground, Colombo"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-06-13T17:30:00Z"
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/om.png"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "battingFirstId": {
+                "nullValue": null
+              },
+              "t1Runs": {
+                "integerValue": "183"
+              },
+              "t2Wickets": {
+                "integerValue": "6"
+              },
+              "t2Overs": {
+                "doubleValue": 20
+              },
+              "team1": {
+                "integerValue": "183"
+              },
+              "t1Wickets": {
+                "integerValue": "5"
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "t1Overs": {
+                "doubleValue": 17.5
+              },
+              "winnerId": {
+                "stringValue": "new_zealand"
+              },
+              "marginValue": {
+                "stringValue": "5"
+              },
+              "t2Runs": {
+                "integerValue": "182"
+              },
+              "team2": {
+                "integerValue": "182"
+              },
+              "verified": {
+                "booleanValue": true
+              },
+              "marginType": {
+                "stringValue": "wickets"
+              }
+            }
+          }
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/c19088da-4d78-4340-bd72-0194461bfb05_04e844d6-cda8-47c9-8e9e-58843972d4dd",
+      "fields": {
+        "id": {
+          "stringValue": "c19088da-4d78-4340-bd72-0194461bfb05_04e844d6-cda8-47c9-8e9e-58843972d4dd"
+        },
+        "round": {
+          "stringValue": "Super 8"
+        },
+        "team2Name": {
+          "stringValue": "Sri Lanka"
+        },
+        "group": {
+          "nullValue": null
+        },
+        "status": {
+          "stringValue": "upcoming"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "team1Name": {
+          "stringValue": "New Zealand"
+        },
+        "matchNumber": {
+          "integerValue": "46"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/nz.png"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team2Id": {
+          "stringValue": "c19088da-4d78-4340-bd72-0194461bfb05"
+        },
+        "team1Id": {
+          "stringValue": "04e844d6-cda8-47c9-8e9e-58843972d4dd"
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/lk.png"
+        },
+        "actualScore": {
+          "nullValue": null
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-25T13:30:00Z"
+        },
+        "location": {
+          "stringValue": "R.Premadasa Stadium, Colombo"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/c19088da-4d78-4340-bd72-0194461bfb05_170382c5-c795-4c4c-888a-f886b85c287e",
+      "fields": {
+        "team1Name": {
+          "stringValue": "Sri Lanka"
+        },
+        "status": {
+          "stringValue": "completed"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "round": {
+          "stringValue": "Round 2"
+        },
+        "team2Name": {
+          "stringValue": "Oman"
+        },
+        "group": {
+          "stringValue": "Group B"
+        },
+        "id": {
+          "stringValue": "c19088da-4d78-4340-bd72-0194461bfb05_170382c5-c795-4c4c-888a-f886b85c287e"
+        },
+        "location": {
+          "stringValue": "Pallekele International Cricket Stadium, Kandy"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-12T05:30:00Z"
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/om.png"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "battingFirstName": {
+                "stringValue": "Sri Lanka"
+              },
+              "t2Runs": {
+                "integerValue": "120"
+              },
+              "verified": {
+                "booleanValue": true
+              },
+              "team2": {
+                "integerValue": "120"
+              },
+              "marginType": {
+                "stringValue": "runs"
+              },
+              "t1Overs": {
+                "doubleValue": 20
+              },
+              "winnerId": {
+                "stringValue": "sri_lanka"
+              },
+              "marginValue": {
+                "stringValue": "105"
+              },
+              "team1": {
+                "integerValue": "225"
+              },
+              "t1Wickets": {
+                "integerValue": "5"
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "t2Overs": {
+                "doubleValue": 20
+              },
+              "t2Wickets": {
+                "integerValue": "9"
+              },
+              "battingFirstId": {
+                "stringValue": "sri_lanka"
+              },
+              "t1Runs": {
+                "integerValue": "225"
+              }
+            }
+          }
+        },
+        "team1Id": {
+          "stringValue": "c19088da-4d78-4340-bd72-0194461bfb05"
+        },
+        "matchNumber": {
+          "integerValue": "16"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/lk.png"
+        },
+        "team2Id": {
+          "stringValue": "170382c5-c795-4c4c-888a-f886b85c287e"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/c19088da-4d78-4340-bd72-0194461bfb05_1f1f59f8-4f47-443e-ad91-8e59191ea7ff",
+      "fields": {
+        "team1LogoUrl": {
+          "nullValue": null
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "matchNumber": {
+          "integerValue": "50"
+        },
+        "team2Id": {
+          "stringValue": "1f1f59f8-4f47-443e-ad91-8e59191ea7ff"
+        },
+        "team1Id": {
+          "stringValue": "c19088da-4d78-4340-bd72-0194461bfb05"
+        },
+        "team2LogoUrl": {
+          "nullValue": null
+        },
+        "actualScore": {
+          "nullValue": null
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-28T13:30:00Z"
+        },
+        "location": {
+          "stringValue": "Pallekele International Cricket Stadium, Kandy"
+        },
+        "id": {
+          "stringValue": "c19088da-4d78-4340-bd72-0194461bfb05_1f1f59f8-4f47-443e-ad91-8e59191ea7ff"
+        },
+        "round": {
+          "stringValue": "Round 8"
+        },
+        "group": {
+          "nullValue": null
+        },
+        "team2Name": {
+          "stringValue": "Pakistan"
+        },
+        "status": {
+          "stringValue": "upcoming"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "team1Name": {
+          "stringValue": "Sri Lanka"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/c19088da-4d78-4340-bd72-0194461bfb05_8bf2b02a-648a-4eba-8ea0-807fb6479791",
+      "fields": {
+        "status": {
+          "stringValue": "completed"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "team1Name": {
+          "stringValue": "Sri Lanka"
+        },
+        "id": {
+          "stringValue": "c19088da-4d78-4340-bd72-0194461bfb05_8bf2b02a-648a-4eba-8ea0-807fb6479791"
+        },
+        "round": {
+          "stringValue": "Round 1"
+        },
+        "team2Name": {
+          "stringValue": "Ireland"
+        },
+        "group": {
+          "stringValue": "Group B"
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/ie.png"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "marginType": {
+                "stringValue": "runs"
+              },
+              "t2Runs": {
+                "integerValue": "143"
+              },
+              "battingFirstName": {
+                "stringValue": "Sri Lanka"
+              },
+              "team2": {
+                "integerValue": "143"
+              },
+              "verified": {
+                "booleanValue": true
+              },
+              "marginValue": {
+                "stringValue": "20"
+              },
+              "t1Overs": {
+                "doubleValue": 20
+              },
+              "winnerId": {
+                "stringValue": "sri_lanka"
+              },
+              "team1": {
+                "integerValue": "163"
+              },
+              "t1Wickets": {
+                "integerValue": "6"
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "t1Runs": {
+                "integerValue": "163"
+              },
+              "battingFirstId": {
+                "stringValue": "sri_lanka"
+              },
+              "t2Wickets": {
+                "integerValue": "10"
+              },
+              "t2Overs": {
+                "doubleValue": 19.5
+              }
+            }
+          }
+        },
+        "location": {
+          "stringValue": "R.Premadasa Stadium, Colombo"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-08T13:30:00Z"
+        },
+        "matchNumber": {
+          "integerValue": "6"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/lk.png"
+        },
+        "team2Id": {
+          "stringValue": "8bf2b02a-648a-4eba-8ea0-807fb6479791"
+        },
+        "team1Id": {
+          "stringValue": "c19088da-4d78-4340-bd72-0194461bfb05"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/c19088da-4d78-4340-bd72-0194461bfb05_d7a42ef7-ba51-489b-a5d4-3a0d027e8d97",
+      "fields": {
+        "team1Name": {
+          "stringValue": "Sri Lanka"
+        },
+        "status": {
+          "stringValue": "completed"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "round": {
+          "stringValue": "Round 4"
+        },
+        "group": {
+          "stringValue": "Group B"
+        },
+        "team2Name": {
+          "stringValue": "Australia"
+        },
+        "id": {
+          "stringValue": "c19088da-4d78-4340-bd72-0194461bfb05_d7a42ef7-ba51-489b-a5d4-3a0d027e8d97"
+        },
+        "location": {
+          "stringValue": "Pallekele International Cricket Stadium, Kandy"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-16T13:30:00Z"
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/au.png"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "t1Wickets": {
+                "integerValue": "2"
+              },
+              "team1": {
+                "integerValue": "184"
+              },
+              "t2Wickets": {
+                "integerValue": "10"
+              },
+              "t2Overs": {
+                "doubleValue": 20
+              },
+              "battingFirstId": {
+                "stringValue": "australia"
+              },
+              "t1Runs": {
+                "integerValue": "184"
+              },
+              "marginType": {
+                "stringValue": "wickets"
+              },
+              "verified": {
+                "booleanValue": true
+              },
+              "team2": {
+                "integerValue": "181"
+              },
+              "battingFirstName": {
+                "stringValue": "Australia"
+              },
+              "t2Runs": {
+                "integerValue": "181"
+              },
+              "marginValue": {
+                "stringValue": "8"
+              },
+              "winnerId": {
+                "stringValue": "sri_lanka"
+              },
+              "t1Overs": {
+                "doubleValue": 18
+              }
+            }
+          }
+        },
+        "team1Id": {
+          "stringValue": "c19088da-4d78-4340-bd72-0194461bfb05"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/lk.png"
+        },
+        "matchNumber": {
+          "integerValue": "30"
+        },
+        "team2Id": {
+          "stringValue": "d7a42ef7-ba51-489b-a5d4-3a0d027e8d97"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/c19088da-4d78-4340-bd72-0194461bfb05_e604d308-32bb-4d58-983c-6ef5b0eb0b04",
+      "fields": {
+        "group": {
+          "nullValue": null
+        },
+        "team2Name": {
+          "stringValue": "Sri Lanka"
+        },
+        "round": {
+          "stringValue": "Super 8"
+        },
+        "id": {
+          "stringValue": "c19088da-4d78-4340-bd72-0194461bfb05_e604d308-32bb-4d58-983c-6ef5b0eb0b04"
+        },
+        "team1Name": {
+          "stringValue": "England"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "status": {
+          "stringValue": "upcoming"
+        },
+        "team1Id": {
+          "stringValue": "e604d308-32bb-4d58-983c-6ef5b0eb0b04"
+        },
+        "team2Id": {
+          "stringValue": "c19088da-4d78-4340-bd72-0194461bfb05"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/gb-eng.png"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "matchNumber": {
+          "integerValue": "42"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-22T09:30:00Z"
+        },
+        "location": {
+          "stringValue": "Pallekele International Cricket Stadium, Pallekele"
+        },
+        "actualScore": {
+          "nullValue": null
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/lk.png"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/c19088da-4d78-4340-bd72-0194461bfb05_e61f4e01-95cb-4b12-95a0-90ad35cdf151",
+      "fields": {
+        "location": {
+          "stringValue": "R.Premadasa Stadium, Colombo"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-19T09:30:00Z"
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/zw.png"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "t2Wickets": {
+                "integerValue": "4"
+              },
+              "t2Overs": {
+                "doubleValue": 19.3
+              },
+              "battingFirstId": {
+                "stringValue": "sri_lanka"
+              },
+              "t1Runs": {
+                "integerValue": "178"
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "t1Wickets": {
+                "integerValue": "7"
+              },
+              "team1": {
+                "integerValue": "178"
+              },
+              "winnerId": {
+                "stringValue": "zimbabwe"
+              },
+              "t1Overs": {
+                "doubleValue": 20
+              },
+              "marginValue": {
+                "stringValue": "6"
+              },
+              "verified": {
+                "booleanValue": true
+              },
+              "team2": {
+                "integerValue": "182"
+              },
+              "battingFirstName": {
+                "stringValue": "Sri Lanka"
+              },
+              "t2Runs": {
+                "integerValue": "182"
+              },
+              "marginType": {
+                "stringValue": "wickets"
+              }
+            }
+          }
+        },
+        "team1Id": {
+          "stringValue": "c19088da-4d78-4340-bd72-0194461bfb05"
+        },
+        "matchNumber": {
+          "integerValue": "38"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/lk.png"
+        },
+        "team2Id": {
+          "stringValue": "e61f4e01-95cb-4b12-95a0-90ad35cdf151"
+        },
+        "team1Name": {
+          "stringValue": "Sri Lanka"
+        },
+        "status": {
+          "stringValue": "completed"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "round": {
+          "stringValue": "Round 5"
+        },
+        "team2Name": {
+          "stringValue": "Zimbabwe"
+        },
+        "group": {
+          "stringValue": "Group B"
+        },
+        "id": {
+          "stringValue": "c19088da-4d78-4340-bd72-0194461bfb05_e61f4e01-95cb-4b12-95a0-90ad35cdf151"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/d2117dfc-5e44-4070-afdd-75f8c6a5cef6_2ad5450d-9d51-4126-84d5-c6c04ea2999c",
+      "fields": {
+        "scheduledTime": {
+          "timestampValue": "2026-02-09T05:30:00Z"
+        },
+        "location": {
+          "stringValue": "Eden Gardens, Kolkata"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "team1": {
+                "integerValue": "207"
+              },
+              "t1Wickets": {
+                "integerValue": "4"
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "t2Overs": {
+                "doubleValue": 16.4
+              },
+              "t2Wickets": {
+                "integerValue": "10"
+              },
+              "battingFirstId": {
+                "stringValue": "scotland"
+              },
+              "t1Runs": {
+                "integerValue": "207"
+              },
+              "battingFirstName": {
+                "stringValue": "Scotland"
+              },
+              "t2Runs": {
+                "integerValue": "134"
+              },
+              "verified": {
+                "booleanValue": true
+              },
+              "team2": {
+                "integerValue": "134"
+              },
+              "marginType": {
+                "stringValue": "runs"
+              },
+              "t1Overs": {
+                "doubleValue": 20
+              },
+              "winnerId": {
+                "stringValue": "scotland"
+              },
+              "marginValue": {
+                "stringValue": "73"
+              }
+            }
+          }
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/it.png"
+        },
+        "team1Id": {
+          "stringValue": "d2117dfc-5e44-4070-afdd-75f8c6a5cef6"
+        },
+        "team2Id": {
+          "stringValue": "2ad5450d-9d51-4126-84d5-c6c04ea2999c"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/gb-sct.png"
+        },
+        "matchNumber": {
+          "integerValue": "7"
+        },
+        "team1Name": {
+          "stringValue": "Scotland"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "status": {
+          "stringValue": "completed"
+        },
+        "group": {
+          "stringValue": "Group C"
+        },
+        "team2Name": {
+          "stringValue": "Italy"
+        },
+        "round": {
+          "stringValue": "Round 2"
+        },
+        "id": {
+          "stringValue": "d2117dfc-5e44-4070-afdd-75f8c6a5cef6_2ad5450d-9d51-4126-84d5-c6c04ea2999c"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/d2117dfc-5e44-4070-afdd-75f8c6a5cef6_52081ab3-adec-40bc-ba85-d9fd91ddc398",
+      "fields": {
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "team1": {
+                "integerValue": "170"
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "t1Wickets": {
+                "integerValue": "7"
+              },
+              "battingFirstId": {
+                "stringValue": "scotland"
+              },
+              "t1Runs": {
+                "integerValue": "170"
+              },
+              "t2Wickets": {
+                "integerValue": "3"
+              },
+              "t2Overs": {
+                "doubleValue": 19.2
+              },
+              "marginType": {
+                "stringValue": "wickets"
+              },
+              "t2Runs": {
+                "integerValue": "171"
+              },
+              "battingFirstName": {
+                "stringValue": "Scotland"
+              },
+              "team2": {
+                "integerValue": "171"
+              },
+              "verified": {
+                "booleanValue": true
+              },
+              "marginValue": {
+                "stringValue": "7"
+              },
+              "t1Overs": {
+                "doubleValue": 20
+              },
+              "winnerId": {
+                "stringValue": "nepal"
+              }
+            }
+          }
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/np.png"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-17T13:30:00Z"
+        },
+        "location": {
+          "stringValue": "Wankhede Stadium, Mumbai"
+        },
+        "team2Id": {
+          "stringValue": "52081ab3-adec-40bc-ba85-d9fd91ddc398"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/gb-sct.png"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "matchNumber": {
+          "integerValue": "33"
+        },
+        "team1Id": {
+          "stringValue": "d2117dfc-5e44-4070-afdd-75f8c6a5cef6"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "status": {
+          "stringValue": "completed"
+        },
+        "team1Name": {
+          "stringValue": "Scotland"
+        },
+        "id": {
+          "stringValue": "d2117dfc-5e44-4070-afdd-75f8c6a5cef6_52081ab3-adec-40bc-ba85-d9fd91ddc398"
+        },
+        "group": {
+          "stringValue": "Group C"
+        },
+        "team2Name": {
+          "stringValue": "Nepal"
+        },
+        "round": {
+          "stringValue": "Round 5"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/d6jAqnCouWGu7utnMXEq",
+      "fields": {
+        "team1Name": {
+          "stringValue": "Australia"
+        },
+        "status": {
+          "stringValue": "upcoming"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "round": {
+          "stringValue": "Group Stage"
+        },
+        "team2Name": {
+          "stringValue": "India"
+        },
+        "group": {
+          "nullValue": null
+        },
+        "id": {
+          "stringValue": "d6jAqnCouWGu7utnMXEq"
+        },
+        "location": {
+          "stringValue": "Lord's, London"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-06-28T13:30:00Z"
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/in.png"
+        },
+        "actualScore": {
+          "nullValue": null
+        },
+        "team1Id": {
+          "stringValue": "d7a42ef7-ba51-489b-a5d4-3a0d027e8d97"
+        },
+        "matchNumber": {
+          "integerValue": "30"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/au.png"
+        },
+        "team2Id": {
+          "stringValue": "79565c70-cb21-40f3-ac7f-c1f462f95ff0"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/d7a42ef7-ba51-489b-a5d4-3a0d027e8d97_170382c5-c795-4c4c-888a-f886b85c287e",
+      "fields": {
+        "team2Id": {
+          "stringValue": "170382c5-c795-4c4c-888a-f886b85c287e"
+        },
+        "matchNumber": {
+          "integerValue": "40"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/au.png"
+        },
+        "team1Id": {
+          "stringValue": "d7a42ef7-ba51-489b-a5d4-3a0d027e8d97"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "winnerId": {
+                "stringValue": "australia"
+              },
+              "t1Overs": {
+                "doubleValue": 9.4
+              },
+              "marginValue": {
+                "stringValue": "9"
+              },
+              "team2": {
+                "integerValue": "104"
+              },
+              "verified": {
+                "booleanValue": true
+              },
+              "t2Runs": {
+                "integerValue": "104"
+              },
+              "battingFirstName": {
+                "stringValue": "Oman"
+              },
+              "marginType": {
+                "stringValue": "wickets"
+              },
+              "t1Runs": {
+                "integerValue": "108"
+              },
+              "battingFirstId": {
+                "stringValue": "oman"
+              },
+              "t2Wickets": {
+                "integerValue": "10"
+              },
+              "t2Overs": {
+                "doubleValue": 16.2
+              },
+              "t1Wickets": {
+                "integerValue": "1"
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "team1": {
+                "integerValue": "108"
+              }
+            }
+          }
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/om.png"
+        },
+        "location": {
+          "stringValue": "Pallekele International Cricket Stadium, Kandy"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-20T13:30:00Z"
+        },
+        "id": {
+          "stringValue": "d7a42ef7-ba51-489b-a5d4-3a0d027e8d97_170382c5-c795-4c4c-888a-f886b85c287e"
+        },
+        "team2Name": {
+          "stringValue": "Oman"
+        },
+        "group": {
+          "stringValue": "Group B"
+        },
+        "round": {
+          "stringValue": "Round 5"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "status": {
+          "stringValue": "progressing"
+        },
+        "team1Name": {
+          "stringValue": "Australia"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/d7a42ef7-ba51-489b-a5d4-3a0d027e8d97_8bf2b02a-648a-4eba-8ea0-807fb6479791",
+      "fields": {
+        "team2Name": {
+          "stringValue": "Ireland"
+        },
+        "group": {
+          "stringValue": "Group B"
+        },
+        "round": {
+          "stringValue": "Round 2"
+        },
+        "id": {
+          "stringValue": "d7a42ef7-ba51-489b-a5d4-3a0d027e8d97_8bf2b02a-648a-4eba-8ea0-807fb6479791"
+        },
+        "team1Name": {
+          "stringValue": "Australia"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "status": {
+          "stringValue": "completed"
+        },
+        "team1Id": {
+          "stringValue": "d7a42ef7-ba51-489b-a5d4-3a0d027e8d97"
+        },
+        "team2Id": {
+          "stringValue": "8bf2b02a-648a-4eba-8ea0-807fb6479791"
+        },
+        "matchNumber": {
+          "integerValue": "14"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/au.png"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-11T09:30:00Z"
+        },
+        "location": {
+          "stringValue": "R.Premadasa Stadium, Colombo"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "team1": {
+                "integerValue": "186"
+              },
+              "t1Wickets": {
+                "integerValue": "6"
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "t2Wickets": {
+                "integerValue": "10"
+              },
+              "t2Overs": {
+                "doubleValue": 16.5
+              },
+              "battingFirstId": {
+                "stringValue": "australia"
+              },
+              "t1Runs": {
+                "integerValue": "186"
+              },
+              "marginType": {
+                "stringValue": "runs"
+              },
+              "battingFirstName": {
+                "stringValue": "Australia"
+              },
+              "t2Runs": {
+                "integerValue": "115"
+              },
+              "verified": {
+                "booleanValue": true
+              },
+              "team2": {
+                "integerValue": "115"
+              },
+              "marginValue": {
+                "stringValue": "67"
+              },
+              "t1Overs": {
+                "doubleValue": 20
+              },
+              "winnerId": {
+                "stringValue": "australia"
+              }
+            }
+          }
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/ie.png"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/d7a42ef7-ba51-489b-a5d4-3a0d027e8d97_e61f4e01-95cb-4b12-95a0-90ad35cdf151",
+      "fields": {
+        "id": {
+          "stringValue": "d7a42ef7-ba51-489b-a5d4-3a0d027e8d97_e61f4e01-95cb-4b12-95a0-90ad35cdf151"
+        },
+        "group": {
+          "stringValue": "Group B"
+        },
+        "team2Name": {
+          "stringValue": "Zimbabwe"
+        },
+        "round": {
+          "stringValue": "Round 3"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "status": {
+          "stringValue": "completed"
+        },
+        "team1Name": {
+          "stringValue": "Australia"
+        },
+        "team2Id": {
+          "stringValue": "e61f4e01-95cb-4b12-95a0-90ad35cdf151"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/au.png"
+        },
+        "matchNumber": {
+          "integerValue": "19"
+        },
+        "team1Id": {
+          "stringValue": "d7a42ef7-ba51-489b-a5d4-3a0d027e8d97"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "t1Wickets": {
+                "integerValue": "10"
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "team1": {
+                "integerValue": "146"
+              },
+              "t1Runs": {
+                "integerValue": "146"
+              },
+              "battingFirstId": {
+                "stringValue": "zimbabwe"
+              },
+              "t2Overs": {
+                "doubleValue": 20
+              },
+              "t2Wickets": {
+                "integerValue": "2"
+              },
+              "marginType": {
+                "stringValue": "runs"
+              },
+              "team2": {
+                "integerValue": "169"
+              },
+              "verified": {
+                "booleanValue": true
+              },
+              "t2Runs": {
+                "integerValue": "169"
+              },
+              "battingFirstName": {
+                "stringValue": "Zimbabwe"
+              },
+              "marginValue": {
+                "stringValue": "23"
+              },
+              "winnerId": {
+                "stringValue": "zimbabwe"
+              },
+              "t1Overs": {
+                "doubleValue": 19.3
+              }
+            }
+          }
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/zw.png"
+        },
+        "location": {
+          "stringValue": "R.Premadasa Stadium, Colombo"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-13T05:30:00Z"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/e604d308-32bb-4d58-983c-6ef5b0eb0b04_04e844d6-cda8-47c9-8e9e-58843972d4dd",
+      "fields": {
+        "team2Name": {
+          "stringValue": "New Zealand"
+        },
+        "group": {
+          "nullValue": null
+        },
+        "round": {
+          "stringValue": "Super 8"
+        },
+        "id": {
+          "stringValue": "e604d308-32bb-4d58-983c-6ef5b0eb0b04_04e844d6-cda8-47c9-8e9e-58843972d4dd"
+        },
+        "team1Name": {
+          "stringValue": "England"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "status": {
+          "stringValue": "upcoming"
+        },
+        "team1Id": {
+          "stringValue": "e604d308-32bb-4d58-983c-6ef5b0eb0b04"
+        },
+        "team2Id": {
+          "stringValue": "04e844d6-cda8-47c9-8e9e-58843972d4dd"
+        },
+        "matchNumber": {
+          "integerValue": "49"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/gb-eng.png"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-27T13:30:00Z"
+        },
+        "location": {
+          "stringValue": "R.Premadasa Stadium, Colombo"
+        },
+        "actualScore": {
+          "nullValue": null
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/nz.png"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/e604d308-32bb-4d58-983c-6ef5b0eb0b04_1f1f59f8-4f47-443e-ad91-8e59191ea7ff",
+      "fields": {
+        "team1Id": {
+          "stringValue": "e604d308-32bb-4d58-983c-6ef5b0eb0b04"
+        },
+        "team2Id": {
+          "stringValue": "1f1f59f8-4f47-443e-ad91-8e59191ea7ff"
+        },
+        "matchNumber": {
+          "integerValue": "45"
+        },
+        "team1LogoUrl": {
+          "nullValue": null
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-24T13:30:00Z"
+        },
+        "location": {
+          "stringValue": "Pallekele International Cricket Stadium, Kandy"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "t1Wickets": {
+                "integerValue": "6"
+              },
+              "team2": {
+                "integerValue": "152"
+              },
+              "team1": {
+                "integerValue": "153"
+              },
+              "t2Runs": {
+                "integerValue": "152"
+              },
+              "winnerId": {
+                "stringValue": "e604d308-32bb-4d58-983c-6ef5b0eb0b04"
+              },
+              "battingFirstId": {
+                "stringValue": "1f1f59f8-4f47-443e-ad91-8e59191ea7ff"
+              },
+              "t1Runs": {
+                "integerValue": "153"
+              },
+              "t1Overs": {
+                "doubleValue": 19.1
+              },
+              "t2Overs": {
+                "doubleValue": 20
+              },
+              "t2Wickets": {
+                "integerValue": "7"
+              },
+              "marginValue": {
+                "stringValue": "4"
+              }
+            }
+          }
+        },
+        "team2LogoUrl": {
+          "nullValue": null
+        },
+        "team2Name": {
+          "stringValue": "Pakistan"
+        },
+        "group": {
+          "nullValue": null
+        },
+        "round": {
+          "stringValue": "Round 7"
+        },
+        "id": {
+          "stringValue": "e604d308-32bb-4d58-983c-6ef5b0eb0b04_1f1f59f8-4f47-443e-ad91-8e59191ea7ff"
+        },
+        "team1Name": {
+          "stringValue": "England"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "status": {
+          "stringValue": "completed"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/e604d308-32bb-4d58-983c-6ef5b0eb0b04_2ad5450d-9d51-4126-84d5-c6c04ea2999c",
+      "fields": {
+        "status": {
+          "stringValue": "completed"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "team1Name": {
+          "stringValue": "England"
+        },
+        "id": {
+          "stringValue": "e604d308-32bb-4d58-983c-6ef5b0eb0b04_2ad5450d-9d51-4126-84d5-c6c04ea2999c"
+        },
+        "round": {
+          "stringValue": "Round 4"
+        },
+        "team2Name": {
+          "stringValue": "Italy"
+        },
+        "group": {
+          "stringValue": "Group C"
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/it.png"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "marginType": {
+                "stringValue": "runs"
+              },
+              "verified": {
+                "booleanValue": true
+              },
+              "team2": {
+                "integerValue": "178"
+              },
+              "battingFirstName": {
+                "stringValue": "England"
+              },
+              "t2Runs": {
+                "integerValue": "178"
+              },
+              "marginValue": {
+                "stringValue": "24"
+              },
+              "winnerId": {
+                "stringValue": "england"
+              },
+              "t1Overs": {
+                "doubleValue": 20
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "t1Wickets": {
+                "integerValue": "7"
+              },
+              "team1": {
+                "integerValue": "202"
+              },
+              "t2Wickets": {
+                "integerValue": "10"
+              },
+              "t2Overs": {
+                "doubleValue": 20
+              },
+              "battingFirstId": {
+                "stringValue": "england"
+              },
+              "t1Runs": {
+                "integerValue": "202"
+              }
+            }
+          }
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-16T09:30:00Z"
+        },
+        "location": {
+          "stringValue": "Eden Gardens, Kolkata"
+        },
+        "matchNumber": {
+          "integerValue": "29"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/gb-eng.png"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team2Id": {
+          "stringValue": "2ad5450d-9d51-4126-84d5-c6c04ea2999c"
+        },
+        "team1Id": {
+          "stringValue": "e604d308-32bb-4d58-983c-6ef5b0eb0b04"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/e604d308-32bb-4d58-983c-6ef5b0eb0b04_4a7de6dd-f10c-4bf5-8a59-058793c7332a",
+      "fields": {
+        "matchNumber": {
+          "integerValue": "15"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/gb-eng.png"
+        },
+        "team2Id": {
+          "stringValue": "4a7de6dd-f10c-4bf5-8a59-058793c7332a"
+        },
+        "team1Id": {
+          "stringValue": "e604d308-32bb-4d58-983c-6ef5b0eb0b04"
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/jm.png"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "marginValue": {
+                "stringValue": "30"
+              },
+              "winnerId": {
+                "stringValue": "west_indies"
+              },
+              "t1Overs": {
+                "doubleValue": 19
+              },
+              "marginType": {
+                "stringValue": "runs"
+              },
+              "verified": {
+                "booleanValue": true
+              },
+              "team2": {
+                "integerValue": "196"
+              },
+              "battingFirstName": {
+                "stringValue": "West Indies"
+              },
+              "t2Runs": {
+                "integerValue": "196"
+              },
+              "t2Wickets": {
+                "integerValue": "6"
+              },
+              "t2Overs": {
+                "doubleValue": 20
+              },
+              "battingFirstId": {
+                "stringValue": "west_indies"
+              },
+              "t1Runs": {
+                "integerValue": "166"
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "t1Wickets": {
+                "integerValue": "10"
+              },
+              "team1": {
+                "integerValue": "166"
+              }
+            }
+          }
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-11T13:30:00Z"
+        },
+        "location": {
+          "stringValue": "Wankhede Stadium, Mumbai"
+        },
+        "id": {
+          "stringValue": "e604d308-32bb-4d58-983c-6ef5b0eb0b04_4a7de6dd-f10c-4bf5-8a59-058793c7332a"
+        },
+        "round": {
+          "stringValue": "Round 2"
+        },
+        "team2Name": {
+          "stringValue": "West Indies"
+        },
+        "group": {
+          "stringValue": "Group C"
+        },
+        "status": {
+          "stringValue": "completed"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "team1Name": {
+          "stringValue": "England"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/e604d308-32bb-4d58-983c-6ef5b0eb0b04_52081ab3-adec-40bc-ba85-d9fd91ddc398",
+      "fields": {
+        "id": {
+          "stringValue": "e604d308-32bb-4d58-983c-6ef5b0eb0b04_52081ab3-adec-40bc-ba85-d9fd91ddc398"
+        },
+        "round": {
+          "stringValue": "Round 1"
+        },
+        "team2Name": {
+          "stringValue": "Nepal"
+        },
+        "group": {
+          "stringValue": "Group C"
+        },
+        "status": {
+          "stringValue": "completed"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "team1Name": {
+          "stringValue": "England"
+        },
+        "matchNumber": {
+          "integerValue": "5"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/gb-eng.png"
+        },
+        "team2Id": {
+          "stringValue": "52081ab3-adec-40bc-ba85-d9fd91ddc398"
+        },
+        "team1Id": {
+          "stringValue": "e604d308-32bb-4d58-983c-6ef5b0eb0b04"
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/np.png"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "t1Wickets": {
+                "integerValue": "7"
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "team1": {
+                "integerValue": "184"
+              },
+              "t1Runs": {
+                "integerValue": "184"
+              },
+              "battingFirstId": {
+                "stringValue": "england"
+              },
+              "t2Overs": {
+                "doubleValue": 20
+              },
+              "t2Wickets": {
+                "integerValue": "6"
+              },
+              "team2": {
+                "integerValue": "180"
+              },
+              "verified": {
+                "booleanValue": true
+              },
+              "t2Runs": {
+                "integerValue": "180"
+              },
+              "battingFirstName": {
+                "stringValue": "England"
+              },
+              "marginType": {
+                "stringValue": "runs"
+              },
+              "winnerId": {
+                "stringValue": "england"
+              },
+              "t1Overs": {
+                "doubleValue": 20
+              },
+              "marginValue": {
+                "stringValue": "4"
+              }
+            }
+          }
+        },
+        "location": {
+          "stringValue": "Wankhede Stadium, Mumbai"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-08T09:30:00Z"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/e604d308-32bb-4d58-983c-6ef5b0eb0b04_d2117dfc-5e44-4070-afdd-75f8c6a5cef6",
+      "fields": {
+        "matchNumber": {
+          "integerValue": "23"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/gb-eng.png"
+        },
+        "team2Id": {
+          "stringValue": "d2117dfc-5e44-4070-afdd-75f8c6a5cef6"
+        },
+        "team1Id": {
+          "stringValue": "e604d308-32bb-4d58-983c-6ef5b0eb0b04"
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/gb-sct.png"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "t2Wickets": {
+                "integerValue": "10"
+              },
+              "t2Overs": {
+                "doubleValue": 19.4
+              },
+              "t1Runs": {
+                "integerValue": "155"
+              },
+              "battingFirstId": {
+                "stringValue": "scotland"
+              },
+              "t1Wickets": {
+                "integerValue": "5"
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "team1": {
+                "integerValue": "155"
+              },
+              "marginValue": {
+                "stringValue": "5"
+              },
+              "winnerId": {
+                "stringValue": "england"
+              },
+              "t1Overs": {
+                "doubleValue": 18.2
+              },
+              "marginType": {
+                "stringValue": "wickets"
+              },
+              "verified": {
+                "booleanValue": true
+              },
+              "team2": {
+                "integerValue": "152"
+              },
+              "battingFirstName": {
+                "stringValue": "Scotland"
+              },
+              "t2Runs": {
+                "integerValue": "152"
+              }
+            }
+          }
+        },
+        "location": {
+          "stringValue": "Eden Gardens, Kolkata"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-14T09:30:00Z"
+        },
+        "id": {
+          "stringValue": "e604d308-32bb-4d58-983c-6ef5b0eb0b04_d2117dfc-5e44-4070-afdd-75f8c6a5cef6"
+        },
+        "round": {
+          "stringValue": "Round 3"
+        },
+        "team2Name": {
+          "stringValue": "Scotland"
+        },
+        "group": {
+          "stringValue": "Group C"
+        },
+        "status": {
+          "stringValue": "completed"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "team1Name": {
+          "stringValue": "England"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/e61f4e01-95cb-4b12-95a0-90ad35cdf151_170382c5-c795-4c4c-888a-f886b85c287e",
+      "fields": {
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/om.png"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "marginType": {
+                "stringValue": "wickets"
+              },
+              "team2": {
+                "integerValue": "103"
+              },
+              "verified": {
+                "booleanValue": true
+              },
+              "t2Runs": {
+                "integerValue": "103"
+              },
+              "battingFirstName": {
+                "stringValue": "Oman"
+              },
+              "marginValue": {
+                "stringValue": "8"
+              },
+              "winnerId": {
+                "stringValue": "zimbabwe"
+              },
+              "t1Overs": {
+                "doubleValue": 13.3
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "t1Wickets": {
+                "integerValue": "2"
+              },
+              "team1": {
+                "integerValue": "106"
+              },
+              "battingFirstId": {
+                "stringValue": "oman"
+              },
+              "t1Runs": {
+                "integerValue": "106"
+              },
+              "t2Wickets": {
+                "integerValue": "10"
+              },
+              "t2Overs": {
+                "doubleValue": 19.5
+              }
+            }
+          }
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-09T09:30:00Z"
+        },
+        "location": {
+          "stringValue": "Sinhalese Sports Club, Colombo"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/zw.png"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "matchNumber": {
+          "integerValue": "8"
+        },
+        "team2Id": {
+          "stringValue": "170382c5-c795-4c4c-888a-f886b85c287e"
+        },
+        "team1Id": {
+          "stringValue": "e61f4e01-95cb-4b12-95a0-90ad35cdf151"
+        },
+        "status": {
+          "stringValue": "completed"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "team1Name": {
+          "stringValue": "Zimbabwe"
+        },
+        "id": {
+          "stringValue": "e61f4e01-95cb-4b12-95a0-90ad35cdf151_170382c5-c795-4c4c-888a-f886b85c287e"
+        },
+        "round": {
+          "stringValue": "Round 1"
+        },
+        "group": {
+          "stringValue": "Group B"
+        },
+        "team2Name": {
+          "stringValue": "Oman"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/e61f4e01-95cb-4b12-95a0-90ad35cdf151_36cd5f74-bce4-41cd-8af7-63705d34d825",
+      "fields": {
+        "winnerId": {
+          "nullValue": null
+        },
+        "status": {
+          "stringValue": "upcoming"
+        },
+        "team1Name": {
+          "stringValue": "Zimbabwe"
+        },
+        "id": {
+          "stringValue": "e61f4e01-95cb-4b12-95a0-90ad35cdf151_36cd5f74-bce4-41cd-8af7-63705d34d825"
+        },
+        "group": {
+          "nullValue": null
+        },
+        "team2Name": {
+          "stringValue": "South Africa"
+        },
+        "round": {
+          "stringValue": "Round 8"
+        },
+        "actualScore": {
+          "nullValue": null
+        },
+        "team2LogoUrl": {
+          "nullValue": null
+        },
+        "location": {
+          "stringValue": "Arun Jaitley Stadium, Delhi"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-03-01T09:30:00Z"
+        },
+        "team2Id": {
+          "stringValue": "36cd5f74-bce4-41cd-8af7-63705d34d825"
+        },
+        "team1LogoUrl": {
+          "nullValue": null
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "matchNumber": {
+          "integerValue": "51"
+        },
+        "team1Id": {
+          "stringValue": "e61f4e01-95cb-4b12-95a0-90ad35cdf151"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/e61f4e01-95cb-4b12-95a0-90ad35cdf151_4a7de6dd-f10c-4bf5-8a59-058793c7332a",
+      "fields": {
+        "status": {
+          "stringValue": "upcoming"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "team1Name": {
+          "stringValue": "Zimbabwe"
+        },
+        "id": {
+          "stringValue": "e61f4e01-95cb-4b12-95a0-90ad35cdf151_4a7de6dd-f10c-4bf5-8a59-058793c7332a"
+        },
+        "round": {
+          "stringValue": "Super 8"
+        },
+        "group": {
+          "nullValue": null
+        },
+        "team2Name": {
+          "stringValue": "West Indies"
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/jm.png"
+        },
+        "actualScore": {
+          "nullValue": null
+        },
+        "location": {
+          "stringValue": "Wankhede Stadium, Mumbai"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-23T13:30:00Z"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/zw.png"
+        },
+        "matchNumber": {
+          "integerValue": "44"
+        },
+        "team2Id": {
+          "stringValue": "4a7de6dd-f10c-4bf5-8a59-058793c7332a"
+        },
+        "team1Id": {
+          "stringValue": "e61f4e01-95cb-4b12-95a0-90ad35cdf151"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/f13db68f-fd76-4f0b-8528-2e418f628e8a_55bcf213-92b9-493c-b8b2-a853701c7444",
+      "fields": {
+        "team2Name": {
+          "stringValue": "United Arab Emirates"
+        },
+        "group": {
+          "stringValue": "Group D"
+        },
+        "round": {
+          "stringValue": "Round 4"
+        },
+        "id": {
+          "stringValue": "f13db68f-fd76-4f0b-8528-2e418f628e8a_55bcf213-92b9-493c-b8b2-a853701c7444"
+        },
+        "team1Name": {
+          "stringValue": "Afghanistan"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "status": {
+          "stringValue": "completed"
+        },
+        "team1Id": {
+          "stringValue": "f13db68f-fd76-4f0b-8528-2e418f628e8a"
+        },
+        "team2Id": {
+          "stringValue": "55bcf213-92b9-493c-b8b2-a853701c7444"
+        },
+        "matchNumber": {
+          "integerValue": "28"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/af.png"
+        },
+        "location": {
+          "stringValue": "Arun Jaitley Stadium, Delhi"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-16T05:30:00Z"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "marginType": {
+                "stringValue": "wickets"
+              },
+              "battingFirstName": {
+                "stringValue": "United Arab Emirates"
+              },
+              "t2Runs": {
+                "integerValue": "160"
+              },
+              "verified": {
+                "booleanValue": true
+              },
+              "team2": {
+                "integerValue": "160"
+              },
+              "marginValue": {
+                "stringValue": "5"
+              },
+              "t1Overs": {
+                "doubleValue": 19.2
+              },
+              "winnerId": {
+                "stringValue": "afghanistan"
+              },
+              "team1": {
+                "integerValue": "162"
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "t1Wickets": {
+                "integerValue": "5"
+              },
+              "t2Wickets": {
+                "integerValue": "9"
+              },
+              "t2Overs": {
+                "doubleValue": 20
+              },
+              "battingFirstId": {
+                "stringValue": "united_arab_emirates"
+              },
+              "t1Runs": {
+                "integerValue": "162"
+              }
+            }
+          }
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/ae.png"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/f13db68f-fd76-4f0b-8528-2e418f628e8a_8d71a8a3-1b2c-465a-abb1-fea4fe77152a",
+      "fields": {
+        "location": {
+          "stringValue": "MA Chidambaram Stadium, Chennai"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-02-19T13:30:00Z"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "t1Runs": {
+                "integerValue": "200"
+              },
+              "battingFirstId": {
+                "stringValue": "afghanistan"
+              },
+              "t2Wickets": {
+                "integerValue": "8"
+              },
+              "t2Overs": {
+                "doubleValue": 20
+              },
+              "team1": {
+                "integerValue": "200"
+              },
+              "t1Wickets": {
+                "integerValue": "4"
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "marginValue": {
+                "stringValue": "82"
+              },
+              "t1Overs": {
+                "doubleValue": 20
+              },
+              "winnerId": {
+                "stringValue": "afghanistan"
+              },
+              "marginType": {
+                "stringValue": "runs"
+              },
+              "t2Runs": {
+                "integerValue": "118"
+              },
+              "battingFirstName": {
+                "stringValue": "Afghanistan"
+              },
+              "team2": {
+                "integerValue": "118"
+              },
+              "verified": {
+                "booleanValue": true
+              }
+            }
+          }
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/ca.png"
+        },
+        "team1Id": {
+          "stringValue": "f13db68f-fd76-4f0b-8528-2e418f628e8a"
+        },
+        "team2Id": {
+          "stringValue": "8d71a8a3-1b2c-465a-abb1-fea4fe77152a"
+        },
+        "matchNumber": {
+          "integerValue": "39"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/af.png"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1Name": {
+          "stringValue": "Afghanistan"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "status": {
+          "stringValue": "completed"
+        },
+        "team2Name": {
+          "stringValue": "Canada"
+        },
+        "group": {
+          "stringValue": "Group D"
+        },
+        "round": {
+          "stringValue": "Round 5"
+        },
+        "id": {
+          "stringValue": "f13db68f-fd76-4f0b-8528-2e418f628e8a_8d71a8a3-1b2c-465a-abb1-fea4fe77152a"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/pk3lzILEiweGFzuEWx9z",
+      "fields": {
+        "actualScore": {
+          "nullValue": null
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/za.png"
+        },
+        "location": {
+          "stringValue": "Emirates Old Trafford, Manchester"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-06-13T13:30:00Z"
+        },
+        "team2Id": {
+          "stringValue": "36cd5f74-bce4-41cd-8af7-63705d34d825"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/au.png"
+        },
+        "matchNumber": {
+          "integerValue": "3"
+        },
+        "team1Id": {
+          "stringValue": "d7a42ef7-ba51-489b-a5d4-3a0d027e8d97"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "status": {
+          "stringValue": "upcoming"
+        },
+        "team1Name": {
+          "stringValue": "Australia"
+        },
+        "id": {
+          "stringValue": "pk3lzILEiweGFzuEWx9z"
+        },
+        "group": {
+          "nullValue": null
+        },
+        "team2Name": {
+          "stringValue": "South Africa"
+        },
+        "round": {
+          "stringValue": "Group Stage"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/qUFDL2tI5JK350W5PyVB",
+      "fields": {
+        "team1Name": {
+          "stringValue": "Australia"
+        },
+        "status": {
+          "stringValue": "upcoming"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "round": {
+          "stringValue": "Group Stage"
+        },
+        "group": {
+          "nullValue": null
+        },
+        "team2Name": {
+          "stringValue": "Pakistan"
+        },
+        "id": {
+          "stringValue": "qUFDL2tI5JK350W5PyVB"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-06-23T17:30:00Z"
+        },
+        "location": {
+          "stringValue": "Headingley, Leeds"
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/pk.png"
+        },
+        "actualScore": {
+          "nullValue": null
+        },
+        "team1Id": {
+          "stringValue": "d7a42ef7-ba51-489b-a5d4-3a0d027e8d97"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/au.png"
+        },
+        "matchNumber": {
+          "integerValue": "21"
+        },
+        "team2Id": {
+          "stringValue": "1f1f59f8-4f47-443e-ad91-8e59191ea7ff"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be/matches/xiyDcODvNOASmARuioKp",
+      "fields": {
+        "id": {
+          "stringValue": "xiyDcODvNOASmARuioKp"
+        },
+        "team2Name": {
+          "stringValue": "India"
+        },
+        "group": {
+          "nullValue": null
+        },
+        "round": {
+          "stringValue": "Group Stage"
+        },
+        "winnerId": {
+          "nullValue": null
+        },
+        "status": {
+          "stringValue": "completed"
+        },
+        "team1Name": {
+          "stringValue": "South Africa"
+        },
+        "team2Id": {
+          "stringValue": "79565c70-cb21-40f3-ac7f-c1f462f95ff0"
+        },
+        "matchNumber": {
+          "integerValue": "18"
+        },
+        "team1LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/za.png"
+        },
+        "competitionId": {
+          "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+        },
+        "team1Id": {
+          "stringValue": "36cd5f74-bce4-41cd-8af7-63705d34d825"
+        },
+        "actualScore": {
+          "mapValue": {
+            "fields": {
+              "team2": {
+                "integerValue": "116"
+              },
+              "verified": {
+                "booleanValue": true
+              },
+              "t2Runs": {
+                "integerValue": "116"
+              },
+              "battingFirstName": {
+                "stringValue": "India"
+              },
+              "marginType": {
+                "stringValue": "runs"
+              },
+              "winnerId": {
+                "stringValue": "india"
+              },
+              "t1Overs": {
+                "doubleValue": 20
+              },
+              "marginValue": {
+                "stringValue": "93"
+              },
+              "t1Wickets": {
+                "integerValue": "9"
+              },
+              "manuallyScored": {
+                "booleanValue": true
+              },
+              "team1": {
+                "integerValue": "209"
+              },
+              "battingFirstId": {
+                "stringValue": "india"
+              },
+              "t1Runs": {
+                "integerValue": "209"
+              },
+              "t2Overs": {
+                "doubleValue": 18.2
+              },
+              "t2Wickets": {
+                "integerValue": "10"
+              }
+            }
+          }
+        },
+        "team2LogoUrl": {
+          "stringValue": "https://flagcdn.com/w160/in.png"
+        },
+        "scheduledTime": {
+          "timestampValue": "2026-06-21T13:30:00Z"
+        },
+        "location": {
+          "stringValue": "Emirates Old Trafford, Manchester"
+        }
+      },
+      "createTime": "2026-02-22T12:16:21.694584Z",
+      "updateTime": "2026-02-22T12:16:21.694584Z"
+    }
+  ]
+}

@@ -10,14 +10,19 @@ import '../services/pdf_service.dart';
 import '../services/ad_service.dart';
 import '../utils/share_util.dart';
 
+import 'package:flutter/foundation.dart';
+import '../utils/standings_calculator.dart';
+
 class LeaderboardScreen extends StatefulWidget {
   final CompetitionModel competition;
   final bool embed;
+  final bool isParticipant;
 
   const LeaderboardScreen({
     super.key,
     required this.competition,
     this.embed = false,
+    this.isParticipant = false,
   });
 
   @override
@@ -185,139 +190,259 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
             return const Center(child: LoadingSpinner());
           }
 
-          if (snapshot.hasError) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  'Error loading standings:\n${snapshot.error}',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: AppColors.error),
-                ),
-              ),
+          if (snapshot.hasError ||
+              (snapshot.hasData && snapshot.data!.isEmpty)) {
+            final errorStr = snapshot.error?.toString() ?? 'No data found';
+            final bool isPermissionError = errorStr.contains(
+              'permission-denied',
             );
-          }
 
-          final standings = snapshot.data ?? [];
-
-          // Client-side sorting based on competition rules
-          // Client-side sorting based on competition rules
-          standings.sort((a, b) {
-            // 1. Points (Always first)
-            int cmp = b.points.compareTo(a.points);
-            if (cmp != 0) return cmp;
-
-            // 2. Dynamic Tie Breakers (Respecting order defined by user)
-            for (final rule in widget.competition.tieBreakerRules) {
-              if (rule == AppConstants.tieBreakerGoalDiff) {
-                cmp = b.goalDifference.compareTo(a.goalDifference);
-              } else if (rule == AppConstants.tieBreakerGoalsScored) {
-                cmp = b.goalsFor.compareTo(a.goalsFor);
-              } else if (rule == AppConstants.tieBreakerWins) {
-                cmp = b.won.compareTo(a.won);
-              } else if (rule == AppConstants.tieBreakerNrr) {
-                cmp = b.netRunRate.compareTo(a.netRunRate);
-              }
-              // Head-to-head not fully implemented on client-side yet
-              if (cmp != 0) return cmp;
-            }
-
-            // 3. Sport-specific Fallbacks (If rules are not explicitly defined or points/rules are equal)
-            if (widget.competition.sport == AppConstants.sportCricket) {
-              // IPL Standard Fallback: Wins then NRR
-              if (!widget.competition.tieBreakerRules.contains(
-                AppConstants.tieBreakerWins,
-              )) {
-                cmp = b.won.compareTo(a.won);
-                if (cmp != 0) return cmp;
-              }
-              if (!widget.competition.tieBreakerRules.contains(
-                AppConstants.tieBreakerNrr,
-              )) {
-                cmp = b.netRunRate.compareTo(a.netRunRate);
-                if (cmp != 0) return cmp;
-              }
-            } else {
-              // Football/General Fallback: GD then Goals For
-              if (!widget.competition.tieBreakerRules.contains(
-                AppConstants.tieBreakerGoalDiff,
-              )) {
-                cmp = b.goalDifference.compareTo(a.goalDifference);
-                if (cmp != 0) return cmp;
-              }
-              if (!widget.competition.tieBreakerRules.contains(
-                AppConstants.tieBreakerGoalsScored,
-              )) {
-                cmp = b.goalsFor.compareTo(a.goalsFor);
-                if (cmp != 0) return cmp;
-              }
-            }
-
-            // 4. Final Fallback: Name
-            return a.teamName.compareTo(b.teamName);
-          });
-
-          if (standings.isEmpty) {
-            return const Center(
-              child: Text(
-                'No standings available yet.',
-                style: TextStyle(color: AppColors.textSecondary),
-              ),
-            );
-          }
-
-          // Group standings if format is Groups + Knockout or group field is present
-          final Map<String, List<StandingModel>> groupedData = {};
-          for (var s in standings) {
-            final g = s.group ?? 'Other';
-            groupedData.putIfAbsent(g, () => []).add(s);
-          }
-
-          // Sort group names
-          final sortedGroups = groupedData.keys.toList()..sort();
-
-          return SingleChildScrollView(
-            child: RepaintBoundary(
-              key: _boundaryKey,
-              child: Container(
-                color: AppColors.backgroundDark,
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                child: Column(
-                  children: sortedGroups.map((groupName) {
-                    final groupStandings = groupedData[groupName]!;
-
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                          child: Text(
-                            groupName.toUpperCase(),
-                            style: const TextStyle(
-                              color: AppColors.accentGreen,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                              letterSpacing: 1.2,
-                            ),
+            // If it's a participant OR a public competition, try fallback calculation from matches
+            if (widget.isParticipant || widget.competition.isPublic) {
+              return FutureBuilder<List<StandingModel>>(
+                future: _getCalculatedStandings(firestore),
+                builder: (context, fallbackSnapshot) {
+                  if (fallbackSnapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    return const Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          LoadingSpinner(),
+                          SizedBox(height: 16),
+                          Text(
+                            'Processing table...',
+                            style: TextStyle(color: AppColors.textSecondary),
                           ),
-                        ),
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child:
-                              widget.competition.sport ==
-                                  AppConstants.sportCricket
-                              ? _buildCricketTable(groupStandings)
-                              : _buildDefaultTable(groupStandings),
-                        ),
-                        const SizedBox(height: 16),
-                      ],
+                        ],
+                      ),
                     );
-                  }).toList(),
-                ),
+                  }
+
+                  if (fallbackSnapshot.hasError ||
+                      !fallbackSnapshot.hasData ||
+                      fallbackSnapshot.data!.isEmpty) {
+                    // If fallback also fails, show the restricted or empty view
+                    if (isPermissionError && !widget.isParticipant) {
+                      return _buildRestrictedView();
+                    }
+                    final fallbackError =
+                        fallbackSnapshot.error?.toString() ??
+                        'No matches found';
+                    return _buildEmptyOrErrorView(fallbackError);
+                  }
+
+                  return _buildTable(fallbackSnapshot.data!);
+                },
+              );
+            }
+
+            if (isPermissionError) {
+              return _buildRestrictedView();
+            }
+            return _buildEmptyOrErrorView(errorStr);
+          }
+
+          return _buildTable(snapshot.data!);
+        },
+      ),
+    );
+  }
+
+  Widget _buildRestrictedView() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.lock_outline,
+              size: 64,
+              color: AppColors.textSecondary,
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Access Restricted',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
               ),
             ),
-          );
-        },
+            const SizedBox(height: 8),
+            const Text(
+              'Standings are only visible to participants of this competition.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: AppColors.textSecondary),
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              'Please join the competition to view the full table and leaderboard.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyOrErrorView(String error) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.table_rows_outlined,
+              size: 48,
+              color: AppColors.textSecondary,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Table not available yet',
+              style: TextStyle(
+                color: AppColors.textPrimary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Matches might still be in progress or data is syncing.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: AppColors.textSecondary),
+            ),
+            if (kDebugMode) ...[
+              const SizedBox(height: 16),
+              Text(
+                'Debug: $error',
+                style: const TextStyle(color: AppColors.error, fontSize: 10),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<List<StandingModel>> _getCalculatedStandings(
+    FirestoreService firestore,
+  ) async {
+    // Fetch matches and teams, then calculate standings in-memory
+    final matches = await firestore.getMatches(widget.competition.id).first;
+    final teams = await firestore.getTeams(widget.competition.id).first;
+    return StandingsCalculator.calculate(
+      matches: matches,
+      teams: teams,
+      competition: widget.competition,
+    );
+  }
+
+  Widget _buildTable(List<StandingModel> standings) {
+    if (standings.isEmpty) {
+      return _buildEmptyOrErrorView('No teams found');
+    }
+
+    // Client-side sorting based on competition rules
+    standings.sort((a, b) {
+      // 1. Points (Always first)
+      int cmp = b.points.compareTo(a.points);
+      if (cmp != 0) return cmp;
+
+      // 2. Dynamic Tie Breakers (Respecting order defined by user)
+      for (final rule in widget.competition.tieBreakerRules) {
+        if (rule == AppConstants.tieBreakerGoalDiff) {
+          cmp = b.goalDifference.compareTo(a.goalDifference);
+        } else if (rule == AppConstants.tieBreakerGoalsScored) {
+          cmp = b.goalsFor.compareTo(a.goalsFor);
+        } else if (rule == AppConstants.tieBreakerWins) {
+          cmp = b.won.compareTo(a.won);
+        } else if (rule == AppConstants.tieBreakerNrr) {
+          cmp = b.netRunRate.compareTo(a.netRunRate);
+        }
+        if (cmp != 0) return cmp;
+      }
+
+      // 3. Sport-specific Fallbacks
+      if (widget.competition.sport == AppConstants.sportCricket) {
+        if (!widget.competition.tieBreakerRules.contains(
+          AppConstants.tieBreakerWins,
+        )) {
+          cmp = b.won.compareTo(a.won);
+          if (cmp != 0) return cmp;
+        }
+        if (!widget.competition.tieBreakerRules.contains(
+          AppConstants.tieBreakerNrr,
+        )) {
+          cmp = b.netRunRate.compareTo(a.netRunRate);
+          if (cmp != 0) return cmp;
+        }
+      } else {
+        if (!widget.competition.tieBreakerRules.contains(
+          AppConstants.tieBreakerGoalDiff,
+        )) {
+          cmp = b.goalDifference.compareTo(a.goalDifference);
+          if (cmp != 0) return cmp;
+        }
+        if (!widget.competition.tieBreakerRules.contains(
+          AppConstants.tieBreakerGoalsScored,
+        )) {
+          cmp = b.goalsFor.compareTo(a.goalsFor);
+          if (cmp != 0) return cmp;
+        }
+      }
+
+      // 4. Final Fallback: Name
+      return a.teamName.compareTo(b.teamName);
+    });
+
+    // Group standings
+    final Map<String, List<StandingModel>> groupedData = {};
+    for (var s in standings) {
+      final g = s.group ?? 'Other';
+      groupedData.putIfAbsent(g, () => []).add(s);
+    }
+
+    final sortedGroups = groupedData.keys.toList()..sort();
+
+    return SingleChildScrollView(
+      child: RepaintBoundary(
+        key: _boundaryKey,
+        child: Container(
+          color: AppColors.backgroundDark,
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Column(
+            children: sortedGroups.map((groupName) {
+              final groupStandings = groupedData[groupName]!;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                    child: Text(
+                      groupName.toUpperCase(),
+                      style: const TextStyle(
+                        color: AppColors.accentGreen,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                  ),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: widget.competition.sport == AppConstants.sportCricket
+                        ? _buildCricketTable(groupStandings)
+                        : _buildDefaultTable(groupStandings),
+                  ),
+                  const SizedBox(height: 16),
+                ],
+              );
+            }).toList(),
+          ),
+        ),
       ),
     );
   }

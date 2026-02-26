@@ -152,7 +152,7 @@ class TermsPage extends StatelessWidget {
           SizedBox(height: 32),
           Center(
             child: Text(
-              'Contact us at support@winniko.com for any questions.',
+              'Contact us at teamwinniko@gmail.com for any questions.',
               style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
             ),
           ),
@@ -280,7 +280,7 @@ class PrivacyPolicyPage extends StatelessWidget {
             title: '7. Contact Us',
             content:
                 'For any privacy-related inquiries or data requests, please contact us at:\n'
-                'Email: support@winniko.com',
+                'Email: teamwinniko@gmail.com',
           ),
 
           SizedBox(height: 32),
@@ -403,7 +403,7 @@ class TutorialPage extends StatelessWidget {
 
           const Center(
             child: Text(
-              'Questions? Contact support@winniko.com',
+              'Questions? Contact teamwinniko@gmail.com',
               style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
             ),
           ),

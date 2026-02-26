@@ -130,8 +130,34 @@ class _TournamentSelectionScreenState extends State<TournamentSelectionScreen>
     },
   ];
 
+  Set<String> _blacklist = {};
+
+  bool _isBlacklisted(String id) {
+    if (_blacklist.contains(id)) return true;
+    // Map internal UI keys to blacklisted official external IDs
+    final mappings = {
+      'pl': 'epl-2025',
+      'ucl': 'champions-league-2025',
+      'laliga': 'la-liga-2025',
+      'bundesliga': 'bundesliga-2025',
+      'seriea': 'serie-a-2025',
+      'ligue1': 'ligue-1-2025',
+      'wc2026': 'fifa-world-cup-2026',
+      'ipl': 'ipl-2025',
+    };
+    final officialId = mappings[id];
+    if (officialId != null && _blacklist.contains(officialId)) {
+      return true;
+    }
+    return false;
+  }
+
   List<Map<String, dynamic>> get _filteredTournaments => _tournaments
-      .where((t) => t['sport'] == widget.competitionPrototype.sport)
+      .where(
+        (t) =>
+            t['sport'] == widget.competitionPrototype.sport &&
+            !_isBlacklisted(t['id'] as String),
+      )
       .toList();
 
   @override
@@ -142,6 +168,21 @@ class _TournamentSelectionScreenState extends State<TournamentSelectionScreen>
       duration: const Duration(milliseconds: 800),
     );
     _controller.forward();
+    _loadBlacklist();
+  }
+
+  Future<void> _loadBlacklist() async {
+    try {
+      final firestore = Provider.of<FirestoreService>(context, listen: false);
+      final blacklist = await firestore.getBlacklistedTournamentIds();
+      if (mounted) {
+        setState(() {
+          _blacklist = blacklist;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading blacklist: $e');
+    }
   }
 
   @override
@@ -594,7 +635,7 @@ class _TournamentSelectionScreenState extends State<TournamentSelectionScreen>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Tournament Dictionary',
+                        'Search Official Tournaments',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 18,

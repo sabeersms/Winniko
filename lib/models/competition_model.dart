@@ -129,6 +129,15 @@ class CompetitionModel {
     };
   }
 
+  bool get isFinished {
+    if (status == 'finished' || status == 'archived') return true;
+    if (endDate != null && endDate!.isBefore(DateTime.now())) return true;
+    return false;
+  }
+
+  int get displayParticipantCount =>
+      participantCount < 0 ? 0 : participantCount;
+
   factory CompetitionModel.fromMap(
     Map<String, dynamic> map,
     String documentId,
@@ -170,7 +179,8 @@ class CompetitionModel {
           ? List<String>.from(map['customImages'])
           : null,
       customCaption: map['customCaption'],
-      participantCount: map['participantCount'] ?? 0,
+      participantCount:
+          map['participantCount'] ?? map['participantsCount'] ?? 0,
       createdAt: (map['createdAt'] as Timestamp).toDate(),
       startDate: map['startDate'] != null
           ? (map['startDate'] as Timestamp).toDate()

@@ -11,12 +11,14 @@ class JoinCompetitionScreen extends StatefulWidget {
   final String userId;
   final String userName;
   final String? userPhone;
+  final String? userPhotoUrl;
 
   const JoinCompetitionScreen({
     super.key,
     required this.userId,
     required this.userName,
     this.userPhone,
+    this.userPhotoUrl,
   });
 
   @override
@@ -112,6 +114,7 @@ class _JoinCompetitionScreenState extends State<JoinCompetitionScreen> {
         userId: widget.userId,
         userName: widget.userName,
         phoneNumber: widget.userPhone,
+        photoUrl: widget.userPhotoUrl,
         competitionId: competition.id,
         joinedAt: DateTime.now(),
       );

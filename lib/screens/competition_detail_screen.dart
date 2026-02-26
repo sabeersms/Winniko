@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,8 +11,6 @@ import '../models/competition_model.dart';
 import '../models/user_model.dart';
 import '../models/participant_model.dart';
 import '../models/message_model.dart';
-import '../models/match_model.dart';
-import '../services/tournament_data_service.dart';
 
 import 'leaderboard_screen.dart';
 import 'participant_leaderboard_screen.dart';
@@ -44,7 +43,7 @@ class CompetitionDetailScreen extends StatefulWidget {
 }
 
 class _CompetitionDetailScreenState extends State<CompetitionDetailScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   CompetitionModel? _competition;
   UserModel? _currentUser;
   ParticipantModel? _participant;
@@ -52,28 +51,35 @@ class _CompetitionDetailScreenState extends State<CompetitionDetailScreen>
   bool _hasJoined = false;
   bool _isJoining = false;
   late TabController _tabController;
+  StreamSubscription? _syncSubscription;
+
+  bool get _isOfficial => _competition?.leagueId?.isNotEmpty == true;
 
   @override
   void initState() {
     super.initState();
+    // Initialize with default length, will be updated in _loadData if necessary
     _tabController = TabController(
       length: 4,
       vsync: this,
       initialIndex: widget.initialTab,
     );
-    _tabController.addListener(() {
-      setState(() {});
-    });
+    _tabController.addListener(_handleTabSelection);
     _loadData();
+  }
+
+  void _handleTabSelection() {
+    if (mounted) setState(() {});
   }
 
   @override
   void dispose() {
+    _syncSubscription?.cancel();
+    _tabController.removeListener(_handleTabSelection);
     _tabController.dispose();
     super.dispose();
   }
 
-  // ... _loadData, _joinCompetition, _leaveCompetition, _syncMatches methods remain the same ...
   Future<void> _loadData() async {
     final firestoreService = Provider.of<FirestoreService>(
       context,
@@ -82,80 +88,174 @@ class _CompetitionDetailScreenState extends State<CompetitionDetailScreen>
     final authService = Provider.of<AuthService>(context, listen: false);
 
     try {
-      final competition = await firestoreService.getCompetition(
+      debugPrint('🔍 Loading competition data for ID: ${widget.competitionId}');
+
+      // 1. Try fetching by ID (Standard)
+      CompetitionModel? competition = await firestoreService.getCompetition(
         widget.competitionId,
       );
 
-      // Trigger auto-refresh for active official tournaments
-      if (competition != null &&
-          competition.leagueId != null &&
-          competition.leagueId!.isNotEmpty &&
-          competition.status == 'active') {
-        TournamentDataService.refreshCompetitionFixtures(
-          competitionId: widget.competitionId,
-          leagueId: competition.leagueId!,
-          firestore: firestoreService,
-        ).catchError((e) => debugPrint('Auto-refresh error: $e'));
+      // 2. Fallback: Try by Join Code if not found by ID
+      if (competition == null) {
+        debugPrint(
+          '🔍 Not found by ID, trying as Join Code: ${widget.competitionId}',
+        );
+        competition = await firestoreService.getCompetitionByJoinCode(
+          widget.competitionId.toUpperCase(),
+        );
       }
+
+      if (competition == null) {
+        debugPrint(
+          '❌ CompetitionDetails: Competition not found (${widget.competitionId})',
+        );
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+        return;
+      }
+
       final userId = authService.currentUserId;
+      UserModel? user;
+      bool hasJoined = false;
+      ParticipantModel? participant;
 
       if (userId != null) {
-        final user = await authService.getUserProfile(userId);
-        final hasJoined = await firestoreService.hasJoinedCompetition(
+        user = await authService.getUserProfile(userId);
+        hasJoined = await firestoreService.hasJoinedCompetition(
           userId,
-          widget.competitionId,
+          competition.id, // Use actual competition ID
         );
-
-        ParticipantModel? participant;
         if (hasJoined) {
           participant = await firestoreService.getParticipant(
-            widget.competitionId,
+            competition.id,
             userId,
           );
         }
 
-        if (competition != null && user != null) {
-          // Location check removed
-          // isEligible = await locationService.isEligibleForCompetition(...);
-
-          // Ensure Join Code exists (Self-healing for older competitions)
-          if (competition.joinCode.isEmpty &&
-              user.id == competition.organizerId) {
-            await firestoreService.ensureJoinCode(competition.id);
-            // Reload competition to get the code
-            final updatedCompetition = await firestoreService.getCompetition(
-              widget.competitionId,
-            );
-            if (updatedCompetition != null) {
-              setState(() {
-                _competition = updatedCompetition;
-                _currentUser = user;
-                _hasJoined = hasJoined;
-                _participant = participant;
-                _isLoading = false;
-              });
-              return;
-            }
+        // Self-healing for missing Join Code
+        if (user != null &&
+            competition.joinCode.isEmpty &&
+            user.id == competition.organizerId) {
+          debugPrint('🛠️ Self-healing: Generating missing join code...');
+          await firestoreService.ensureJoinCode(competition.id);
+          // Reload competition
+          final updated = await firestoreService.getCompetition(competition.id);
+          if (updated != null) {
+            _loadData(); // Re-run with new data
+            return;
           }
         }
+      }
 
-        setState(() {
-          _competition = competition;
-          _currentUser = user;
-          _hasJoined = hasJoined;
-          _participant = participant;
-          _participant = participant;
-          _isLoading = false;
+      if (!mounted) return;
+
+      // 3. Update TabController length if necessary
+      // We now show 4 tabs for official leagues too (to show the Table/Standings)
+      // unless it's a format that specifically doesn't use a table.
+      bool showTable = true;
+      if (competition.format == AppConstants.formatKnockout ||
+          competition.format == AppConstants.formatSingleMatch) {
+        showTable = false;
+      }
+
+      // Hide table for official cricket tournaments as requested
+      if (competition.sport == AppConstants.sportCricket &&
+          competition.leagueId != null &&
+          competition.leagueId!.isNotEmpty) {
+        showTable = false;
+      }
+
+      final desiredTabCount = showTable ? 4 : 3;
+      if (_tabController.length != desiredTabCount) {
+        debugPrint(
+          '🔄 Reconfiguring TabController: ${_tabController.length} -> $desiredTabCount',
+        );
+        final oldIndex = _tabController.index;
+
+        _tabController.removeListener(_handleTabSelection);
+        _tabController.dispose();
+
+        _tabController = TabController(
+          length: desiredTabCount,
+          vsync: this,
+          initialIndex: oldIndex < desiredTabCount ? oldIndex : 0,
+        );
+        _tabController.addListener(_handleTabSelection);
+      }
+
+      setState(() {
+        _competition = competition;
+        _currentUser = user;
+        _hasJoined = hasJoined;
+        _participant = participant;
+        _isLoading = false;
+      });
+
+      // Start Auto Sync for Verification (Master Workflow)
+      if (competition.leagueId?.isNotEmpty == true) {
+        _syncSubscription?.cancel();
+        _syncSubscription = firestoreService.startAutoSync(
+          competition.id,
+          competition.leagueId!,
+        );
+      }
+
+      // Self-healing: Update participant count if it's negative or out of sync
+      if (competition.participantCount < 0) {
+        debugPrint(
+          '🛠️ Auto-fixing negative participant count for ${competition.id}',
+        );
+        firestoreService.recountParticipants(competition.id).then((newCount) {
+          if (mounted && newCount >= 0) {
+            setState(() {
+              _competition = _competition?.copyWith(participantCount: newCount);
+            });
+          }
         });
+      }
 
-        if (hasJoined) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (mounted) _tabController.animateTo(1);
-          });
-        }
+      // Self-healing: Update participant photo
+      if (participant != null &&
+          user?.photoUrl != null &&
+          participant.photoUrl != user!.photoUrl) {
+        final currentPhotoUrl = user.photoUrl!;
+        firestoreService
+            .updateParticipantPhoto(competition.id, userId!, currentPhotoUrl)
+            .then((_) {
+              if (mounted) {
+                setState(() {
+                  _participant = _participant?.copyWith(
+                    photoUrl: currentPhotoUrl,
+                  );
+                });
+              }
+            });
+      }
+
+      if (hasJoined) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          // If viewing overview and joined, move to matches tab
+          if (mounted && _tabController.index == 0) {
+            _tabController.animateTo(1);
+          }
+        });
       }
     } catch (e) {
-      if (mounted) setState(() => _isLoading = false);
+      debugPrint('💥 Error loading competition data: $e');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error loading competition: $e'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
     }
   }
 
@@ -173,7 +273,7 @@ class _CompetitionDetailScreenState extends State<CompetitionDetailScreen>
           userName: _currentUser!.name,
           photoUrl: _currentUser!.photoUrl,
           phoneNumber: _currentUser!.phone,
-          competitionId: widget.competitionId,
+          competitionId: _competition!.id,
           joinedAt: DateTime.now(),
         );
 
@@ -208,12 +308,12 @@ class _CompetitionDetailScreenState extends State<CompetitionDetailScreen>
           userName: _currentUser!.name,
           photoUrl: _currentUser!.photoUrl,
           phoneNumber: _currentUser!.phone,
-          competitionId: widget.competitionId,
+          competitionId: _competition!.id, // Use actual ID
           joinedAt: DateTime.now(),
         );
 
         await firestoreService.joinCompetition(
-          widget.competitionId,
+          _competition!.id, // Use actual ID
           participant,
         );
 
@@ -228,13 +328,16 @@ class _CompetitionDetailScreenState extends State<CompetitionDetailScreen>
             isOrganizer: false,
             isSystem: true,
           );
-          await firestoreService.sendMessage(widget.competitionId, sysMsg);
+          await firestoreService.sendMessage(_competition!.id, sysMsg);
         } catch (_) {}
 
         setState(() {
           _hasJoined = true;
           _isJoining = false;
         });
+
+        // 🔄 Refresh data to show updated participant count
+        _loadData();
 
         if (!mounted) return;
 
@@ -327,6 +430,9 @@ class _CompetitionDetailScreenState extends State<CompetitionDetailScreen>
       final firestore = Provider.of<FirestoreService>(context, listen: false);
       await firestore.leaveCompetition(_competition!.id, _currentUser!.id);
 
+      // 🔄 Refresh data to show updated participant count
+      _loadData();
+
       setState(() {
         _hasJoined = false;
         _participant = null;
@@ -354,124 +460,6 @@ class _CompetitionDetailScreenState extends State<CompetitionDetailScreen>
     }
   }
 
-  Future<void> _syncMatches() async {
-    if (_competition == null) return;
-
-    // Use stored leagueId if available (robust), otherwise try name matching (legacy)
-    final leagueId =
-        _competition!.leagueId ??
-        TournamentDataService.getLeagueIdByName(_competition!.name);
-
-    if (leagueId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Cannot sync: Unknown league')),
-      );
-      return;
-    }
-
-    setState(() => _isLoading = true);
-
-    try {
-      final firestore = Provider.of<FirestoreService>(context, listen: false);
-
-      // 1. Get existing teams
-      final teams = await firestore.getTeams(_competition!.id).first;
-
-      // 2. Fetch latest data
-      final latestMatches = await TournamentDataService.getTournamentFixtures(
-        _competition!.id,
-        leagueId,
-        teams,
-      );
-
-      // 3. Get existing matches
-      final existingMatches = await firestore
-          .getMatches(_competition!.id)
-          .first;
-
-      int updatedCount = 0;
-      for (var newMatch in latestMatches) {
-        // Find existing match by teams
-        MatchModel? existing;
-        for (var m in existingMatches) {
-          if (m.team1Id == newMatch.team1Id && m.team2Id == newMatch.team2Id) {
-            existing = m;
-            break;
-          }
-        }
-
-        if (existing != null) {
-          bool needsUpdate = false;
-          // Check status
-          if (existing.status != newMatch.status) needsUpdate = true;
-          // Check time (if changed significantly, e.g. rescheduled)
-          if (existing.scheduledTime != newMatch.scheduledTime) {
-            needsUpdate = true;
-          }
-
-          // Check scores
-          final oldS = existing.actualScore;
-          final newS = newMatch.actualScore;
-          if (oldS == null && newS != null) needsUpdate = true;
-          if (oldS != null && newS == null) needsUpdate = true;
-          if (oldS != null && newS != null) {
-            if (oldS['team1'] != newS['team1'] ||
-                oldS['team2'] != newS['team2']) {
-              needsUpdate = true;
-            }
-          }
-
-          if (needsUpdate) {
-            final isLiveOrCompleted =
-                newMatch.status == AppConstants.matchStatusLive ||
-                newMatch.status == AppConstants.matchStatusCompleted;
-
-            if (isLiveOrCompleted && newMatch.actualScore != null) {
-              if (existing.scheduledTime != newMatch.scheduledTime) {
-                await firestore.updateMatch(
-                  existing.copyWith(scheduledTime: newMatch.scheduledTime),
-                );
-              }
-
-              await firestore.updateMatchScore(
-                _competition!.id,
-                existing.id,
-                newMatch.actualScore!,
-                newMatch.status,
-                oldScore: existing.actualScore,
-              );
-            } else {
-              await firestore.updateMatch(newMatch.copyWith(id: existing.id));
-            }
-            updatedCount++;
-          }
-        }
-      }
-
-      await firestore.recalculateStandings(_competition!.id);
-
-      if (mounted) {
-        setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Synced! Updated $updatedCount matches.'),
-            backgroundColor: AppColors.success,
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Sync failed: $e'),
-            backgroundColor: AppColors.error,
-          ),
-        );
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
@@ -486,10 +474,57 @@ class _CompetitionDetailScreenState extends State<CompetitionDetailScreen>
       return Scaffold(
         backgroundColor: AppColors.backgroundDark,
         appBar: AppBar(title: const Text('Competition Details')),
-        body: const Center(
-          child: Text(
-            'Competition not found',
-            style: TextStyle(color: AppColors.error),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.emoji_events_outlined,
+                color: AppColors.textSecondary,
+                size: 64,
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Competition not found',
+                style: TextStyle(
+                  color: AppColors.textPrimary,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: Text(
+                  'We couldn\'t find a competition with ID:\n${widget.competitionId}',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton.icon(
+                onPressed: () {
+                  setState(() => _isLoading = true);
+                  _loadData();
+                },
+                icon: const Icon(Icons.refresh),
+                label: const Text('Try Again'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.accentGreen,
+                  foregroundColor: Colors.black,
+                ),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text(
+                  'Go Back',
+                  style: TextStyle(color: AppColors.textSecondary),
+                ),
+              ),
+            ],
           ),
         ),
       );
@@ -515,7 +550,8 @@ class _CompetitionDetailScreenState extends State<CompetitionDetailScreen>
             ),
 
           // Manual Standings Refresh (Table Tab Only (Index 3) - Organizer Only)
-          if (_tabController.index == 3 &&
+          if (!_isOfficial &&
+              _tabController.index == 3 &&
               _currentUser?.id == _competition!.organizerId &&
               !(_competition!.format == AppConstants.formatKnockout ||
                   _competition!.format == AppConstants.formatSingleMatch))
@@ -544,15 +580,6 @@ class _CompetitionDetailScreenState extends State<CompetitionDetailScreen>
                   }
                 }
               },
-            ),
-
-          // Sync Button (Only for Organizer of Public Competition)
-          if (_currentUser?.id == _competition!.organizerId &&
-              _competition!.isPublic)
-            IconButton(
-              icon: const Icon(Icons.sync),
-              tooltip: 'Sync with Official Scores',
-              onPressed: _syncMatches,
             ),
 
           if (_currentUser?.id == _competition!.organizerId)
@@ -626,8 +653,9 @@ class _CompetitionDetailScreenState extends State<CompetitionDetailScreen>
             ),
 
           // Task 18: PDF Action (Table/Standings)
-          if (_currentUser?.id == _competition!.organizerId &&
+          if (!_isOfficial &&
               _tabController.index == 3 &&
+              _currentUser?.id == _competition!.organizerId &&
               !(_competition!.format == AppConstants.formatKnockout ||
                   _competition!.format == AppConstants.formatSingleMatch))
             IconButton(
@@ -653,16 +681,17 @@ class _CompetitionDetailScreenState extends State<CompetitionDetailScreen>
           unselectedLabelColor: AppColors.textSecondary,
           isScrollable: true,
           tabs: [
-            Tab(text: 'Overview'),
-            Tab(text: 'Matches'),
-            Tab(text: 'Leaderboard'),
-            Tab(
-              text:
-                  (_competition!.format == AppConstants.formatKnockout ||
-                      _competition!.format == AppConstants.formatSingleMatch)
-                  ? 'Result'
-                  : 'Table',
-            ),
+            const Tab(text: 'Overview'),
+            const Tab(text: 'Matches'),
+            const Tab(text: 'Leaderboard'),
+            if (_tabController.length > 3)
+              Tab(
+                text:
+                    (_competition!.format == AppConstants.formatKnockout ||
+                        _competition!.format == AppConstants.formatSingleMatch)
+                    ? 'Result'
+                    : 'Table',
+              ),
           ],
         ),
       ),
@@ -676,15 +705,20 @@ class _CompetitionDetailScreenState extends State<CompetitionDetailScreen>
             isParticipant: _hasJoined,
           ),
           ParticipantLeaderboardScreen(competition: _competition!),
-          (_competition!.format == AppConstants.formatKnockout ||
-                  _competition!.format == AppConstants.formatSingleMatch)
-              ? MatchesListScreen(
-                  competition: _competition!,
-                  embed: true,
-                  isParticipant: _hasJoined,
-                  initialFilter: 'Completed',
-                )
-              : LeaderboardScreen(competition: _competition!, embed: true),
+          if (_tabController.length > 3)
+            (_competition!.format == AppConstants.formatKnockout ||
+                    _competition!.format == AppConstants.formatSingleMatch)
+                ? MatchesListScreen(
+                    competition: _competition!,
+                    embed: true,
+                    isParticipant: _hasJoined,
+                    initialFilter: 'Completed',
+                  )
+                : LeaderboardScreen(
+                    competition: _competition!,
+                    embed: true,
+                    isParticipant: _hasJoined,
+                  ),
         ],
       ),
       floatingActionButton: null,
@@ -810,22 +844,43 @@ class _CompetitionDetailScreenState extends State<CompetitionDetailScreen>
                     child: SizedBox(
                       width: double.infinity,
                       height: 50,
-                      child: ElevatedButton(
-                        onPressed: !_isJoining ? _joinCompetition : null,
-                        child: _isJoining
-                            ? const SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: LoadingSpinner(
-                                  size: 20,
-                                  color: AppColors.textPrimary,
+                      child: (_competition?.isFinished ?? false)
+                          ? Container(
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: AppColors.textSecondary.withValues(
+                                  alpha: 0.1,
                                 ),
-                              )
-                            : const Text(
-                                'Join Competition',
-                                style: TextStyle(fontSize: 16),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: AppColors.textSecondary,
+                                ),
                               ),
-                      ),
+                              child: const Text(
+                                'FINISHED',
+                                style: TextStyle(
+                                  color: AppColors.textSecondary,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            )
+                          : ElevatedButton(
+                              onPressed: !_isJoining ? _joinCompetition : null,
+                              child: _isJoining
+                                  ? const SizedBox(
+                                      height: 20,
+                                      width: 20,
+                                      child: LoadingSpinner(
+                                        size: 20,
+                                        color: AppColors.textPrimary,
+                                      ),
+                                    )
+                                  : const Text(
+                                      'Join Competition',
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                            ),
                     ),
                   )
                 else

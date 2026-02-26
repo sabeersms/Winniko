@@ -8,8 +8,11 @@ import '../services/firestore_service.dart';
 import '../services/auth_service.dart';
 import '../widgets/loading_spinner.dart';
 import '../utils/share_util.dart';
+import 'user_profile_screen.dart';
 import '../services/pdf_service.dart';
 import '../services/ad_service.dart';
+import '../models/match_model.dart';
+import '../models/prediction_model.dart';
 
 class ParticipantLeaderboardScreen extends StatefulWidget {
   final CompetitionModel competition;
@@ -46,10 +49,53 @@ class _ParticipantLeaderboardScreenState
           }
 
           if (snapshot.hasError) {
+            final errorStr = snapshot.error.toString();
+            if (errorStr.contains('permission-denied')) {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(32.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.lock_outline,
+                        size: 64,
+                        color: AppColors.textSecondary,
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Access Restricted',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'This leaderboard is only visible to participants of this competition.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: AppColors.textSecondary),
+                      ),
+                      const SizedBox(height: 24),
+                      const Text(
+                        'Please join the competition to see the full rankings and detailed stats.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
             return Center(
               child: Text(
-                'Error: ${snapshot.error}',
+                'Error: $errorStr',
                 style: const TextStyle(color: AppColors.error),
+                textAlign: TextAlign.center,
               ),
             );
           }
@@ -156,6 +202,49 @@ class _ParticipantLeaderboardScreenState
     );
   }
 
+  Future<void> _navigateToProfile(ParticipantModel participant) async {
+    final authService = Provider.of<AuthService>(context, listen: false);
+
+    // Show loading indicator
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) =>
+          const Center(child: LoadingSpinner(color: AppColors.accentGreen)),
+    );
+
+    try {
+      final userModel = await authService.getUserProfile(participant.userId);
+      if (!mounted) return;
+      Navigator.pop(context); // Close loading
+
+      if (userModel != null) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => UserProfileScreen(
+              user: userModel,
+              isCurrentUser: participant.userId == authService.currentUserId,
+              isOrganizer:
+                  authService.currentUserId != null &&
+                  authService.currentUserId == widget.competition.organizerId,
+            ),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not load user profile.')),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      Navigator.pop(context); // Close loading
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error: $e')));
+    }
+  }
+
   Future<void> _downloadUserReport(ParticipantModel participant) async {
     // Show Ad before PDF generation
     ScaffoldMessenger.of(context).showSnackBar(
@@ -205,10 +294,16 @@ class _ParticipantLeaderboardScreenState
           final matchesStream = firestore.getMatches(widget.competition.id);
           final matches = await matchesStream.first;
 
+          // Filter out orphaned predictions (matches that no longer exist)
+          // This ensures points match the Leaderboard calculation
+          final validPredictions = predictions
+              .where((p) => matches.any((m) => m.id == p.matchId))
+              .toList();
+
           // 3. Generate PDF
           await PdfService.generateUserReport(
             participant,
-            predictions,
+            validPredictions,
             widget.competition,
             matches,
           );
@@ -365,6 +460,12 @@ class _ParticipantLeaderboardScreenState
       actions: [
         if (isOrganizer)
           IconButton(
+            icon: const Icon(Icons.refresh, color: Colors.white),
+            tooltip: 'Recalculate Stats',
+            onPressed: () => _recalculateStats(),
+          ),
+        if (isOrganizer)
+          IconButton(
             icon: const Icon(Icons.download_rounded, color: Colors.white),
             tooltip: 'Download Full Leaderboard',
             onPressed: () => _downloadFullLeaderboard(participants),
@@ -383,6 +484,79 @@ class _ParticipantLeaderboardScreenState
         const SizedBox(width: 8),
       ],
     );
+  }
+
+  Future<void> _recalculateStats() async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.cardBackground,
+        title: const Text(
+          'Recalculate Leaderboard?',
+          style: TextStyle(color: Colors.white),
+        ),
+        content: const Text(
+          'This will rebuild everyone\'s points from scratch based on their prediction history. Useful if data seems out of sync.',
+          style: TextStyle(color: AppColors.textSecondary),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: AppColors.textSecondary),
+            ),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.accentGreen,
+            ),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text(
+              'Recalculate',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      if (!mounted) return;
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) =>
+            const Center(child: LoadingSpinner(color: AppColors.accentGreen)),
+      );
+
+      try {
+        await Provider.of<FirestoreService>(
+          context,
+          listen: false,
+        ).recalculateParticipantStats(widget.competition.id);
+
+        if (mounted) {
+          Navigator.pop(context); // Close loading
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Recalculation complete!'),
+              backgroundColor: AppColors.success,
+            ),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          Navigator.pop(context); // Close loading
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error: $e'),
+              backgroundColor: AppColors.error,
+            ),
+          );
+        }
+      }
+    }
   }
 
   Future<void> _downloadFullLeaderboard(
@@ -408,9 +582,30 @@ class _ParticipantLeaderboardScreenState
         );
 
         try {
+          final firestore = Provider.of<FirestoreService>(
+            context,
+            listen: false,
+          );
+
+          // 1. Fetch Matches
+          final matchesStream = firestore.getMatches(widget.competition.id);
+          final matches = await matchesStream.first;
+
+          // 2. Fetch All Predictions (using new helper)
+          final allPredictions = await firestore.getCompetitionPredictions(
+            widget.competition.id,
+          );
+
+          // Filter out orphaned predictions to match Leaderboard logic
+          final validPredictions = allPredictions
+              .where((p) => matches.any((m) => m.id == p.matchId))
+              .toList();
+
           await PdfService.generateFullLeaderboard(
             widget.competition,
             participants,
+            matches,
+            validPredictions,
           );
           if (!mounted) return;
           Navigator.pop(context);
@@ -437,30 +632,39 @@ class _ParticipantLeaderboardScreenState
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Expanded(
-            child: _buildPodiumSpot(
-              winners[1],
-              winners[1].rank,
-              55, // Avatar Size (Reduced from 60)
-              90, // Bar Height (Reduced from 110)
-              isOrganizer,
+            child: GestureDetector(
+              onTap: isOrganizer ? () => _navigateToProfile(winners[1]) : null,
+              child: _buildPodiumSpot(
+                winners[1],
+                winners[1].rank,
+                55, // Avatar Size (Reduced from 60)
+                90, // Bar Height (Reduced from 110)
+                isOrganizer,
+              ),
             ),
           ),
           Expanded(
-            child: _buildPodiumSpot(
-              winners[0],
-              winners[0].rank,
-              70, // Avatar Size (Reduced from 80)
-              120, // Bar Height (Reduced from 150)
-              isOrganizer,
+            child: GestureDetector(
+              onTap: isOrganizer ? () => _navigateToProfile(winners[0]) : null,
+              child: _buildPodiumSpot(
+                winners[0],
+                winners[0].rank,
+                65, // Avatar Size (Reduced from 70)
+                120, // Bar Height (Reduced from 140)
+                isOrganizer,
+              ),
             ),
           ),
           Expanded(
-            child: _buildPodiumSpot(
-              winners[2],
-              winners[2].rank,
-              45, // Avatar Size (Reduced from 50)
-              70, // Bar Height (Reduced from 90)
-              isOrganizer,
+            child: GestureDetector(
+              onTap: isOrganizer ? () => _navigateToProfile(winners[2]) : null,
+              child: _buildPodiumSpot(
+                winners[2],
+                winners[2].rank,
+                55, // Avatar Size
+                70, // Bar Height (Reduced from 90)
+                isOrganizer,
+              ),
             ),
           ),
         ],
@@ -688,154 +892,159 @@ class _ParticipantLeaderboardScreenState
             ? AppColors.accentGreen.withValues(alpha: 0.5)
             : AppColors.dividerColor.withValues(alpha: 0.05));
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      decoration: BoxDecoration(
-        color: isMe
-            ? AppColors.accentGreen.withValues(alpha: 0.15)
-            : AppColors.cardBackground.withValues(alpha: 0.4),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: effectiveBorderColor,
-          width: borderColor != null ? 2 : 1, // Thicker for top ranks
+    return GestureDetector(
+      onTap: isOrganizer ? () => _navigateToProfile(participant) : null,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 8),
+        decoration: BoxDecoration(
+          color: isMe
+              ? AppColors.accentGreen.withValues(alpha: 0.15)
+              : AppColors.cardBackground.withValues(alpha: 0.4),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: effectiveBorderColor,
+            width: borderColor != null ? 2 : 1, // Thicker for top ranks
+          ),
+          boxShadow: borderColor != null
+              ? [
+                  BoxShadow(
+                    color: borderColor.withValues(alpha: 0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : null,
         ),
-        boxShadow: borderColor != null
-            ? [
-                BoxShadow(
-                  color: borderColor.withValues(alpha: 0.3),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ]
-            : null,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-        child: Row(
-          children: [
-            // Rank
-            Container(
-              width: 32,
-              alignment: Alignment.center,
-              child: Text(
-                '${participant.rank}',
-                style: TextStyle(
-                  color: isMe
-                      ? AppColors.accentGreen
-                      : (rankTextColor ?? AppColors.textSecondary),
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+          child: Row(
+            children: [
+              // Rank
+              Container(
+                width: 32,
+                alignment: Alignment.center,
+                child: Text(
+                  '${participant.rank}',
+                  style: TextStyle(
+                    color: isMe
+                        ? AppColors.accentGreen
+                        : (rankTextColor ?? AppColors.textSecondary),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(width: 8),
-            // Avatar
-            _buildAvatar(participant, 36), // Compacted size
-            const SizedBox(width: 12),
-            // Info
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Flexible(
-                        child: Text(
-                          participant.userName,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14, // Compacted font
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      if (isMe) ...[
-                        const SizedBox(width: 6),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 6,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.accentGreen,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: const Text(
-                            'YOU',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 8,
-                              fontWeight: FontWeight.bold,
+              const SizedBox(width: 8),
+              // Avatar
+              _buildAvatar(participant, 36), // Compacted size
+              const SizedBox(width: 12),
+              // Info
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            participant.userName,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14, // Compacted font
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        if (isMe) ...[
+                          const SizedBox(width: 6),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.accentGreen,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: const Text(
+                              'YOU',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 8,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                    const SizedBox(height: 2),
+                    Row(
+                      children: [
+                        _buildStatChip(
+                          Icons.star_rounded,
+                          '${participant.perfectScores}',
+                          Colors.amber,
+                        ),
+                        const SizedBox(width: 8),
+                        _buildStatChip(
+                          Icons.check_circle_outline_rounded,
+                          '${participant.correctOutcomes}',
+                          AppColors.accentGreen,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          '${participant.totalPredictions} Pred.',
+                          style: TextStyle(
+                            color: AppColors.textSecondary.withValues(
+                              alpha: 0.6,
+                            ),
+                            fontSize: 10,
                           ),
                         ),
                       ],
-                    ],
+                    ),
+                  ],
+                ),
+              ),
+              // Points
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    '${participant.totalPoints}',
+                    style: const TextStyle(
+                      color: AppColors.accentGreen,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 18, // Compacted font
+                    ),
                   ),
-                  const SizedBox(height: 2),
-                  Row(
-                    children: [
-                      _buildStatChip(
-                        Icons.star_rounded,
-                        '${participant.perfectScores}',
-                        Colors.amber,
-                      ),
-                      const SizedBox(width: 8),
-                      _buildStatChip(
-                        Icons.check_circle_outline_rounded,
-                        '${participant.correctOutcomes}',
-                        AppColors.accentGreen,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        '${participant.totalPredictions} Pred.',
-                        style: TextStyle(
-                          color: AppColors.textSecondary.withValues(alpha: 0.6),
-                          fontSize: 10,
-                        ),
-                      ),
-                    ],
+                  const Text(
+                    'PTS',
+                    style: TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: 9,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
-            ),
-            // Points
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  '${participant.totalPoints}',
-                  style: const TextStyle(
-                    color: AppColors.accentGreen,
-                    fontWeight: FontWeight.w900,
-                    fontSize: 18, // Compacted font
-                  ),
-                ),
-                const Text(
-                  'PTS',
-                  style: TextStyle(
+              if (isOrganizer && onDownload != null) ...[
+                const SizedBox(width: 8),
+                IconButton(
+                  icon: const Icon(
+                    Icons.picture_as_pdf,
+                    size: 20,
                     color: AppColors.textSecondary,
-                    fontSize: 9,
-                    fontWeight: FontWeight.bold,
                   ),
+                  onPressed: onDownload,
+                  tooltip: 'Download Report',
                 ),
               ],
-            ),
-            if (isOrganizer && onDownload != null) ...[
-              const SizedBox(width: 8),
-              IconButton(
-                icon: const Icon(
-                  Icons.picture_as_pdf,
-                  size: 20,
-                  color: AppColors.textSecondary,
-                ),
-                onPressed: onDownload,
-                tooltip: 'Download Report',
-              ),
             ],
-          ],
+          ),
         ),
       ),
     );

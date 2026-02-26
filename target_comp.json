@@ -1,0 +1,268 @@
+{
+  "name": "projects/winniko-real/databases/(default)/documents/competitions/f7b5c908-a118-44b0-b78a-b2d23627f2be",
+  "fields": {
+    "customImages": {
+      "nullValue": null
+    },
+    "leagueId": {
+      "stringValue": "mens-t20-world-cup-2026"
+    },
+    "participantCount": {
+      "integerValue": "16"
+    },
+    "isPaid": {
+      "booleanValue": false
+    },
+    "pointsForLoss": {
+      "integerValue": "0"
+    },
+    "isPublic": {
+      "booleanValue": true
+    },
+    "restrictionRadius": {
+      "nullValue": null
+    },
+    "termsAndConditions": {
+      "stringValue": "### No Purchase Necessary\nNo purchase or payment of any kind is necessary to enter or win this contest. A purchase will not increase your chances of winning.\n\n### Sponsorship Disclaimer\nThis contest is organized solely by the competition creator. Apple Inc., Google LLC, and their affiliates are strictly NOT sponsors of, and are in no way involved with, this contest or promotion.\n\n### Point Logic\nPoints will be awarded based on the accuracy of predictions as follows:\n\n• Football:\n  - Predicting the correct Match Result (Winner or Draw): 3 Points\n  - Predicting the Correct Scoreline (in addition to the result): 2 Bonus Points\n\n• Cricket:\n  - Predicting the Match Winner: 3 Points\n  - Predicting the Correct Winning Margin (Runs or Wickets): 2 Bonus Points\n  - Predicting a Draw/Tie correctly: 5 Points (Full points: 3+2)\n\n### Event Modifications\nAs this contest may be linked to specific events, the organizers reserve the right to modify, postpone, or cancel the contest rules or the contest itself in the event of changes, delays, or cancellation of the underlying event.\n\n### Final Authority\nThe decision of the organizers shall be final and binding in all matters related to the contest."
+    },
+    "description": {
+      "nullValue": null
+    },
+    "termsMetadata": {
+      "arrayValue": {
+        "values": [
+          {
+            "mapValue": {
+              "fields": {
+                "content": {
+                  "stringValue": "No purchase or payment of any kind is necessary to enter or win this contest. A purchase will not increase your chances of winning."
+                },
+                "title": {
+                  "stringValue": "No Purchase Necessary"
+                },
+                "isVisible": {
+                  "booleanValue": true
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "content": {
+                  "stringValue": "This contest is organized solely by the competition creator. Apple Inc., Google LLC, and their affiliates are strictly NOT sponsors of, and are in no way involved with, this contest or promotion."
+                },
+                "title": {
+                  "stringValue": "Sponsorship Disclaimer"
+                },
+                "isVisible": {
+                  "booleanValue": true
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "isVisible": {
+                  "booleanValue": true
+                },
+                "title": {
+                  "stringValue": "Point Logic"
+                },
+                "content": {
+                  "stringValue": "Points will be awarded based on the accuracy of predictions as follows:\n\n• Football:\n  - Predicting the correct Match Result (Winner or Draw): 3 Points\n  - Predicting the Correct Scoreline (in addition to the result): 2 Bonus Points\n\n• Cricket:\n  - Predicting the Match Winner: 3 Points\n  - Predicting the Correct Winning Margin (Runs or Wickets): 2 Bonus Points\n  - Predicting a Draw/Tie correctly: 5 Points (Full points: 3+2)"
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "title": {
+                  "stringValue": "Event Modifications"
+                },
+                "content": {
+                  "stringValue": "As this contest may be linked to specific events, the organizers reserve the right to modify, postpone, or cancel the contest rules or the contest itself in the event of changes, delays, or cancellation of the underlying event."
+                },
+                "isVisible": {
+                  "booleanValue": true
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "content": {
+                  "stringValue": "The decision of the organizers shall be final and binding in all matters related to the contest."
+                },
+                "title": {
+                  "stringValue": "Final Authority"
+                },
+                "isVisible": {
+                  "booleanValue": true
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "isVisible": {
+                  "booleanValue": false
+                },
+                "title": {
+                  "stringValue": "Identity Verification"
+                },
+                "content": {
+                  "stringValue": "Participants must register using their legal name and a valid mobile number. The use of fake identities, aliases, or incorrect details is strictly prohibited and will result in immediate disqualification."
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "isVisible": {
+                  "booleanValue": false
+                },
+                "content": {
+                  "stringValue": "The organizers reserve the right to request official government-issued ID proof from shortlisted or winning participants. Failure to provide valid identification upon request will lead to forfeiture of the prize."
+                },
+                "title": {
+                  "stringValue": "Proof of Identity"
+                }
+              }
+            }
+          },
+          {
+            "mapValue": {
+              "fields": {
+                "isVisible": {
+                  "booleanValue": false
+                },
+                "title": {
+                  "stringValue": "Eligibility"
+                },
+                "content": {
+                  "stringValue": "Void where prohibited by law. Participants must be of legal age in their jurisdiction of residence to enter."
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "organizerName": {
+      "stringValue": "Teamwinniko"
+    },
+    "rules": {
+      "mapValue": {
+        "fields": {
+          "correctWinner": {
+            "integerValue": "3"
+          },
+          "correctScore": {
+            "integerValue": "2"
+          }
+        }
+      }
+    },
+    "createdAt": {
+      "timestampValue": "2026-02-01T12:17:14.152384Z"
+    },
+    "pointsForDraw": {
+      "integerValue": "1"
+    },
+    "id": {
+      "stringValue": "f7b5c908-a118-44b0-b78a-b2d23627f2be"
+    },
+    "restrictionState": {
+      "nullValue": null
+    },
+    "restrictionCountry": {
+      "nullValue": null
+    },
+    "organizerId": {
+      "stringValue": "0JaDnBTaiwTgnhOqb6Xr9SdaH0N2"
+    },
+    "sport": {
+      "stringValue": "Cricket"
+    },
+    "customCaption": {
+      "nullValue": null
+    },
+    "fixtureType": {
+      "stringValue": "running"
+    },
+    "numberOfGroups": {
+      "integerValue": "0"
+    },
+    "locationRestrictionType": {
+      "stringValue": "none"
+    },
+    "lastSyncTime": {
+      "timestampValue": "2026-02-22T14:40:01.725Z"
+    },
+    "pointsForWin": {
+      "integerValue": "3"
+    },
+    "deletedAt": {
+      "nullValue": null
+    },
+    "messageCount": {
+      "integerValue": "1"
+    },
+    "cardBackgroundImageUrl": {
+      "stringValue": "https://firebasestorage.googleapis.com/v0/b/winniko-real.firebasestorage.app/o/competitions%2Ff7b5c908-a118-44b0-b78a-b2d23627f2be%2Fbackground%2Fc6b093b5-200a-461f-a616-6c5d0b99c957.jpg?alt=media&token=0c90efb0-fffb-4870-a06a-cb2930245f97"
+    },
+    "logoUrl": {
+      "stringValue": "https://firebasestorage.googleapis.com/v0/b/winniko-real.firebasestorage.app/o/competitions%2Ff7b5c908-a118-44b0-b78a-b2d23627f2be%2Flogo%2F86da318b-e977-446d-9f77-c6e9a0f6091b.jpg?alt=media&token=c7928c8f-9129-459d-bb95-466e5e0bf373"
+    },
+    "tieBreakerRules": {
+      "arrayValue": {
+        "values": [
+          {
+            "stringValue": "wins"
+          },
+          {
+            "stringValue": "nrr"
+          }
+        ]
+      }
+    },
+    "format": {
+      "stringValue": "League"
+    },
+    "sponsorName": {
+      "stringValue": "KSJASC"
+    },
+    "endDate": {
+      "nullValue": null
+    },
+    "status": {
+      "stringValue": "active"
+    },
+    "termsLanguage": {
+      "stringValue": "ml"
+    },
+    "groups": {
+      "arrayValue": {}
+    },
+    "organizerLocation": {
+      "nullValue": null
+    },
+    "joinCode": {
+      "stringValue": "O59CFH"
+    },
+    "name": {
+      "stringValue": "T20 CONTEST"
+    },
+    "startDate": {
+      "nullValue": null
+    }
+  },
+  "createTime": "2026-02-01T12:17:22.406863Z",
+  "updateTime": "2026-02-22T14:40:01.765734Z"
+}

@@ -62,7 +62,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
                   '6. Account Deletion',
                   'You have the right to request the deletion of your account and associated data at any time.\n\n'
                       '1. In-App Deletion: Go to Settings > Delete Account to instantly remove your data.\n'
-                      '2. Email Request: Contact us at sabeersms@gmail.com with the subject "Delete Account".\n\n'
+                      '2. Email Request: Contact us at teamwinniko@gmail.com with the subject "Delete Account".\n\n'
                       'Data that will be deleted:\n'
                       '• Personal Information (Name, Email, Phone)\n'
                       '• Profile Photos and Team Logos\n'
@@ -71,7 +71,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
                 ),
                 _buildSection(
                   '7. Contact Us',
-                  'If you have any questions about this Privacy Policy, please contact us at:\n\nEmail: sabeersms@gmail.com',
+                  'If you have any questions about this Privacy Policy, please contact us at:\n\nEmail: teamwinniko@gmail.com',
                 ),
                 const SizedBox(height: 60),
                 Center(

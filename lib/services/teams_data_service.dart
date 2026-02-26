@@ -13,6 +13,7 @@ class TeamsDataService {
       {'name': 'Bahrain', 'code': 'BHR', 'flag': 'bh'},
       {'name': 'Bangladesh', 'code': 'BAN', 'flag': 'bd'},
       {'name': 'Belgium', 'code': 'BEL', 'flag': 'be'},
+      {'name': 'Bermuda', 'code': 'BER', 'flag': 'bm'},
       {'name': 'Bolivia', 'code': 'BOL', 'flag': 'bo'},
       {'name': 'Bosnia & Herzegovina', 'code': 'BIH', 'flag': 'ba'},
       {'name': 'Brazil', 'code': 'BRA', 'flag': 'br'},
@@ -37,6 +38,7 @@ class TeamsDataService {
       {'name': 'Germany', 'code': 'GER', 'flag': 'de'},
       {'name': 'Ghana', 'code': 'GHA', 'flag': 'gh'},
       {'name': 'Greece', 'code': 'GRE', 'flag': 'gr'},
+      {'name': 'Hong Kong', 'code': 'HKG', 'flag': 'hk'},
       {'name': 'Hungary', 'code': 'HUN', 'flag': 'hu'},
       {'name': 'Iceland', 'code': 'ISL', 'flag': 'is'},
       {'name': 'India', 'code': 'IND', 'flag': 'in'},
@@ -49,6 +51,7 @@ class TeamsDataService {
       {'name': 'Ivory Coast', 'code': 'CIV', 'flag': 'ci'},
       {'name': 'Jamaica', 'code': 'JAM', 'flag': 'jm'},
       {'name': 'Japan', 'code': 'JPN', 'flag': 'jp'},
+      {'name': 'Jersey', 'code': 'JER', 'flag': 'je'},
       {'name': 'Jordan', 'code': 'JOR', 'flag': 'jo'},
       {'name': 'Kazakhstan', 'code': 'KAZ', 'flag': 'kz'},
       {'name': 'Kenya', 'code': 'KEN', 'flag': 'ke'},
@@ -63,6 +66,8 @@ class TeamsDataService {
       {'name': 'Moldova', 'code': 'MDA', 'flag': 'md'},
       {'name': 'Montenegro', 'code': 'MNE', 'flag': 'me'},
       {'name': 'Morocco', 'code': 'MAR', 'flag': 'ma'},
+      {'name': 'Namibia', 'code': 'NAM', 'flag': 'na'},
+      {'name': 'Nepal', 'code': 'NEP', 'flag': 'np'},
       {'name': 'Netherlands', 'code': 'NED', 'flag': 'nl'},
       {'name': 'New Zealand', 'code': 'NZL', 'flag': 'nz'},
       {'name': 'Nigeria', 'code': 'NGA', 'flag': 'ng'},
@@ -72,6 +77,7 @@ class TeamsDataService {
       {'name': 'Oman', 'code': 'OMA', 'flag': 'om'},
       {'name': 'Pakistan', 'code': 'PAK', 'flag': 'pk'},
       {'name': 'Palestine', 'code': 'PLE', 'flag': 'ps'},
+      {'name': 'Papua New Guinea', 'code': 'PNG', 'flag': 'pg'},
       {'name': 'Paraguay', 'code': 'PAR', 'flag': 'py'},
       {'name': 'Peru', 'code': 'PER', 'flag': 'pe'},
       {'name': 'Philippines', 'code': 'PHI', 'flag': 'ph'},
@@ -90,12 +96,14 @@ class TeamsDataService {
       {'name': 'South Africa', 'code': 'RSA', 'flag': 'za'},
       {'name': 'South Korea', 'code': 'KOR', 'flag': 'kr'},
       {'name': 'Spain', 'code': 'ESP', 'flag': 'es'},
+      {'name': 'Sri Lanka', 'code': 'SRI', 'flag': 'lk'},
       {'name': 'Sweden', 'code': 'SWE', 'flag': 'se'},
       {'name': 'Switzerland', 'code': 'SUI', 'flag': 'ch'},
       {'name': 'Syria', 'code': 'SYR', 'flag': 'sy'},
       {'name': 'Thailand', 'code': 'THA', 'flag': 'th'},
       {'name': 'Tunisia', 'code': 'TUN', 'flag': 'tn'},
       {'name': 'Turkey', 'code': 'TUR', 'flag': 'tr'},
+      {'name': 'Uganda', 'code': 'UGA', 'flag': 'ug'},
       {'name': 'Ukraine', 'code': 'UKR', 'flag': 'ua'},
       {'name': 'United Arab Emirates', 'code': 'UAE', 'flag': 'ae'},
       {'name': 'United States', 'code': 'USA', 'flag': 'us'},
@@ -104,6 +112,8 @@ class TeamsDataService {
       {'name': 'Venezuela', 'code': 'VEN', 'flag': 've'},
       {'name': 'Vietnam', 'code': 'VIE', 'flag': 'vn'},
       {'name': 'Wales', 'code': 'WAL', 'flag': 'gb-wls'},
+      {'name': 'West Indies', 'code': 'WI', 'flag': 'jm'},
+      {'name': 'Zimbabwe', 'code': 'ZIM', 'flag': 'zw'},
     ]..sort((a, b) => a['name']!.compareTo(b['name']!));
   }
 
@@ -649,6 +659,86 @@ class TeamsDataService {
             'name': 'Toulouse',
             'code': 'TFC',
             'logo': 'https://crests.football-data.org/518.svg',
+          },
+        ];
+      case 'isl-2025':
+      case 'indian-super-league-2024':
+      case 'indian-super-league-2025':
+        return [
+          {
+            'name': 'Mumbai City FC',
+            'code': 'MCFC',
+            'logo': 'https://a.espncdn.com/i/teamlogos/soccer/500/18002.png',
+          },
+          {
+            'name': 'Mohun Bagan Super Giant',
+            'code': 'MBSG',
+            'logo': 'https://a.espncdn.com/i/teamlogos/soccer/500/20774.png',
+          },
+          {
+            'name': 'FC Goa',
+            'code': 'FCG',
+            'logo': 'https://a.espncdn.com/i/teamlogos/soccer/500/18003.png',
+          },
+          {
+            'name': 'Odisha FC',
+            'code': 'OFC',
+            'logo': 'https://a.espncdn.com/i/teamlogos/soccer/500/17998.png',
+          },
+          {
+            'name': 'Kerala Blasters FC',
+            'code': 'KBFC',
+            'logo': 'https://a.espncdn.com/i/teamlogos/soccer/500/17997.png',
+          },
+          {
+            'name': 'Chennaiyin FC',
+            'code': 'CFC',
+            'logo': 'https://a.espncdn.com/i/teamlogos/soccer/500/18000.png',
+          },
+          {
+            'name': 'NorthEast United FC',
+            'code': 'NEUFC',
+            'logo': 'https://a.espncdn.com/i/teamlogos/soccer/500/18004.png',
+          },
+          {
+            'name': 'East Bengal FC',
+            'code': 'EBFC',
+            'logo': 'https://a.espncdn.com/i/teamlogos/soccer/500/8897.png',
+          },
+          {
+            'name': 'Jamshedpur FC',
+            'code': 'JFC',
+            'logo': 'https://a.espncdn.com/i/teamlogos/soccer/500/18850.png',
+          },
+          {
+            'name': 'Bengaluru FC',
+            'code': 'BFC',
+            'logo': 'https://a.espncdn.com/i/teamlogos/soccer/500/18851.png',
+          },
+          {
+            'name': 'Punjab FC',
+            'code': 'PFC',
+            'logo': 'https://a.espncdn.com/i/teamlogos/soccer/500/18894.png',
+          },
+          {
+            'name': 'Mohammedan SC',
+            'code': 'MSC',
+            'logo': 'https://a.espncdn.com/i/teamlogos/soccer/500/20842.png',
+          },
+          {
+            'name': 'Hyderabad FC',
+            'code': 'HFC',
+            'logo': 'https://a.espncdn.com/i/teamlogos/soccer/500/20174.png',
+          },
+          {
+            'name': 'Inter Kashi',
+            'code': 'IK',
+            'logo': 'https://a.espncdn.com/i/teamlogos/soccer/500/22069.png',
+          },
+          {
+            'name': 'Sporting Club Delhi',
+            'code': 'SCD',
+            'logo': 'https://a.espncdn.com/i/teamlogos/soccer/500/131703.png',
           },
         ];
       case 'ucl':
@@ -1292,16 +1382,45 @@ class TeamsDataService {
       'Côte d\'Ivoire': 'Ivory Coast',
       'Czech Republic': 'Czech Republic', // Already matches but just in case
       'Korea DPR': 'North Korea',
+      'Korea, South': 'South Korea',
+    },
+    'isl-2025': {
+      'SC East Bengal': 'East Bengal FC',
+      'Mohun Bagan SG': 'Mohun Bagan Super Giant',
+      'NorthEast Utd': 'NorthEast United FC',
+      'Kerala Blasters': 'Kerala Blasters FC',
+      'Mumbai City': 'Mumbai City FC',
+      'Bengaluru': 'Bengaluru FC',
+      'Chennaiyin': 'Chennaiyin FC',
+      'Jamshedpur': 'Jamshedpur FC',
+      'Mohammedan': 'Mohammedan SC',
+      'Odisha': 'Odisha FC',
+      'Punjab': 'Punjab FC',
+    },
+    'indian-super-league-2024': {
+      'SC East Bengal': 'East Bengal FC',
+      'Mohun Bagan SG': 'Mohun Bagan Super Giant',
+      'NorthEast Utd': 'NorthEast United FC',
     },
   };
 
   static String resolveTeamName(String leagueId, String feedTeamName) {
+    // 1. Try exact match
     if (_teamNameMappings.containsKey(leagueId)) {
-      final leagueMappings = _teamNameMappings[leagueId]!;
-      if (leagueMappings.containsKey(feedTeamName)) {
-        return leagueMappings[feedTeamName]!;
+      final mappings = _teamNameMappings[leagueId]!;
+      if (mappings.containsKey(feedTeamName)) return mappings[feedTeamName]!;
+    }
+
+    // 2. Try partial match for common league patterns (e.g. any ISL tournament)
+    for (var entry in _teamNameMappings.entries) {
+      if ((leagueId.contains('isl') && entry.key.contains('isl')) ||
+          (leagueId.contains('ipl') && entry.key.contains('ipl'))) {
+        if (entry.value.containsKey(feedTeamName)) {
+          return entry.value[feedTeamName]!;
+        }
       }
     }
+
     return feedTeamName;
   }
 
@@ -1336,5 +1455,155 @@ class TeamsDataService {
     }
 
     return null;
+  }
+
+  static const Map<String, List<String>> _teamAliases = {
+    'United States': ['USA', 'U.S.A.', 'United States of America'],
+    'West Indies': ['WI', 'Windies'],
+    'United Arab Emirates': ['UAE', 'U.A.E.'],
+    'South Korea': ['Korea Republic', 'Republic of Korea'],
+    'Papua New Guinea': ['PNG', 'P.N.G.'],
+    'Namibia': ['NAM'],
+    'Oman': ['OMA'],
+    'Scotland': ['SCO'],
+    'Netherlands': ['NED'],
+    'India': ['IND'],
+    'Australia': ['AUS'],
+    'England': ['ENG'],
+    'South Africa': ['RSA', 'SA', 'S.A.'],
+    'New Zealand': ['NZ', 'NZL'],
+    'Pakistan': ['PAK'],
+    'Sri Lanka': ['SL', 'SRI'],
+    'Afghanistan': ['AFG'],
+    'Bangladesh': ['BAN', 'BD'],
+    'Ireland': ['IRE'],
+    'Zimbabwe': ['ZIM'],
+    'Nepal': ['NEP'],
+    'Canada': ['CAN'],
+    'Uganda': ['UGA'],
+    // IPL Aliases
+    'Chennai Super Kings': ['CSK'],
+    'Delhi Capitals': ['DC'],
+    'Gujarat Titans': ['GT'],
+    'Kolkata Knight Riders': ['KKR'],
+    'Lucknow Super Giants': ['LSG'],
+    'Mumbai Indians': ['MI'],
+    'Punjab Kings': ['PBKS', 'Kings XI Punjab'],
+    'Rajasthan Royals': ['RR'],
+    'Royal Challengers Bengaluru': [
+      'RCB',
+      'Royal Challengers Bangalore',
+      'Bangalore',
+      'Bengaluru',
+    ],
+    'Sunrisers Hyderabad': ['SRH'],
+    // ISL Aliases
+    'Mumbai City FC': ['Mumbai City', 'MCFC'],
+    'Mohun Bagan Super Giant': ['Mohun Bagan', 'Mohun Bagan SG', 'MBSG'],
+    'FC Goa': ['Goa', 'FCG'],
+    'Odisha FC': ['Odisha', 'OFC'],
+    'Kerala Blasters FC': ['Kerala Blasters', 'KBFC'],
+    'Chennaiyin FC': ['Chennaiyin', 'CFC'],
+    'NorthEast United FC': ['NorthEast United', 'NorthEast Utd', 'NEUFC'],
+    'East Bengal FC': ['East Bengal', 'SC East Bengal', 'EBFC'],
+    'Jamshedpur FC': ['Jamshedpur', 'JFC'],
+    'Bengaluru FC': ['Bengaluru', 'BFC'],
+    'Punjab FC': ['Punjab', 'PFC'],
+    'Mohammedan SC': ['Mohammedan', 'MSC'],
+    'Hyderabad FC': ['Hyderabad', 'Hyderabad Football Club', 'HFC'],
+    'Inter Kashi': ['Kashi', 'IK'],
+    'Sporting Club Delhi': ['SC Delhi', 'SCD'],
+  };
+
+  /// Checks if two team names refer to the same team, handling aliases and substrings.
+  static bool areTeamNamesEquivalent(String name1, String name2) {
+    final n1 = name1.toLowerCase().trim();
+    final n2 = name2.toLowerCase().trim();
+
+    if (n1 == n2) return true;
+    // Substring check is risky for short names (e.g. "US" in "Australia"? No, but "USA" is handled by alias)
+    // But "India" vs "India A" etc.
+    // For now, keep contained check but rely on aliases for abbreviations.
+    if (n1.length > 3 && n2.length > 3) {
+      if (n1.contains(n2) || n2.contains(n1)) return true;
+    }
+
+    // Check aliases
+    for (var entry in _teamAliases.entries) {
+      final key = entry.key.toLowerCase();
+      final values = entry.value.map((e) => e.toLowerCase()).toList();
+
+      // Check if n1 is Key and n2 is in Values (or vice versa)
+      if (key == n1 && values.contains(n2)) return true;
+      if (key == n2 && values.contains(n1)) return true;
+
+      // Check if both are aliases of the same key
+      if (values.contains(n1) && values.contains(n2)) return true;
+    }
+
+    return false;
+  }
+
+  /// Checks if a text string contains the team name or any of its aliases.
+  /// Useful for parsing "Inning" strings like "USA Inning 1".
+  static bool stringContainsTeamName(String text, String teamName) {
+    if (text.isEmpty) return false;
+    final t = text.toLowerCase();
+    final name = teamName.toLowerCase().trim();
+
+    // 1. Check exact name with word boundaries
+    final nameEscaped = RegExp.escape(name);
+    if (RegExp('\\b$nameEscaped\\b').hasMatch(t)) return true;
+
+    // 2. Check aliases with word boundaries
+    for (var entry in _teamAliases.entries) {
+      final key = entry.key.toLowerCase();
+      if (key == name) {
+        for (var alias in entry.value) {
+          final aliasEscaped = RegExp.escape(alias.toLowerCase());
+          if (RegExp('\\b$aliasEscaped\\b').hasMatch(t)) return true;
+        }
+      } else if (entry.value.map((e) => e.toLowerCase()).contains(name)) {
+        // Current team is an alias of the key
+        final keyEscaped = RegExp.escape(key);
+        if (RegExp('\\b$keyEscaped\\b').hasMatch(t)) return true;
+        for (var alias in entry.value) {
+          if (alias.toLowerCase() == name) continue;
+          final aliasEscaped = RegExp.escape(alias.toLowerCase());
+          if (RegExp('\\b$aliasEscaped\\b').hasMatch(t)) return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  /// Returns all known aliases for a team name, including the name itself.
+  static List<String> getTeamAliases(String teamName) {
+    List<String> results = [teamName];
+    final name = teamName.toLowerCase().trim();
+
+    for (var entry in _teamAliases.entries) {
+      final key = entry.key.toLowerCase();
+      final values = entry.value;
+
+      if (key == name) {
+        results.addAll(values);
+      } else if (values.map((e) => e.toLowerCase()).contains(name)) {
+        results.add(entry.key);
+        results.addAll(values.where((v) => v.toLowerCase() != name));
+      }
+    }
+    return results.toSet().toList(); // Unique
+  }
+
+  /// Returns the canonical (primary) name for a team from its aliases.
+  static String getPrimaryName(String teamName) {
+    final name = teamName.toLowerCase().trim();
+    for (var entry in _teamAliases.entries) {
+      if (entry.key.toLowerCase() == name) return entry.key;
+      if (entry.value.any((v) => v.toLowerCase() == name)) return entry.key;
+    }
+    return teamName;
   }
 }

@@ -1,0 +1,2869 @@
+{
+  "documents": [
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/05e95cd2-aded-4a4b-9478-ab7e32470a13",
+      "fields": {
+        "participantCount": {
+          "integerValue": "1"
+        },
+        "messageCount": {
+          "integerValue": "0"
+        },
+        "customCaption": {
+          "nullValue": null
+        },
+        "description": {
+          "nullValue": null
+        },
+        "createdAt": {
+          "timestampValue": "2026-02-18T06:46:27.034382Z"
+        },
+        "rules": {
+          "mapValue": {
+            "fields": {
+              "correctScore": {
+                "integerValue": "2"
+              },
+              "correctWinner": {
+                "integerValue": "3"
+              }
+            }
+          }
+        },
+        "cardBackgroundImageUrl": {
+          "nullValue": null
+        },
+        "termsLanguage": {
+          "stringValue": "en"
+        },
+        "startDate": {
+          "nullValue": null
+        },
+        "deletedAt": {
+          "timestampValue": "2026-02-18T06:46:54.834759Z"
+        },
+        "locationRestrictionType": {
+          "stringValue": "none"
+        },
+        "restrictionState": {
+          "nullValue": null
+        },
+        "groups": {
+          "arrayValue": {}
+        },
+        "restrictionCountry": {
+          "nullValue": null
+        },
+        "organizerName": {
+          "stringValue": "Teamwinniko"
+        },
+        "status": {
+          "stringValue": "active"
+        },
+        "pointsForLoss": {
+          "integerValue": "0"
+        },
+        "joinCode": {
+          "stringValue": "NKTRRC"
+        },
+        "name": {
+          "stringValue": "islkk"
+        },
+        "tieBreakerRules": {
+          "arrayValue": {
+            "values": [
+              {
+                "stringValue": "goal_difference"
+              }
+            ]
+          }
+        },
+        "pointsForDraw": {
+          "integerValue": "1"
+        },
+        "leagueId": {
+          "stringValue": "isl-2025"
+        },
+        "organizerId": {
+          "stringValue": "0JaDnBTaiwTgnhOqb6Xr9SdaH0N2"
+        },
+        "format": {
+          "stringValue": "League"
+        },
+        "isPaid": {
+          "booleanValue": false
+        },
+        "logoUrl": {
+          "stringValue": "https://crests.football-data.org/758.svg"
+        },
+        "id": {
+          "stringValue": "05e95cd2-aded-4a4b-9478-ab7e32470a13"
+        },
+        "endDate": {
+          "nullValue": null
+        },
+        "fixtureType": {
+          "stringValue": "running"
+        },
+        "sponsorName": {
+          "nullValue": null
+        },
+        "pointsForWin": {
+          "integerValue": "3"
+        },
+        "termsMetadata": {
+          "arrayValue": {}
+        },
+        "isPublic": {
+          "booleanValue": true
+        },
+        "numberOfGroups": {
+          "integerValue": "0"
+        },
+        "customImages": {
+          "nullValue": null
+        },
+        "restrictionRadius": {
+          "nullValue": null
+        },
+        "sport": {
+          "stringValue": "Football"
+        },
+        "organizerLocation": {
+          "geoPointValue": {}
+        },
+        "termsAndConditions": {
+          "nullValue": null
+        }
+      },
+      "createTime": "2026-02-18T06:46:27.562535Z",
+      "updateTime": "2026-02-18T06:46:55.067908Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/0e01fd3f-8b2e-47f5-8d37-2b67ade6c4ef",
+      "fields": {
+        "messageCount": {
+          "integerValue": "0"
+        },
+        "participantCount": {
+          "integerValue": "1"
+        },
+        "termsLanguage": {
+          "stringValue": "en"
+        },
+        "cardBackgroundImageUrl": {
+          "nullValue": null
+        },
+        "rules": {
+          "mapValue": {
+            "fields": {
+              "correctScore": {
+                "integerValue": "2"
+              },
+              "correctWinner": {
+                "integerValue": "3"
+              }
+            }
+          }
+        },
+        "createdAt": {
+          "timestampValue": "2026-02-21T17:32:10.956956Z"
+        },
+        "description": {
+          "nullValue": null
+        },
+        "customCaption": {
+          "nullValue": null
+        },
+        "restrictionCountry": {
+          "nullValue": null
+        },
+        "locationRestrictionType": {
+          "stringValue": "none"
+        },
+        "restrictionState": {
+          "nullValue": null
+        },
+        "groups": {
+          "arrayValue": {}
+        },
+        "deletedAt": {
+          "timestampValue": "2026-02-21T17:50:22.734497Z"
+        },
+        "startDate": {
+          "nullValue": null
+        },
+        "tieBreakerRules": {
+          "arrayValue": {
+            "values": [
+              {
+                "stringValue": "wins"
+              },
+              {
+                "stringValue": "nrr"
+              }
+            ]
+          }
+        },
+        "name": {
+          "stringValue": "oo"
+        },
+        "joinCode": {
+          "stringValue": "6UONJG"
+        },
+        "pointsForLoss": {
+          "integerValue": "0"
+        },
+        "status": {
+          "stringValue": "active"
+        },
+        "organizerName": {
+          "stringValue": "Teamwinniko"
+        },
+        "logoUrl": {
+          "stringValue": "https://crests.football-data.org/758.svg"
+        },
+        "lastCleanedAt": {
+          "timestampValue": "2026-02-22T15:57:33.376Z"
+        },
+        "isPaid": {
+          "booleanValue": false
+        },
+        "format": {
+          "stringValue": "League"
+        },
+        "organizerId": {
+          "stringValue": "0JaDnBTaiwTgnhOqb6Xr9SdaH0N2"
+        },
+        "leagueId": {
+          "stringValue": "mens-t20-world-cup-2026"
+        },
+        "pointsForDraw": {
+          "integerValue": "1"
+        },
+        "sponsorName": {
+          "nullValue": null
+        },
+        "fixtureType": {
+          "stringValue": "running"
+        },
+        "endDate": {
+          "nullValue": null
+        },
+        "id": {
+          "stringValue": "0e01fd3f-8b2e-47f5-8d37-2b67ade6c4ef"
+        },
+        "customImages": {
+          "nullValue": null
+        },
+        "isPublic": {
+          "booleanValue": true
+        },
+        "numberOfGroups": {
+          "integerValue": "0"
+        },
+        "termsMetadata": {
+          "arrayValue": {}
+        },
+        "pointsForWin": {
+          "integerValue": "3"
+        },
+        "lastSyncTime": {
+          "timestampValue": "2026-02-21T17:34:28.735Z"
+        },
+        "termsAndConditions": {
+          "nullValue": null
+        },
+        "organizerLocation": {
+          "geoPointValue": {}
+        },
+        "sport": {
+          "stringValue": "Cricket"
+        },
+        "restrictionRadius": {
+          "nullValue": null
+        }
+      },
+      "createTime": "2026-02-21T17:32:12.129543Z",
+      "updateTime": "2026-02-22T15:57:33.400008Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/0e39928b-9c00-4ef7-9735-c41be6e2a324",
+      "fields": {
+        "leagueId": {
+          "nullValue": null
+        },
+        "pointsForDraw": {
+          "integerValue": "1"
+        },
+        "logoUrl": {
+          "nullValue": null
+        },
+        "isPaid": {
+          "booleanValue": false
+        },
+        "format": {
+          "stringValue": "League"
+        },
+        "organizerId": {
+          "stringValue": "0JaDnBTaiwTgnhOqb6Xr9SdaH0N2"
+        },
+        "endDate": {
+          "nullValue": null
+        },
+        "id": {
+          "stringValue": "0e39928b-9c00-4ef7-9735-c41be6e2a324"
+        },
+        "sponsorName": {
+          "nullValue": null
+        },
+        "fixtureType": {
+          "stringValue": "running"
+        },
+        "customImages": {
+          "nullValue": null
+        },
+        "isPublic": {
+          "booleanValue": true
+        },
+        "numberOfGroups": {
+          "integerValue": "0"
+        },
+        "pointsForWin": {
+          "integerValue": "3"
+        },
+        "termsMetadata": {
+          "arrayValue": {}
+        },
+        "sport": {
+          "stringValue": "Football"
+        },
+        "restrictionRadius": {
+          "nullValue": null
+        },
+        "termsAndConditions": {
+          "nullValue": null
+        },
+        "organizerLocation": {
+          "geoPointValue": {}
+        },
+        "participantCount": {
+          "integerValue": "0"
+        },
+        "messageCount": {
+          "integerValue": "0"
+        },
+        "createdAt": {
+          "timestampValue": "2026-02-21T09:01:20.399139Z"
+        },
+        "rules": {
+          "mapValue": {
+            "fields": {
+              "correctScore": {
+                "integerValue": "2"
+              },
+              "correctWinner": {
+                "integerValue": "3"
+              }
+            }
+          }
+        },
+        "description": {
+          "nullValue": null
+        },
+        "customCaption": {
+          "nullValue": null
+        },
+        "termsLanguage": {
+          "stringValue": "en"
+        },
+        "cardBackgroundImageUrl": {
+          "nullValue": null
+        },
+        "locationRestrictionType": {
+          "stringValue": "none"
+        },
+        "restrictionState": {
+          "nullValue": null
+        },
+        "groups": {
+          "arrayValue": {}
+        },
+        "deletedAt": {
+          "timestampValue": "2026-02-21T09:02:38.720637Z"
+        },
+        "startDate": {
+          "nullValue": null
+        },
+        "restrictionCountry": {
+          "nullValue": null
+        },
+        "pointsForLoss": {
+          "integerValue": "0"
+        },
+        "organizerName": {
+          "stringValue": "Teamwinniko"
+        },
+        "status": {
+          "stringValue": "active"
+        },
+        "tieBreakerRules": {
+          "arrayValue": {
+            "values": [
+              {
+                "stringValue": "goal_difference"
+              }
+            ]
+          }
+        },
+        "name": {
+          "stringValue": "tt"
+        },
+        "joinCode": {
+          "stringValue": ""
+        }
+      },
+      "createTime": "2026-02-21T09:01:21.101798Z",
+      "updateTime": "2026-02-21T09:02:38.795381Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/16f93158-37d6-487f-b468-286b75530c5b",
+      "fields": {
+        "restrictionCountry": {
+          "nullValue": null
+        },
+        "startDate": {
+          "nullValue": null
+        },
+        "deletedAt": {
+          "nullValue": null
+        },
+        "groups": {
+          "arrayValue": {}
+        },
+        "restrictionState": {
+          "nullValue": null
+        },
+        "locationRestrictionType": {
+          "stringValue": "none"
+        },
+        "joinCode": {
+          "stringValue": "AAAAAA"
+        },
+        "name": {
+          "stringValue": "Lucky Stars"
+        },
+        "tieBreakerRules": {
+          "arrayValue": {
+            "values": [
+              {
+                "stringValue": "goal_difference"
+              }
+            ]
+          }
+        },
+        "organizerName": {
+          "stringValue": "Aneesh"
+        },
+        "status": {
+          "stringValue": "active"
+        },
+        "pointsForLoss": {
+          "integerValue": "0"
+        },
+        "messageCount": {
+          "integerValue": "2"
+        },
+        "participantCount": {
+          "integerValue": "6"
+        },
+        "cardBackgroundImageUrl": {
+          "stringValue": "https://firebasestorage.googleapis.com/v0/b/winniko-real.firebasestorage.app/o/competitions%2F16f93158-37d6-487f-b468-286b75530c5b%2Fbackground%2Fa0f78936-0918-4212-8c42-f942ab8af63c.jpg?alt=media&token=d146cda6-af58-40c0-a644-b31f78cbd866"
+        },
+        "termsLanguage": {
+          "stringValue": "en"
+        },
+        "customCaption": {
+          "nullValue": null
+        },
+        "description": {
+          "nullValue": null
+        },
+        "rules": {
+          "mapValue": {
+            "fields": {
+              "correctWinner": {
+                "integerValue": "3"
+              },
+              "correctScore": {
+                "integerValue": "2"
+              }
+            }
+          }
+        },
+        "createdAt": {
+          "timestampValue": "2026-02-05T13:35:19.395Z"
+        },
+        "pointsForWin": {
+          "integerValue": "3"
+        },
+        "termsMetadata": {
+          "arrayValue": {}
+        },
+        "isPublic": {
+          "booleanValue": false
+        },
+        "numberOfGroups": {
+          "integerValue": "0"
+        },
+        "customImages": {
+          "nullValue": null
+        },
+        "organizerLocation": {
+          "nullValue": null
+        },
+        "termsAndConditions": {
+          "nullValue": null
+        },
+        "restrictionRadius": {
+          "nullValue": null
+        },
+        "sport": {
+          "stringValue": "Football"
+        },
+        "organizerId": {
+          "stringValue": "kZHR4uhBWESbvMaXS5BfKQWckg03"
+        },
+        "format": {
+          "stringValue": "League + Knockout"
+        },
+        "isPaid": {
+          "booleanValue": false
+        },
+        "logoUrl": {
+          "stringValue": "https://firebasestorage.googleapis.com/v0/b/winniko-real.firebasestorage.app/o/competitions%2F16f93158-37d6-487f-b468-286b75530c5b%2Flogo%2F7d0c429a-80da-4b6c-8e9c-a1240cb53861.jpg?alt=media&token=77f56d1e-362b-48f7-b3a9-c1eb4af4ea7f"
+        },
+        "pointsForDraw": {
+          "integerValue": "1"
+        },
+        "leagueId": {
+          "nullValue": null
+        },
+        "fixtureType": {
+          "stringValue": "running"
+        },
+        "sponsorName": {
+          "stringValue": "Saddham Warriors"
+        },
+        "id": {
+          "stringValue": "16f93158-37d6-487f-b468-286b75530c5b"
+        },
+        "endDate": {
+          "nullValue": null
+        }
+      },
+      "createTime": "2026-02-05T13:35:24.643348Z",
+      "updateTime": "2026-02-15T06:31:58.330149Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/1b4f2a96-00bd-405f-9075-09b8c0d9421f",
+      "fields": {
+        "customCaption": {
+          "nullValue": null
+        },
+        "description": {
+          "nullValue": null
+        },
+        "rules": {
+          "mapValue": {
+            "fields": {
+              "correctScore": {
+                "integerValue": "2"
+              },
+              "correctWinner": {
+                "integerValue": "3"
+              }
+            }
+          }
+        },
+        "createdAt": {
+          "timestampValue": "2026-02-21T07:30:09.170262Z"
+        },
+        "cardBackgroundImageUrl": {
+          "nullValue": null
+        },
+        "termsLanguage": {
+          "stringValue": "en"
+        },
+        "participantCount": {
+          "integerValue": "0"
+        },
+        "messageCount": {
+          "integerValue": "0"
+        },
+        "organizerName": {
+          "stringValue": "Teamwinniko"
+        },
+        "status": {
+          "stringValue": "active"
+        },
+        "pointsForLoss": {
+          "integerValue": "0"
+        },
+        "joinCode": {
+          "stringValue": ""
+        },
+        "name": {
+          "stringValue": "tt"
+        },
+        "tieBreakerRules": {
+          "arrayValue": {
+            "values": [
+              {
+                "stringValue": "goal_difference"
+              }
+            ]
+          }
+        },
+        "startDate": {
+          "nullValue": null
+        },
+        "deletedAt": {
+          "timestampValue": "2026-02-21T07:31:43.390457Z"
+        },
+        "groups": {
+          "arrayValue": {}
+        },
+        "restrictionState": {
+          "nullValue": null
+        },
+        "locationRestrictionType": {
+          "stringValue": "none"
+        },
+        "restrictionCountry": {
+          "nullValue": null
+        },
+        "id": {
+          "stringValue": "1b4f2a96-00bd-405f-9075-09b8c0d9421f"
+        },
+        "endDate": {
+          "nullValue": null
+        },
+        "fixtureType": {
+          "stringValue": "running"
+        },
+        "sponsorName": {
+          "nullValue": null
+        },
+        "pointsForDraw": {
+          "integerValue": "1"
+        },
+        "leagueId": {
+          "nullValue": null
+        },
+        "organizerId": {
+          "stringValue": "0JaDnBTaiwTgnhOqb6Xr9SdaH0N2"
+        },
+        "format": {
+          "stringValue": "League"
+        },
+        "isPaid": {
+          "booleanValue": false
+        },
+        "logoUrl": {
+          "nullValue": null
+        },
+        "restrictionRadius": {
+          "nullValue": null
+        },
+        "sport": {
+          "stringValue": "Football"
+        },
+        "organizerLocation": {
+          "geoPointValue": {}
+        },
+        "termsAndConditions": {
+          "nullValue": null
+        },
+        "termsMetadata": {
+          "arrayValue": {}
+        },
+        "pointsForWin": {
+          "integerValue": "3"
+        },
+        "numberOfGroups": {
+          "integerValue": "0"
+        },
+        "isPublic": {
+          "booleanValue": true
+        },
+        "customImages": {
+          "nullValue": null
+        }
+      },
+      "createTime": "2026-02-21T07:30:10.132108Z",
+      "updateTime": "2026-02-21T07:31:43.726149Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/330d2ed2-1a9b-4eb9-a18d-2674f6c341f8",
+      "fields": {
+        "joinCode": {
+          "stringValue": "6D6HIC"
+        },
+        "name": {
+          "stringValue": "Cricket"
+        },
+        "tieBreakerRules": {
+          "arrayValue": {
+            "values": [
+              {
+                "stringValue": "wins"
+              },
+              {
+                "stringValue": "nrr"
+              }
+            ]
+          }
+        },
+        "organizerName": {
+          "stringValue": "Sabeer"
+        },
+        "status": {
+          "stringValue": "active"
+        },
+        "pointsForLoss": {
+          "integerValue": "0"
+        },
+        "restrictionCountry": {
+          "nullValue": null
+        },
+        "startDate": {
+          "nullValue": null
+        },
+        "deletedAt": {
+          "timestampValue": "2026-02-21T09:10:10.890154Z"
+        },
+        "locationRestrictionType": {
+          "stringValue": "none"
+        },
+        "restrictionState": {
+          "nullValue": null
+        },
+        "groups": {
+          "arrayValue": {}
+        },
+        "cardBackgroundImageUrl": {
+          "nullValue": null
+        },
+        "termsLanguage": {
+          "stringValue": "en"
+        },
+        "customCaption": {
+          "nullValue": null
+        },
+        "description": {
+          "nullValue": null
+        },
+        "rules": {
+          "mapValue": {
+            "fields": {
+              "correctScore": {
+                "integerValue": "2"
+              },
+              "correctWinner": {
+                "integerValue": "3"
+              }
+            }
+          }
+        },
+        "createdAt": {
+          "timestampValue": "2026-02-17T17:18:34.367937Z"
+        },
+        "messageCount": {
+          "integerValue": "0"
+        },
+        "participantCount": {
+          "integerValue": "0"
+        },
+        "organizerLocation": {
+          "geoPointValue": {}
+        },
+        "termsAndConditions": {
+          "nullValue": null
+        },
+        "restrictionRadius": {
+          "nullValue": null
+        },
+        "sport": {
+          "stringValue": "Cricket"
+        },
+        "pointsForWin": {
+          "integerValue": "3"
+        },
+        "termsMetadata": {
+          "arrayValue": {}
+        },
+        "isPublic": {
+          "booleanValue": false
+        },
+        "numberOfGroups": {
+          "integerValue": "0"
+        },
+        "customImages": {
+          "nullValue": null
+        },
+        "fixtureType": {
+          "stringValue": "running"
+        },
+        "sponsorName": {
+          "nullValue": null
+        },
+        "id": {
+          "stringValue": "330d2ed2-1a9b-4eb9-a18d-2674f6c341f8"
+        },
+        "endDate": {
+          "nullValue": null
+        },
+        "organizerId": {
+          "stringValue": "yAciX6wmSlailinntKYo5T4Yuv73"
+        },
+        "format": {
+          "stringValue": "Knockout"
+        },
+        "isPaid": {
+          "booleanValue": false
+        },
+        "logoUrl": {
+          "nullValue": null
+        },
+        "pointsForDraw": {
+          "integerValue": "1"
+        },
+        "leagueId": {
+          "nullValue": null
+        }
+      },
+      "createTime": "2026-02-17T17:18:36.565367Z",
+      "updateTime": "2026-02-21T09:10:10.961833Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/36aa3b1b-9b87-46fc-85e3-3a72280cbe1a",
+      "fields": {
+        "organizerName": {
+          "stringValue": "Teamwinniko"
+        },
+        "status": {
+          "stringValue": "active"
+        },
+        "pointsForLoss": {
+          "integerValue": "0"
+        },
+        "tieBreakerRules": {
+          "arrayValue": {
+            "values": [
+              {
+                "stringValue": "wins"
+              },
+              {
+                "stringValue": "nrr"
+              }
+            ]
+          }
+        },
+        "joinCode": {
+          "stringValue": "60LOVS"
+        },
+        "name": {
+          "stringValue": "vvv"
+        },
+        "deletedAt": {
+          "timestampValue": "2026-02-23T05:49:05.713200Z"
+        },
+        "locationRestrictionType": {
+          "stringValue": "none"
+        },
+        "groups": {
+          "arrayValue": {}
+        },
+        "restrictionState": {
+          "nullValue": null
+        },
+        "startDate": {
+          "nullValue": null
+        },
+        "restrictionCountry": {
+          "nullValue": null
+        },
+        "description": {
+          "nullValue": null
+        },
+        "rules": {
+          "mapValue": {
+            "fields": {
+              "correctScore": {
+                "integerValue": "2"
+              },
+              "correctWinner": {
+                "integerValue": "3"
+              }
+            }
+          }
+        },
+        "createdAt": {
+          "timestampValue": "2026-02-22T11:07:34.268409Z"
+        },
+        "customCaption": {
+          "nullValue": null
+        },
+        "cardBackgroundImageUrl": {
+          "nullValue": null
+        },
+        "termsLanguage": {
+          "stringValue": "en"
+        },
+        "participantCount": {
+          "integerValue": "1"
+        },
+        "messageCount": {
+          "integerValue": "0"
+        },
+        "restrictionRadius": {
+          "nullValue": null
+        },
+        "sport": {
+          "stringValue": "Cricket"
+        },
+        "termsAndConditions": {
+          "nullValue": null
+        },
+        "organizerLocation": {
+          "geoPointValue": {}
+        },
+        "customImages": {
+          "nullValue": null
+        },
+        "termsMetadata": {
+          "arrayValue": {}
+        },
+        "pointsForWin": {
+          "integerValue": "3"
+        },
+        "isPublic": {
+          "booleanValue": true
+        },
+        "numberOfGroups": {
+          "integerValue": "0"
+        },
+        "endDate": {
+          "nullValue": null
+        },
+        "id": {
+          "stringValue": "36aa3b1b-9b87-46fc-85e3-3a72280cbe1a"
+        },
+        "sponsorName": {
+          "nullValue": null
+        },
+        "fixtureType": {
+          "stringValue": "running"
+        },
+        "leagueId": {
+          "stringValue": "mens-t20-world-cup-2026"
+        },
+        "pointsForDraw": {
+          "integerValue": "1"
+        },
+        "isPaid": {
+          "booleanValue": false
+        },
+        "lastCleanedAt": {
+          "timestampValue": "2026-02-22T15:57:34.642Z"
+        },
+        "logoUrl": {
+          "stringValue": "https://crests.football-data.org/758.svg"
+        },
+        "organizerId": {
+          "stringValue": "0JaDnBTaiwTgnhOqb6Xr9SdaH0N2"
+        },
+        "format": {
+          "stringValue": "League"
+        }
+      },
+      "createTime": "2026-02-22T11:07:34.673299Z",
+      "updateTime": "2026-02-23T05:49:06.251894Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/3bf1d71f-86a1-4f51-89f8-71f1ae1547d0",
+      "fields": {
+        "fixtureType": {
+          "stringValue": "running"
+        },
+        "sponsorName": {
+          "nullValue": null
+        },
+        "id": {
+          "stringValue": "3bf1d71f-86a1-4f51-89f8-71f1ae1547d0"
+        },
+        "endDate": {
+          "nullValue": null
+        },
+        "format": {
+          "stringValue": "League"
+        },
+        "organizerId": {
+          "stringValue": "0JaDnBTaiwTgnhOqb6Xr9SdaH0N2"
+        },
+        "logoUrl": {
+          "stringValue": "https://crests.football-data.org/758.svg"
+        },
+        "isPaid": {
+          "booleanValue": false
+        },
+        "lastCleanedAt": {
+          "timestampValue": "2026-02-22T15:57:36.878Z"
+        },
+        "pointsForDraw": {
+          "integerValue": "1"
+        },
+        "leagueId": {
+          "stringValue": "mens-t20-world-cup-2026"
+        },
+        "organizerLocation": {
+          "geoPointValue": {}
+        },
+        "termsAndConditions": {
+          "nullValue": null
+        },
+        "sport": {
+          "stringValue": "Cricket"
+        },
+        "restrictionRadius": {
+          "nullValue": null
+        },
+        "numberOfGroups": {
+          "integerValue": "0"
+        },
+        "isPublic": {
+          "booleanValue": true
+        },
+        "termsMetadata": {
+          "arrayValue": {}
+        },
+        "pointsForWin": {
+          "integerValue": "3"
+        },
+        "customImages": {
+          "nullValue": null
+        },
+        "termsLanguage": {
+          "stringValue": "en"
+        },
+        "cardBackgroundImageUrl": {
+          "nullValue": null
+        },
+        "customCaption": {
+          "nullValue": null
+        },
+        "rules": {
+          "mapValue": {
+            "fields": {
+              "correctScore": {
+                "integerValue": "2"
+              },
+              "correctWinner": {
+                "integerValue": "3"
+              }
+            }
+          }
+        },
+        "createdAt": {
+          "timestampValue": "2026-02-18T17:20:24.731977Z"
+        },
+        "description": {
+          "nullValue": null
+        },
+        "messageCount": {
+          "integerValue": "0"
+        },
+        "participantCount": {
+          "integerValue": "1"
+        },
+        "name": {
+          "stringValue": "mmmm"
+        },
+        "joinCode": {
+          "stringValue": "LTMLK8"
+        },
+        "tieBreakerRules": {
+          "arrayValue": {
+            "values": [
+              {
+                "stringValue": "wins"
+              },
+              {
+                "stringValue": "nrr"
+              }
+            ]
+          }
+        },
+        "pointsForLoss": {
+          "integerValue": "0"
+        },
+        "organizerName": {
+          "stringValue": "Teamwinniko"
+        },
+        "status": {
+          "stringValue": "active"
+        },
+        "restrictionCountry": {
+          "nullValue": null
+        },
+        "startDate": {
+          "nullValue": null
+        },
+        "groups": {
+          "arrayValue": {}
+        },
+        "restrictionState": {
+          "nullValue": null
+        },
+        "locationRestrictionType": {
+          "stringValue": "none"
+        },
+        "deletedAt": {
+          "timestampValue": "2026-02-21T07:31:49.355234Z"
+        }
+      },
+      "createTime": "2026-02-18T17:20:25.140798Z",
+      "updateTime": "2026-02-22T15:57:36.892611Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/3e28bf5c-a763-4749-a13d-047eb6eb35bd",
+      "fields": {
+        "tieBreakerRules": {
+          "arrayValue": {
+            "values": [
+              {
+                "stringValue": "wins"
+              },
+              {
+                "stringValue": "nrr"
+              }
+            ]
+          }
+        },
+        "joinCode": {
+          "stringValue": "F3VDTI"
+        },
+        "name": {
+          "stringValue": "mmmmm"
+        },
+        "status": {
+          "stringValue": "active"
+        },
+        "organizerName": {
+          "stringValue": "Teamwinniko"
+        },
+        "pointsForLoss": {
+          "integerValue": "0"
+        },
+        "restrictionCountry": {
+          "nullValue": null
+        },
+        "deletedAt": {
+          "timestampValue": "2026-02-23T05:49:13.257017Z"
+        },
+        "locationRestrictionType": {
+          "stringValue": "none"
+        },
+        "restrictionState": {
+          "nullValue": null
+        },
+        "groups": {
+          "arrayValue": {}
+        },
+        "startDate": {
+          "nullValue": null
+        },
+        "cardBackgroundImageUrl": {
+          "nullValue": null
+        },
+        "termsLanguage": {
+          "stringValue": "en"
+        },
+        "description": {
+          "nullValue": null
+        },
+        "rules": {
+          "mapValue": {
+            "fields": {
+              "correctScore": {
+                "integerValue": "2"
+              },
+              "correctWinner": {
+                "integerValue": "3"
+              }
+            }
+          }
+        },
+        "createdAt": {
+          "timestampValue": "2026-02-22T16:10:19.882500Z"
+        },
+        "customCaption": {
+          "nullValue": null
+        },
+        "messageCount": {
+          "integerValue": "0"
+        },
+        "participantCount": {
+          "integerValue": "1"
+        },
+        "termsAndConditions": {
+          "nullValue": null
+        },
+        "organizerLocation": {
+          "geoPointValue": {}
+        },
+        "restrictionRadius": {
+          "nullValue": null
+        },
+        "sport": {
+          "stringValue": "Cricket"
+        },
+        "customImages": {
+          "nullValue": null
+        },
+        "pointsForWin": {
+          "integerValue": "3"
+        },
+        "termsMetadata": {
+          "arrayValue": {}
+        },
+        "numberOfGroups": {
+          "integerValue": "0"
+        },
+        "isPublic": {
+          "booleanValue": true
+        },
+        "lastSyncTime": {
+          "timestampValue": "2026-02-22T16:10:36.040Z"
+        },
+        "sponsorName": {
+          "nullValue": null
+        },
+        "fixtureType": {
+          "stringValue": "running"
+        },
+        "endDate": {
+          "nullValue": null
+        },
+        "id": {
+          "stringValue": "3e28bf5c-a763-4749-a13d-047eb6eb35bd"
+        },
+        "isPaid": {
+          "booleanValue": false
+        },
+        "logoUrl": {
+          "stringValue": "https://crests.football-data.org/758.svg"
+        },
+        "organizerId": {
+          "stringValue": "0JaDnBTaiwTgnhOqb6Xr9SdaH0N2"
+        },
+        "format": {
+          "stringValue": "League"
+        },
+        "leagueId": {
+          "stringValue": "mens-t20-world-cup-2026"
+        },
+        "pointsForDraw": {
+          "integerValue": "1"
+        }
+      },
+      "createTime": "2026-02-22T16:10:20.354263Z",
+      "updateTime": "2026-02-23T05:49:13.462702Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/456a857d-ea14-4128-a3f3-61ca43e37602",
+      "fields": {
+        "id": {
+          "stringValue": "456a857d-ea14-4128-a3f3-61ca43e37602"
+        },
+        "endDate": {
+          "nullValue": null
+        },
+        "fixtureType": {
+          "stringValue": "running"
+        },
+        "sponsorName": {
+          "nullValue": null
+        },
+        "pointsForDraw": {
+          "integerValue": "1"
+        },
+        "leagueId": {
+          "stringValue": "isl-2025"
+        },
+        "format": {
+          "stringValue": "League"
+        },
+        "organizerId": {
+          "stringValue": "0JaDnBTaiwTgnhOqb6Xr9SdaH0N2"
+        },
+        "logoUrl": {
+          "stringValue": "https://crests.football-data.org/758.svg"
+        },
+        "isPaid": {
+          "booleanValue": false
+        },
+        "sport": {
+          "stringValue": "Football"
+        },
+        "restrictionRadius": {
+          "nullValue": null
+        },
+        "organizerLocation": {
+          "geoPointValue": {}
+        },
+        "termsAndConditions": {
+          "nullValue": null
+        },
+        "isPublic": {
+          "booleanValue": true
+        },
+        "numberOfGroups": {
+          "integerValue": "0"
+        },
+        "pointsForWin": {
+          "integerValue": "3"
+        },
+        "termsMetadata": {
+          "arrayValue": {}
+        },
+        "customImages": {
+          "nullValue": null
+        },
+        "customCaption": {
+          "nullValue": null
+        },
+        "createdAt": {
+          "timestampValue": "2026-02-18T06:49:34.411496Z"
+        },
+        "rules": {
+          "mapValue": {
+            "fields": {
+              "correctScore": {
+                "integerValue": "2"
+              },
+              "correctWinner": {
+                "integerValue": "3"
+              }
+            }
+          }
+        },
+        "description": {
+          "nullValue": null
+        },
+        "termsLanguage": {
+          "stringValue": "en"
+        },
+        "cardBackgroundImageUrl": {
+          "nullValue": null
+        },
+        "participantCount": {
+          "integerValue": "1"
+        },
+        "messageCount": {
+          "integerValue": "0"
+        },
+        "pointsForLoss": {
+          "integerValue": "0"
+        },
+        "organizerName": {
+          "stringValue": "Teamwinniko"
+        },
+        "status": {
+          "stringValue": "active"
+        },
+        "name": {
+          "stringValue": "isl"
+        },
+        "joinCode": {
+          "stringValue": "DWUKGN"
+        },
+        "tieBreakerRules": {
+          "arrayValue": {
+            "values": [
+              {
+                "stringValue": "goal_difference"
+              }
+            ]
+          }
+        },
+        "startDate": {
+          "nullValue": null
+        },
+        "locationRestrictionType": {
+          "stringValue": "none"
+        },
+        "restrictionState": {
+          "nullValue": null
+        },
+        "groups": {
+          "arrayValue": {}
+        },
+        "deletedAt": {
+          "timestampValue": "2026-02-18T07:09:07.758394Z"
+        },
+        "restrictionCountry": {
+          "nullValue": null
+        }
+      },
+      "createTime": "2026-02-18T06:49:35.478015Z",
+      "updateTime": "2026-02-18T07:09:09.078001Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/50653639-5e80-4f5f-8a50-d456c336394f",
+      "fields": {
+        "participantCount": {
+          "integerValue": "9"
+        },
+        "messageCount": {
+          "integerValue": "1"
+        },
+        "description": {
+          "nullValue": null
+        },
+        "rules": {
+          "mapValue": {
+            "fields": {
+              "correctScore": {
+                "integerValue": "2"
+              },
+              "correctWinner": {
+                "integerValue": "3"
+              }
+            }
+          }
+        },
+        "createdAt": {
+          "timestampValue": "2026-02-05T14:10:07.128874Z"
+        },
+        "customCaption": {
+          "nullValue": null
+        },
+        "cardBackgroundImageUrl": {
+          "stringValue": "https://firebasestorage.googleapis.com/v0/b/winniko-real.firebasestorage.app/o/competitions%2F50653639-5e80-4f5f-8a50-d456c336394f%2Fbackground%2F9f06ab03-2b41-422a-9671-8715dc264e23.jpg?alt=media&token=aa2b030a-ebad-48ca-9462-031585935b14"
+        },
+        "termsLanguage": {
+          "stringValue": "en"
+        },
+        "deletedAt": {
+          "nullValue": null
+        },
+        "groups": {
+          "arrayValue": {}
+        },
+        "restrictionState": {
+          "nullValue": null
+        },
+        "locationRestrictionType": {
+          "stringValue": "none"
+        },
+        "startDate": {
+          "nullValue": null
+        },
+        "restrictionCountry": {
+          "nullValue": null
+        },
+        "organizerName": {
+          "stringValue": "Sabeer"
+        },
+        "status": {
+          "stringValue": "active"
+        },
+        "pointsForLoss": {
+          "integerValue": "0"
+        },
+        "tieBreakerRules": {
+          "arrayValue": {
+            "values": [
+              {
+                "stringValue": "wins"
+              },
+              {
+                "stringValue": "nrr"
+              }
+            ]
+          }
+        },
+        "joinCode": {
+          "stringValue": "AKMNOO"
+        },
+        "name": {
+          "stringValue": "Just 4 Fun"
+        },
+        "leagueId": {
+          "nullValue": null
+        },
+        "pointsForDraw": {
+          "integerValue": "1"
+        },
+        "isPaid": {
+          "booleanValue": false
+        },
+        "logoUrl": {
+          "nullValue": null
+        },
+        "organizerId": {
+          "stringValue": "yAciX6wmSlailinntKYo5T4Yuv73"
+        },
+        "format": {
+          "stringValue": "Single Match"
+        },
+        "endDate": {
+          "nullValue": null
+        },
+        "id": {
+          "stringValue": "50653639-5e80-4f5f-8a50-d456c336394f"
+        },
+        "sponsorName": {
+          "stringValue": "Predit it"
+        },
+        "fixtureType": {
+          "stringValue": "running"
+        },
+        "customImages": {
+          "nullValue": null
+        },
+        "termsMetadata": {
+          "arrayValue": {}
+        },
+        "pointsForWin": {
+          "integerValue": "3"
+        },
+        "numberOfGroups": {
+          "integerValue": "0"
+        },
+        "isPublic": {
+          "booleanValue": false
+        },
+        "restrictionRadius": {
+          "nullValue": null
+        },
+        "sport": {
+          "stringValue": "Cricket"
+        },
+        "termsAndConditions": {
+          "nullValue": null
+        },
+        "organizerLocation": {
+          "geoPointValue": {}
+        }
+      },
+      "createTime": "2026-02-05T14:10:09.065823Z",
+      "updateTime": "2026-02-08T20:05:59.444578Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/54f612e3-e2c3-4136-8ba2-46497834bd2c",
+      "fields": {
+        "format": {
+          "stringValue": "League"
+        },
+        "organizerId": {
+          "stringValue": "0JaDnBTaiwTgnhOqb6Xr9SdaH0N2"
+        },
+        "logoUrl": {
+          "stringValue": "https://crests.football-data.org/758.svg"
+        },
+        "isPaid": {
+          "booleanValue": false
+        },
+        "pointsForDraw": {
+          "integerValue": "1"
+        },
+        "leagueId": {
+          "stringValue": "mens-t20-world-cup-2026"
+        },
+        "fixtureType": {
+          "stringValue": "running"
+        },
+        "sponsorName": {
+          "nullValue": null
+        },
+        "id": {
+          "stringValue": "54f612e3-e2c3-4136-8ba2-46497834bd2c"
+        },
+        "endDate": {
+          "nullValue": null
+        },
+        "numberOfGroups": {
+          "integerValue": "0"
+        },
+        "isPublic": {
+          "booleanValue": true
+        },
+        "termsMetadata": {
+          "arrayValue": {}
+        },
+        "pointsForWin": {
+          "integerValue": "3"
+        },
+        "customImages": {
+          "nullValue": null
+        },
+        "lastSyncTime": {
+          "timestampValue": "2026-02-22T16:19:14.895Z"
+        },
+        "organizerLocation": {
+          "geoPointValue": {}
+        },
+        "termsAndConditions": {
+          "nullValue": null
+        },
+        "sport": {
+          "stringValue": "Cricket"
+        },
+        "restrictionRadius": {
+          "nullValue": null
+        },
+        "messageCount": {
+          "integerValue": "0"
+        },
+        "participantCount": {
+          "integerValue": "1"
+        },
+        "termsLanguage": {
+          "stringValue": "en"
+        },
+        "cardBackgroundImageUrl": {
+          "nullValue": null
+        },
+        "customCaption": {
+          "nullValue": null
+        },
+        "createdAt": {
+          "timestampValue": "2026-02-22T16:19:03.375392Z"
+        },
+        "rules": {
+          "mapValue": {
+            "fields": {
+              "correctScore": {
+                "integerValue": "2"
+              },
+              "correctWinner": {
+                "integerValue": "3"
+              }
+            }
+          }
+        },
+        "description": {
+          "nullValue": null
+        },
+        "restrictionCountry": {
+          "nullValue": null
+        },
+        "startDate": {
+          "nullValue": null
+        },
+        "groups": {
+          "arrayValue": {}
+        },
+        "restrictionState": {
+          "nullValue": null
+        },
+        "locationRestrictionType": {
+          "stringValue": "none"
+        },
+        "deletedAt": {
+          "timestampValue": "2026-02-23T05:49:18.150975Z"
+        },
+        "name": {
+          "stringValue": "ttt"
+        },
+        "joinCode": {
+          "stringValue": "LWEDYG"
+        },
+        "tieBreakerRules": {
+          "arrayValue": {
+            "values": [
+              {
+                "stringValue": "wins"
+              },
+              {
+                "stringValue": "nrr"
+              }
+            ]
+          }
+        },
+        "pointsForLoss": {
+          "integerValue": "0"
+        },
+        "status": {
+          "stringValue": "active"
+        },
+        "organizerName": {
+          "stringValue": "Teamwinniko"
+        }
+      },
+      "createTime": "2026-02-22T16:19:03.853603Z",
+      "updateTime": "2026-02-23T05:49:18.308722Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/66ffc4fd-b26a-4094-82ce-5a441df76a4c",
+      "fields": {
+        "participantCount": {
+          "integerValue": "1"
+        },
+        "messageCount": {
+          "integerValue": "0"
+        },
+        "rules": {
+          "mapValue": {
+            "fields": {
+              "correctScore": {
+                "integerValue": "2"
+              },
+              "correctWinner": {
+                "integerValue": "3"
+              }
+            }
+          }
+        },
+        "createdAt": {
+          "timestampValue": "2026-02-20T16:05:03.874503Z"
+        },
+        "description": {
+          "nullValue": null
+        },
+        "customCaption": {
+          "nullValue": null
+        },
+        "termsLanguage": {
+          "stringValue": "en"
+        },
+        "cardBackgroundImageUrl": {
+          "nullValue": null
+        },
+        "groups": {
+          "arrayValue": {}
+        },
+        "restrictionState": {
+          "nullValue": null
+        },
+        "locationRestrictionType": {
+          "stringValue": "none"
+        },
+        "deletedAt": {
+          "timestampValue": "2026-02-21T07:31:55.395264Z"
+        },
+        "startDate": {
+          "nullValue": null
+        },
+        "restrictionCountry": {
+          "nullValue": null
+        },
+        "pointsForLoss": {
+          "integerValue": "0"
+        },
+        "organizerName": {
+          "stringValue": "Teamwinniko"
+        },
+        "status": {
+          "stringValue": "active"
+        },
+        "tieBreakerRules": {
+          "arrayValue": {
+            "values": [
+              {
+                "stringValue": "wins"
+              },
+              {
+                "stringValue": "nrr"
+              }
+            ]
+          }
+        },
+        "name": {
+          "stringValue": "cccccrrrrr"
+        },
+        "joinCode": {
+          "stringValue": "USRDOR"
+        },
+        "leagueId": {
+          "stringValue": "mens-t20-world-cup-2026"
+        },
+        "pointsForDraw": {
+          "integerValue": "1"
+        },
+        "logoUrl": {
+          "stringValue": "https://crests.football-data.org/758.svg"
+        },
+        "isPaid": {
+          "booleanValue": false
+        },
+        "lastCleanedAt": {
+          "timestampValue": "2026-02-22T15:57:38.910Z"
+        },
+        "format": {
+          "stringValue": "League"
+        },
+        "organizerId": {
+          "stringValue": "0JaDnBTaiwTgnhOqb6Xr9SdaH0N2"
+        },
+        "endDate": {
+          "nullValue": null
+        },
+        "id": {
+          "stringValue": "66ffc4fd-b26a-4094-82ce-5a441df76a4c"
+        },
+        "sponsorName": {
+          "nullValue": null
+        },
+        "fixtureType": {
+          "stringValue": "running"
+        },
+        "customImages": {
+          "nullValue": null
+        },
+        "numberOfGroups": {
+          "integerValue": "0"
+        },
+        "isPublic": {
+          "booleanValue": true
+        },
+        "termsMetadata": {
+          "arrayValue": {}
+        },
+        "pointsForWin": {
+          "integerValue": "3"
+        },
+        "sport": {
+          "stringValue": "Cricket"
+        },
+        "restrictionRadius": {
+          "nullValue": null
+        },
+        "termsAndConditions": {
+          "nullValue": null
+        },
+        "organizerLocation": {
+          "geoPointValue": {}
+        }
+      },
+      "createTime": "2026-02-20T16:05:04.410524Z",
+      "updateTime": "2026-02-22T15:57:38.922529Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/6a81a585-90c8-4466-8bab-3eb3be8baf9e",
+      "fields": {
+        "restrictionRadius": {
+          "nullValue": null
+        },
+        "sport": {
+          "stringValue": "Cricket"
+        },
+        "termsAndConditions": {
+          "nullValue": null
+        },
+        "organizerLocation": {
+          "geoPointValue": {}
+        },
+        "lastSyncTime": {
+          "timestampValue": "2026-02-22T15:23:55.293Z"
+        },
+        "customImages": {
+          "nullValue": null
+        },
+        "termsMetadata": {
+          "arrayValue": {}
+        },
+        "pointsForWin": {
+          "integerValue": "3"
+        },
+        "numberOfGroups": {
+          "integerValue": "0"
+        },
+        "isPublic": {
+          "booleanValue": true
+        },
+        "endDate": {
+          "nullValue": null
+        },
+        "id": {
+          "stringValue": "6a81a585-90c8-4466-8bab-3eb3be8baf9e"
+        },
+        "sponsorName": {
+          "nullValue": null
+        },
+        "fixtureType": {
+          "stringValue": "running"
+        },
+        "leagueId": {
+          "stringValue": "mens-t20-world-cup-2026"
+        },
+        "pointsForDraw": {
+          "integerValue": "1"
+        },
+        "isPaid": {
+          "booleanValue": false
+        },
+        "lastCleanedAt": {
+          "timestampValue": "2026-02-22T15:57:41.102Z"
+        },
+        "logoUrl": {
+          "stringValue": "https://crests.football-data.org/758.svg"
+        },
+        "organizerId": {
+          "stringValue": "0JaDnBTaiwTgnhOqb6Xr9SdaH0N2"
+        },
+        "format": {
+          "stringValue": "League"
+        },
+        "status": {
+          "stringValue": "active"
+        },
+        "organizerName": {
+          "stringValue": "Teamwinniko"
+        },
+        "pointsForLoss": {
+          "integerValue": "0"
+        },
+        "tieBreakerRules": {
+          "arrayValue": {
+            "values": [
+              {
+                "stringValue": "wins"
+              },
+              {
+                "stringValue": "nrr"
+              }
+            ]
+          }
+        },
+        "joinCode": {
+          "stringValue": "7Y225U"
+        },
+        "name": {
+          "stringValue": "ooo"
+        },
+        "deletedAt": {
+          "timestampValue": "2026-02-23T05:49:22.836620Z"
+        },
+        "groups": {
+          "arrayValue": {}
+        },
+        "restrictionState": {
+          "nullValue": null
+        },
+        "locationRestrictionType": {
+          "stringValue": "none"
+        },
+        "startDate": {
+          "nullValue": null
+        },
+        "restrictionCountry": {
+          "nullValue": null
+        },
+        "description": {
+          "nullValue": null
+        },
+        "createdAt": {
+          "timestampValue": "2026-02-22T15:23:37.610770Z"
+        },
+        "rules": {
+          "mapValue": {
+            "fields": {
+              "correctScore": {
+                "integerValue": "2"
+              },
+              "correctWinner": {
+                "integerValue": "3"
+              }
+            }
+          }
+        },
+        "customCaption": {
+          "nullValue": null
+        },
+        "cardBackgroundImageUrl": {
+          "nullValue": null
+        },
+        "termsLanguage": {
+          "stringValue": "en"
+        },
+        "participantCount": {
+          "integerValue": "1"
+        },
+        "messageCount": {
+          "integerValue": "0"
+        }
+      },
+      "createTime": "2026-02-22T15:23:37.904032Z",
+      "updateTime": "2026-02-23T05:49:23.018155Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/75c65cd3-411b-40cd-8ade-7180168ec99f",
+      "fields": {
+        "termsLanguage": {
+          "stringValue": "en"
+        },
+        "cardBackgroundImageUrl": {
+          "stringValue": "https://firebasestorage.googleapis.com/v0/b/winniko-real.firebasestorage.app/o/competitions%2F75c65cd3-411b-40cd-8ade-7180168ec99f%2Fbackground%2Fd77af012-3973-46e3-a194-1aea4af05cdb.jpg?alt=media&token=1384fa68-0e7c-49dd-a939-864ef72cf863"
+        },
+        "customCaption": {
+          "nullValue": null
+        },
+        "rules": {
+          "mapValue": {
+            "fields": {
+              "correctScore": {
+                "integerValue": "2"
+              },
+              "correctWinner": {
+                "integerValue": "3"
+              }
+            }
+          }
+        },
+        "createdAt": {
+          "timestampValue": "2026-02-07T10:13:39.191153Z"
+        },
+        "description": {
+          "nullValue": null
+        },
+        "messageCount": {
+          "integerValue": "2"
+        },
+        "participantCount": {
+          "integerValue": "4"
+        },
+        "name": {
+          "stringValue": "PREMIER LEAGUE"
+        },
+        "joinCode": {
+          "stringValue": "JJT2AI"
+        },
+        "tieBreakerRules": {
+          "arrayValue": {
+            "values": [
+              {
+                "stringValue": "goal_difference"
+              }
+            ]
+          }
+        },
+        "pointsForLoss": {
+          "integerValue": "0"
+        },
+        "organizerName": {
+          "stringValue": "Teamwinniko"
+        },
+        "status": {
+          "stringValue": "active"
+        },
+        "restrictionCountry": {
+          "nullValue": null
+        },
+        "startDate": {
+          "nullValue": null
+        },
+        "locationRestrictionType": {
+          "stringValue": "none"
+        },
+        "restrictionState": {
+          "nullValue": null
+        },
+        "groups": {
+          "arrayValue": {}
+        },
+        "deletedAt": {
+          "timestampValue": "2026-02-21T09:02:47.277183Z"
+        },
+        "fixtureType": {
+          "stringValue": "running"
+        },
+        "sponsorName": {
+          "nullValue": null
+        },
+        "id": {
+          "stringValue": "75c65cd3-411b-40cd-8ade-7180168ec99f"
+        },
+        "endDate": {
+          "nullValue": null
+        },
+        "format": {
+          "stringValue": "League"
+        },
+        "organizerId": {
+          "stringValue": "0JaDnBTaiwTgnhOqb6Xr9SdaH0N2"
+        },
+        "logoUrl": {
+          "stringValue": "https://firebasestorage.googleapis.com/v0/b/winniko-real.firebasestorage.app/o/competitions%2F75c65cd3-411b-40cd-8ade-7180168ec99f%2Flogo%2F42451f1f-adfa-4538-bd3f-4370f51c67d6.jpg?alt=media&token=50bf58a7-be5e-434e-95f6-34c12861c51d"
+        },
+        "isPaid": {
+          "booleanValue": false
+        },
+        "pointsForDraw": {
+          "integerValue": "1"
+        },
+        "leagueId": {
+          "stringValue": "pl"
+        },
+        "organizerLocation": {
+          "geoPointValue": {}
+        },
+        "termsAndConditions": {
+          "nullValue": null
+        },
+        "sport": {
+          "stringValue": "Football"
+        },
+        "restrictionRadius": {
+          "nullValue": null
+        },
+        "isPublic": {
+          "booleanValue": true
+        },
+        "numberOfGroups": {
+          "integerValue": "0"
+        },
+        "pointsForWin": {
+          "integerValue": "3"
+        },
+        "termsMetadata": {
+          "arrayValue": {}
+        },
+        "customImages": {
+          "nullValue": null
+        },
+        "lastSyncTime": {
+          "timestampValue": "2026-02-09T04:44:19.519Z"
+        }
+      },
+      "createTime": "2026-02-07T10:13:40.174437Z",
+      "updateTime": "2026-02-21T09:02:47.330003Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/79e2715b-1168-469d-a07b-09b8fc4b678e",
+      "fields": {
+        "id": {
+          "stringValue": "79e2715b-1168-469d-a07b-09b8fc4b678e"
+        },
+        "endDate": {
+          "nullValue": null
+        },
+        "fixtureType": {
+          "stringValue": "running"
+        },
+        "sponsorName": {
+          "nullValue": null
+        },
+        "pointsForDraw": {
+          "integerValue": "1"
+        },
+        "leagueId": {
+          "stringValue": "mens-t20-world-cup-2026"
+        },
+        "organizerId": {
+          "stringValue": "0JaDnBTaiwTgnhOqb6Xr9SdaH0N2"
+        },
+        "format": {
+          "stringValue": "League"
+        },
+        "isPaid": {
+          "booleanValue": false
+        },
+        "lastCleanedAt": {
+          "timestampValue": "2026-02-22T15:57:44.310Z"
+        },
+        "logoUrl": {
+          "stringValue": "https://crests.football-data.org/758.svg"
+        },
+        "restrictionRadius": {
+          "nullValue": null
+        },
+        "sport": {
+          "stringValue": "Cricket"
+        },
+        "organizerLocation": {
+          "geoPointValue": {}
+        },
+        "termsAndConditions": {
+          "nullValue": null
+        },
+        "lastSyncTime": {
+          "timestampValue": "2026-02-21T15:06:14.665Z"
+        },
+        "termsMetadata": {
+          "arrayValue": {}
+        },
+        "pointsForWin": {
+          "integerValue": "3"
+        },
+        "numberOfGroups": {
+          "integerValue": "0"
+        },
+        "isPublic": {
+          "booleanValue": true
+        },
+        "customImages": {
+          "nullValue": null
+        },
+        "customCaption": {
+          "nullValue": null
+        },
+        "description": {
+          "nullValue": null
+        },
+        "rules": {
+          "mapValue": {
+            "fields": {
+              "correctScore": {
+                "integerValue": "2"
+              },
+              "correctWinner": {
+                "integerValue": "3"
+              }
+            }
+          }
+        },
+        "createdAt": {
+          "timestampValue": "2026-02-21T15:05:13.757119Z"
+        },
+        "cardBackgroundImageUrl": {
+          "nullValue": null
+        },
+        "termsLanguage": {
+          "stringValue": "en"
+        },
+        "participantCount": {
+          "integerValue": "1"
+        },
+        "messageCount": {
+          "integerValue": "0"
+        },
+        "organizerName": {
+          "stringValue": "Teamwinniko"
+        },
+        "status": {
+          "stringValue": "active"
+        },
+        "pointsForLoss": {
+          "integerValue": "0"
+        },
+        "joinCode": {
+          "stringValue": "3GOCD9"
+        },
+        "name": {
+          "stringValue": "hhh"
+        },
+        "tieBreakerRules": {
+          "arrayValue": {
+            "values": [
+              {
+                "stringValue": "wins"
+              },
+              {
+                "stringValue": "nrr"
+              }
+            ]
+          }
+        },
+        "startDate": {
+          "nullValue": null
+        },
+        "deletedAt": {
+          "timestampValue": "2026-02-21T17:50:28.490707Z"
+        },
+        "groups": {
+          "arrayValue": {}
+        },
+        "restrictionState": {
+          "nullValue": null
+        },
+        "locationRestrictionType": {
+          "stringValue": "none"
+        },
+        "restrictionCountry": {
+          "nullValue": null
+        }
+      },
+      "createTime": "2026-02-21T15:05:14.009796Z",
+      "updateTime": "2026-02-22T15:57:44.330259Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/7b9ab200-c20b-4ce5-b7f2-ccfd251edb76",
+      "fields": {
+        "restrictionCountry": {
+          "nullValue": null
+        },
+        "deletedAt": {
+          "timestampValue": "2026-02-21T17:50:35.474806Z"
+        },
+        "locationRestrictionType": {
+          "stringValue": "none"
+        },
+        "restrictionState": {
+          "nullValue": null
+        },
+        "groups": {
+          "arrayValue": {}
+        },
+        "startDate": {
+          "nullValue": null
+        },
+        "tieBreakerRules": {
+          "arrayValue": {
+            "values": [
+              {
+                "stringValue": "wins"
+              },
+              {
+                "stringValue": "nrr"
+              }
+            ]
+          }
+        },
+        "joinCode": {
+          "stringValue": "FPRLLI"
+        },
+        "name": {
+          "stringValue": "t20 new"
+        },
+        "organizerName": {
+          "stringValue": "Teamwinniko"
+        },
+        "status": {
+          "stringValue": "active"
+        },
+        "pointsForLoss": {
+          "integerValue": "0"
+        },
+        "messageCount": {
+          "integerValue": "0"
+        },
+        "participantCount": {
+          "integerValue": "1"
+        },
+        "cardBackgroundImageUrl": {
+          "nullValue": null
+        },
+        "termsLanguage": {
+          "stringValue": "en"
+        },
+        "description": {
+          "nullValue": null
+        },
+        "rules": {
+          "mapValue": {
+            "fields": {
+              "correctScore": {
+                "integerValue": "2"
+              },
+              "correctWinner": {
+                "integerValue": "3"
+              }
+            }
+          }
+        },
+        "createdAt": {
+          "timestampValue": "2026-02-21T09:14:12.785147Z"
+        },
+        "customCaption": {
+          "nullValue": null
+        },
+        "customImages": {
+          "nullValue": null
+        },
+        "termsMetadata": {
+          "arrayValue": {}
+        },
+        "pointsForWin": {
+          "integerValue": "3"
+        },
+        "isPublic": {
+          "booleanValue": true
+        },
+        "numberOfGroups": {
+          "integerValue": "0"
+        },
+        "lastSyncTime": {
+          "timestampValue": "2026-02-21T09:19:14.787Z"
+        },
+        "termsAndConditions": {
+          "nullValue": null
+        },
+        "organizerLocation": {
+          "geoPointValue": {}
+        },
+        "restrictionRadius": {
+          "nullValue": null
+        },
+        "sport": {
+          "stringValue": "Cricket"
+        },
+        "isPaid": {
+          "booleanValue": false
+        },
+        "lastCleanedAt": {
+          "timestampValue": "2026-02-22T15:57:46.208Z"
+        },
+        "logoUrl": {
+          "stringValue": "https://crests.football-data.org/758.svg"
+        },
+        "organizerId": {
+          "stringValue": "0JaDnBTaiwTgnhOqb6Xr9SdaH0N2"
+        },
+        "format": {
+          "stringValue": "League"
+        },
+        "leagueId": {
+          "stringValue": "mens-t20-world-cup-2026"
+        },
+        "pointsForDraw": {
+          "integerValue": "1"
+        },
+        "sponsorName": {
+          "nullValue": null
+        },
+        "fixtureType": {
+          "stringValue": "running"
+        },
+        "endDate": {
+          "nullValue": null
+        },
+        "id": {
+          "stringValue": "7b9ab200-c20b-4ce5-b7f2-ccfd251edb76"
+        }
+      },
+      "createTime": "2026-02-21T09:14:16.145608Z",
+      "updateTime": "2026-02-22T15:57:46.215384Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/9c6580a2-a459-4450-9577-924baeb270a6",
+      "fields": {
+        "customImages": {
+          "nullValue": null
+        },
+        "numberOfGroups": {
+          "integerValue": "0"
+        },
+        "isPublic": {
+          "booleanValue": true
+        },
+        "termsMetadata": {
+          "arrayValue": {}
+        },
+        "pointsForWin": {
+          "integerValue": "3"
+        },
+        "sport": {
+          "stringValue": "Football"
+        },
+        "restrictionRadius": {
+          "nullValue": null
+        },
+        "termsAndConditions": {
+          "nullValue": null
+        },
+        "organizerLocation": {
+          "geoPointValue": {}
+        },
+        "leagueId": {
+          "nullValue": null
+        },
+        "pointsForDraw": {
+          "integerValue": "1"
+        },
+        "logoUrl": {
+          "nullValue": null
+        },
+        "isPaid": {
+          "booleanValue": false
+        },
+        "format": {
+          "stringValue": "League"
+        },
+        "organizerId": {
+          "stringValue": "0JaDnBTaiwTgnhOqb6Xr9SdaH0N2"
+        },
+        "endDate": {
+          "nullValue": null
+        },
+        "id": {
+          "stringValue": "9c6580a2-a459-4450-9577-924baeb270a6"
+        },
+        "sponsorName": {
+          "nullValue": null
+        },
+        "fixtureType": {
+          "stringValue": "running"
+        },
+        "locationRestrictionType": {
+          "stringValue": "none"
+        },
+        "restrictionState": {
+          "nullValue": null
+        },
+        "groups": {
+          "arrayValue": {}
+        },
+        "deletedAt": {
+          "timestampValue": "2026-02-21T17:50:41.048751Z"
+        },
+        "startDate": {
+          "nullValue": null
+        },
+        "restrictionCountry": {
+          "nullValue": null
+        },
+        "pointsForLoss": {
+          "integerValue": "0"
+        },
+        "status": {
+          "stringValue": "active"
+        },
+        "organizerName": {
+          "stringValue": "Teamwinniko"
+        },
+        "tieBreakerRules": {
+          "arrayValue": {
+            "values": [
+              {
+                "stringValue": "goal_difference"
+              }
+            ]
+          }
+        },
+        "name": {
+          "stringValue": "ss"
+        },
+        "joinCode": {
+          "stringValue": "VIFWSM"
+        },
+        "participantCount": {
+          "integerValue": "0"
+        },
+        "messageCount": {
+          "integerValue": "0"
+        },
+        "rules": {
+          "mapValue": {
+            "fields": {
+              "correctScore": {
+                "integerValue": "2"
+              },
+              "correctWinner": {
+                "integerValue": "3"
+              }
+            }
+          }
+        },
+        "createdAt": {
+          "timestampValue": "2026-02-21T09:24:19.955080Z"
+        },
+        "description": {
+          "nullValue": null
+        },
+        "customCaption": {
+          "nullValue": null
+        },
+        "termsLanguage": {
+          "stringValue": "en"
+        },
+        "cardBackgroundImageUrl": {
+          "nullValue": null
+        }
+      },
+      "createTime": "2026-02-21T09:24:20.941715Z",
+      "updateTime": "2026-02-21T17:50:41.122025Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/a07ce161-a901-43f1-adce-5d5b38d5b5a8",
+      "fields": {
+        "cardBackgroundImageUrl": {
+          "nullValue": null
+        },
+        "termsLanguage": {
+          "stringValue": "en"
+        },
+        "customCaption": {
+          "nullValue": null
+        },
+        "description": {
+          "nullValue": null
+        },
+        "createdAt": {
+          "timestampValue": "2026-02-23T05:52:42.915268Z"
+        },
+        "rules": {
+          "mapValue": {
+            "fields": {
+              "correctScore": {
+                "integerValue": "2"
+              },
+              "correctWinner": {
+                "integerValue": "3"
+              }
+            }
+          }
+        },
+        "messageCount": {
+          "integerValue": "0"
+        },
+        "participantCount": {
+          "integerValue": "1"
+        },
+        "joinCode": {
+          "stringValue": "MM8S1V"
+        },
+        "name": {
+          "stringValue": "pppp"
+        },
+        "tieBreakerRules": {
+          "arrayValue": {
+            "values": [
+              {
+                "stringValue": "wins"
+              },
+              {
+                "stringValue": "nrr"
+              }
+            ]
+          }
+        },
+        "status": {
+          "stringValue": "active"
+        },
+        "organizerName": {
+          "stringValue": "Teamwinniko"
+        },
+        "pointsForLoss": {
+          "integerValue": "0"
+        },
+        "restrictionCountry": {
+          "nullValue": null
+        },
+        "startDate": {
+          "nullValue": null
+        },
+        "deletedAt": {
+          "nullValue": null
+        },
+        "locationRestrictionType": {
+          "stringValue": "none"
+        },
+        "restrictionState": {
+          "nullValue": null
+        },
+        "groups": {
+          "arrayValue": {}
+        },
+        "fixtureType": {
+          "stringValue": "running"
+        },
+        "sponsorName": {
+          "nullValue": null
+        },
+        "id": {
+          "stringValue": "a07ce161-a901-43f1-adce-5d5b38d5b5a8"
+        },
+        "endDate": {
+          "nullValue": null
+        },
+        "organizerId": {
+          "stringValue": "0JaDnBTaiwTgnhOqb6Xr9SdaH0N2"
+        },
+        "format": {
+          "stringValue": "League"
+        },
+        "isPaid": {
+          "booleanValue": false
+        },
+        "logoUrl": {
+          "stringValue": "https://crests.football-data.org/758.svg"
+        },
+        "pointsForDraw": {
+          "integerValue": "1"
+        },
+        "leagueId": {
+          "stringValue": "mens-t20-world-cup-2026"
+        },
+        "organizerLocation": {
+          "geoPointValue": {}
+        },
+        "termsAndConditions": {
+          "nullValue": null
+        },
+        "restrictionRadius": {
+          "nullValue": null
+        },
+        "sport": {
+          "stringValue": "Cricket"
+        },
+        "termsMetadata": {
+          "arrayValue": {}
+        },
+        "pointsForWin": {
+          "integerValue": "3"
+        },
+        "numberOfGroups": {
+          "integerValue": "0"
+        },
+        "isPublic": {
+          "booleanValue": true
+        },
+        "customImages": {
+          "nullValue": null
+        },
+        "lastSyncTime": {
+          "timestampValue": "2026-02-23T05:53:03.773Z"
+        }
+      },
+      "createTime": "2026-02-23T05:52:43.532282Z",
+      "updateTime": "2026-02-23T05:53:03.783538Z"
+    },
+    {
+      "name": "projects/winniko-real/databases/(default)/documents/competitions/b2890ccb-eece-4cba-a612-876f97139dd0",
+      "fields": {
+        "termsAndConditions": {
+          "nullValue": null
+        },
+        "organizerLocation": {
+          "geoPointValue": {}
+        },
+        "restrictionRadius": {
+          "nullValue": null
+        },
+        "sport": {
+          "stringValue": "Cricket"
+        },
+        "customImages": {
+          "nullValue": null
+        },
+        "pointsForWin": {
+          "integerValue": "3"
+        },
+        "termsMetadata": {
+          "arrayValue": {}
+        },
+        "isPublic": {
+          "booleanValue": true
+        },
+        "numberOfGroups": {
+          "integerValue": "0"
+        },
+        "sponsorName": {
+          "nullValue": null
+        },
+        "fixtureType": {
+          "stringValue": "running"
+        },
+        "endDate": {
+          "nullValue": null
+        },
+        "id": {
+          "stringValue": "b2890ccb-eece-4cba-a612-876f97139dd0"
+        },
+        "isPaid": {
+          "booleanValue": false
+        },
+        "logoUrl": {
+          "nullValue": null
+        },
+        "organizerId": {
+          "stringValue": "0JaDnBTaiwTgnhOqb6Xr9SdaH0N2"
+        },
+        "format": {
+          "stringValue": "League"
+        },
+        "leagueId": {
+          "nullValue": null
+        },
+        "pointsForDraw": {
+          "integerValue": "1"
+        },
+        "tieBreakerRules": {
+          "arrayValue": {
+            "values": [
+              {
+                "stringValue": "wins"
+              },
+              {
+                "stringValue": "nrr"
+              }
+            ]
+          }
+        },
+        "joinCode": {
+          "stringValue": ""
+        },
+        "name": {
+          "stringValue": "gg"
+        },
+        "organizerName": {
+          "stringValue": "Teamwinniko"
+        },
+        "status": {
+          "stringValue": "active"
+        },
+        "pointsForLoss": {
+          "integerValue": "0"
+        },
+        "restrictionCountry": {
+          "nullValue": null
+        },
+        "deletedAt": {
+          "timestampValue": "2026-02-21T17:50:45.915172Z"
+        },
+        "locationRestrictionType": {
+          "stringValue": "none"
+        },
+        "restrictionState": {
+          "nullValue": null
+        },
+        "groups": {
+          "arrayValue": {}
+        },
+        "startDate": {
+          "nullValue": null
+        },
+        "cardBackgroundImageUrl": {
+          "nullValue": null
+        },
+        "termsLanguage": {
+          "stringValue": "en"
+        },
+        "description": {
+          "nullValue": null
+        },
+        "createdAt": {
+          "timestampValue": "2026-02-21T10:51:20.090109Z"
+        },
+        "rules": {
+          "mapValue": {
+            "fields": {
+              "correctScore": {
+                "integerValue": "2"
+              },
+              "correctWinner": {
+                "integerValue": "3"
+              }
+            }
+          }
+        },
+        "customCaption": {
+          "nullValue": null
+        },
+        "messageCount": {
+          "integerValue": "0"
+        },
+        "participantCount": {
+          "integerValue": "0"
+        }
+      },
+      "createTime": "2026-02-21T10:51:20.474944Z",
+      "updateTime": "2026-02-21T17:50:45.973491Z"
+    }
+  ],
+  "nextPageToken": "AFTOeJxnaHpiP14XZvGUoQXaKOyAhqbsbvmdEeC-yC0LO77-JQuEGFq7YMdZyXICq8Bf6tSEa5SkvITyZrll2Kz4IrRosqppK5AK77vUyLI6Ba6Emxf1Cw6OZzcFgyQ_Wxu96S4e0AftNKX8tEfJMQ7E2rVWnnc"
+}

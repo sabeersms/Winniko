@@ -198,7 +198,7 @@ class _CompetitionTeamsScreenState extends State<CompetitionTeamsScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               color: AppColors.cardBackground,
               child: DropdownButtonFormField<String>(
-                value: _selectedGroup,
+                initialValue: _selectedGroup,
                 hint: const Text('Select Group to Assign'),
                 isDense: true,
                 decoration: const InputDecoration(
@@ -802,7 +802,7 @@ class _CompetitionTeamsScreenState extends State<CompetitionTeamsScreen> {
         Padding(
           padding: const EdgeInsets.all(12.0),
           child: DropdownButtonFormField<String>(
-            value: _selectedLeagueId,
+            initialValue: _selectedLeagueId,
             items: leagues
                 .map(
                   (l) =>
@@ -1284,7 +1284,7 @@ class _EditTeamDialogState extends State<EditTeamDialog> {
           if (widget.groups.isNotEmpty) ...[
             const SizedBox(height: 12),
             DropdownButtonFormField<String>(
-              value: _selectedGroup,
+              initialValue: _selectedGroup,
               hint: const Text('Assign Group'),
               decoration: const InputDecoration(
                 labelText: 'Group',

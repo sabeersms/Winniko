@@ -150,7 +150,8 @@ class _WaitingVerificationScreenState extends State<WaitingVerificationScreen> {
       await authService.sendEmailVerification();
       if (mounted) {
         setState(() {
-          _message = "Verification email resent! Please check your inbox.";
+          _message =
+              "Verification email resent! Please check your inbox (and spam folder).";
           _isLoading = false;
         });
       }
@@ -199,7 +200,7 @@ class _WaitingVerificationScreenState extends State<WaitingVerificationScreen> {
               ),
               const SizedBox(height: 16),
               Text(
-                "A verification link was sent to:\n${user?.email ?? 'your email'}",
+                "A verification link was sent to:\n${user?.email ?? 'your email'}\n(Don't forget to check your spam folder!)",
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   color: AppColors.textSecondary,

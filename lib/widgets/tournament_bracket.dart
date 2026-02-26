@@ -155,7 +155,33 @@ class TournamentBracket extends StatelessWidget {
     );
   }
 
+  String? _resolveWinnerId(MatchModel match) {
+    String? wId = match.winnerId;
+    if (wId == null || wId.isEmpty) {
+      wId = match.actualScore?['winnerId']?.toString();
+    }
+    if (wId == null || wId.isEmpty) return null;
+    if (wId == 'tied' || wId == 'no_result') return wId;
+    if (wId == match.team1Id || wId == match.team2Id) return wId;
+    if (wId.contains('-')) return wId;
+
+    final slug = wId.toLowerCase().replaceAll('_', '');
+    final t1n = match.team1Name
+        .toLowerCase()
+        .replaceAll(' ', '')
+        .replaceAll('_', '');
+    final t2n = match.team2Name
+        .toLowerCase()
+        .replaceAll(' ', '')
+        .replaceAll('_', '');
+    if (t1n.contains(slug) || slug.contains(t1n)) return match.team1Id;
+    if (t2n.contains(slug) || slug.contains(t2n)) return match.team2Id;
+    return wId;
+  }
+
   Widget _buildBracketMatch(BuildContext context, MatchModel match) {
+    final resolvedWinnerId = _resolveWinnerId(match);
+
     return Container(
       margin: const EdgeInsets.only(bottom: 24),
       padding: const EdgeInsets.all(12),
@@ -181,13 +207,13 @@ class TournamentBracket extends StatelessWidget {
           _buildTeamRow(
             match.team1Name,
             match.actualScore?['team1'],
-            match.winnerId == match.team1Id,
+            resolvedWinnerId == match.team1Id,
           ),
           const Divider(color: AppColors.dividerColor, height: 16),
           _buildTeamRow(
             match.team2Name,
             match.actualScore?['team2'],
-            match.winnerId == match.team2Id,
+            resolvedWinnerId == match.team2Id,
           ),
           const SizedBox(height: 8),
           Row(

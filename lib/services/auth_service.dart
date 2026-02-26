@@ -16,6 +16,48 @@ class AuthService with ChangeNotifier {
   // Get current user ID
   String? get currentUserId => _auth.currentUser?.uid;
 
+  // Master Admin Check
+  bool get isMasterAdmin {
+    final email = _auth.currentUser?.email;
+    if (email == null) return false;
+    const masterEmails = [
+      'sabeersms@gmail.com',
+      'teamwinniko@gmail.com',
+      '2mobilecampus@gmail.com',
+    ];
+    return masterEmails.contains(email.toLowerCase());
+  }
+
+  /// Registers the current user's UID in the Firestore 'admins' collection
+  /// if they are a master admin. This is needed so Firestore security rules
+  /// can identify phone-authenticated admins by UID (not just by token email).
+  Future<void> registerAdminUidIfNeeded() async {
+    try {
+      final user = _auth.currentUser;
+      if (user == null) return;
+
+      // Check app-side admin status
+      final email = user.email ?? '';
+      const masterEmails = [
+        'sabeersms@gmail.com',
+        'teamwinniko@gmail.com',
+        '2mobilecampus@gmail.com',
+      ];
+
+      if (masterEmails.contains(email.toLowerCase())) {
+        // Write UID to admins collection so Firestore rules can check it
+        await _firestore.collection('admins').doc(user.uid).set({
+          'email': email,
+          'registeredAt': FieldValue.serverTimestamp(),
+        }, SetOptions(merge: true));
+        debugPrint('✅ Admin UID registered: ${user.uid}');
+      }
+    } catch (e) {
+      // Non-fatal: log but don't block login
+      debugPrint('⚠️ Could not register admin UID: $e');
+    }
+  }
+
   // Stream of auth state changes
   late final Stream<User?> authStateChanges = _auth.authStateChanges();
 

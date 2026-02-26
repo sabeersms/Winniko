@@ -18,6 +18,9 @@ class MatchModel {
   final String? group; // e.g., 'Group A'
   final int? matchNumber;
   final String? location; // e.g. 'Old Trafford'
+  bool get isVerified =>
+      actualScore?['verified'] == true ||
+      actualScore?['manuallyScored'] == true;
 
   MatchModel({
     required this.id,
@@ -125,8 +128,43 @@ class MatchModel {
     return MatchModel.fromMap(data, snapshot.id);
   }
 
-  bool get isUpcoming => status == 'upcoming';
-  bool get isLive => status == 'live';
-  bool get isCompleted => status == 'completed';
-  bool get isPredictionLocked => DateTime.now().isAfter(scheduledTime);
+  bool get isUpcoming =>
+      status == 'upcoming' || status == 'scheduled' || status == 'Upcoming';
+  bool get isLive =>
+      status == 'live' ||
+      status == 'progressing' ||
+      status == 'Live' ||
+      status == 'In Progress';
+  bool get isCompleted =>
+      status == 'completed' ||
+      status == 'finished' ||
+      status.toLowerCase() == 'match ended' ||
+      status.toLowerCase().contains('won') ||
+      status.toLowerCase().contains('beat');
+
+  bool get isFinished => isCompleted || isVerified;
+  bool get isPredictionLocked =>
+      DateTime.now().isAfter(scheduledTime) || isFinished;
+
+  /// Resolves a winner ID that may be an API name slug (e.g., "south_africa")
+  /// OR a competition UUID. Returns the matching team1Id or team2Id,
+  /// or the original value unchanged (for 'tied', 'no_result', already UUID, etc.)
+  String? get resolvedWinnerId {
+    String? wId = winnerId;
+    if (wId == null || wId.isEmpty) {
+      wId = actualScore?['winnerId']?.toString();
+    }
+    if (wId == null || wId.isEmpty) return null;
+    if (wId == 'tied' || wId == 'no_result' || wId == 'draw') return wId;
+    if (wId == team1Id || wId == team2Id) return wId;
+    if (wId.contains('-')) return wId; // looks like a UUID
+
+    // Looks like a slug — try to map to a team UUID via name fuzzy match
+    final slug = wId.toLowerCase().replaceAll('_', '');
+    final t1n = team1Name.toLowerCase().replaceAll(' ', '').replaceAll('_', '');
+    final t2n = team2Name.toLowerCase().replaceAll(' ', '').replaceAll('_', '');
+    if (t1n.contains(slug) || slug.contains(t1n)) return team1Id;
+    if (t2n.contains(slug) || slug.contains(t2n)) return team2Id;
+    return wId; // unresolved, return as-is
+  }
 }

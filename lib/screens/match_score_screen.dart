@@ -1,7 +1,6 @@
-// ignore_for_file: use_build_context_synchronously
 import 'package:flutter/material.dart';
-import '../widgets/loading_spinner.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../constants/app_constants.dart';
 import '../models/match_model.dart';
 import '../services/firestore_service.dart';
@@ -34,6 +33,8 @@ class _MatchScoreScreenState extends State<MatchScoreScreen> {
   final TextEditingController _t1WicketsController = TextEditingController();
   final TextEditingController _t2RunsController = TextEditingController();
   final TextEditingController _t2WicketsController = TextEditingController();
+  final TextEditingController _t1OversController = TextEditingController();
+  final TextEditingController _t2OversController = TextEditingController();
 
   @override
   void initState() {
@@ -53,12 +54,23 @@ class _MatchScoreScreenState extends State<MatchScoreScreen> {
             widget.match.actualScore!['t2Runs']?.toString() ?? '';
         _t2WicketsController.text =
             widget.match.actualScore!['t2Wickets']?.toString() ?? '';
+        _t1OversController.text =
+            widget.match.actualScore!['t1Overs']?.toString() ?? '';
+        _t2OversController.text =
+            widget.match.actualScore!['t2Overs']?.toString() ?? '';
       } else {
         _homeScoreController.text =
             widget.match.actualScore!['team1']?.toString() ?? '0';
         _awayScoreController.text =
             widget.match.actualScore!['team2']?.toString() ?? '0';
-        _tieBreakWinnerId = widget.match.actualScore!['winnerId'];
+
+        final apiWinnerId = widget.match.actualScore!['winnerId'];
+        if (apiWinnerId == widget.match.team1Id ||
+            apiWinnerId == widget.match.team2Id) {
+          _tieBreakWinnerId = apiWinnerId;
+        } else {
+          _tieBreakWinnerId = null;
+        }
       }
     }
 
@@ -79,7 +91,27 @@ class _MatchScoreScreenState extends State<MatchScoreScreen> {
     super.dispose();
   }
 
+  bool _isSuperAdmin() {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null || user.email == null) return false;
+    return AppConstants.adminEmails.contains(user.email!.toLowerCase());
+  }
+
   Future<void> _saveScore() async {
+    // Check if match is verified and user is not super admin
+    if (widget.match.actualScore?['verified'] == true && !_isSuperAdmin()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'This match has been verified by a super admin and cannot be edited. Only super admins can modify verified results.',
+          ),
+          backgroundColor: AppColors.error,
+          duration: Duration(seconds: 4),
+        ),
+      );
+      return;
+    }
+
     if (DateTime.now().isBefore(widget.match.scheduledTime)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -140,7 +172,7 @@ class _MatchScoreScreenState extends State<MatchScoreScreen> {
             // Batting First Won -> Runs Margin
             _cricketMarginType = 'runs';
             int diff = (t1Runs - t2Runs).abs();
-            _cricketMarginValue = _getRunRange(diff);
+            _cricketMarginValue = diff.toString();
           } else {
             // Batting Second Won -> Wickets Margin
             _cricketMarginType = 'wickets';
@@ -161,13 +193,17 @@ class _MatchScoreScreenState extends State<MatchScoreScreen> {
           'marginValue': _cricketMarginValue,
           't1Runs': t1Runs,
           't1Wickets': t1Wickets,
+          't1Overs': double.tryParse(_t1OversController.text) ?? 0.0,
           't2Runs': t2Runs,
           't2Wickets': t2Wickets,
+          't2Overs': double.tryParse(_t2OversController.text) ?? 0.0,
+          'manuallyScored': true,
         };
       } else {
         actualScore = {
           'team1': homeScore,
           'team2': awayScore,
+          'manuallyScored': true,
           if (homeScore == awayScore && _tieBreakWinnerId != null)
             'winnerId': _tieBreakWinnerId,
         };
@@ -318,6 +354,20 @@ class _MatchScoreScreenState extends State<MatchScoreScreen> {
   }
 
   Future<void> _resetMatch() async {
+    // Check if match is verified and user is not super admin
+    if (widget.match.actualScore?['verified'] == true && !_isSuperAdmin()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'This match has been verified by a super admin and cannot be reset. Only super admins can modify verified results.',
+          ),
+          backgroundColor: AppColors.error,
+          duration: Duration(seconds: 4),
+        ),
+      );
+      return;
+    }
+
     final bool? confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -468,8 +518,83 @@ class _MatchScoreScreenState extends State<MatchScoreScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // Status Dropdown removed
-            const SizedBox(height: 32),
+            // Verification Status Indicator (Super Admin Lock)
+            if (widget.match.actualScore?['verified'] == true)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Colors.amber.withAlpha(26),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: Colors.amber.withAlpha(77),
+                    width: 2,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.verified, color: Colors.amber, size: 24),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '✓ VERIFIED BY SUPER ADMIN',
+                            style: TextStyle(
+                              color: Colors.amber,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'This result is locked and cannot be modified by anyone except super admins',
+                            style: TextStyle(
+                              color: Colors.amber.withAlpha(200),
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+            // Protection Status Indicator
+            if (widget.match.actualScore?['manuallyScored'] == true)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: AppColors.accentGreen.withAlpha(26),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: AppColors.accentGreen.withAlpha(77),
+                    width: 1,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.lock, color: AppColors.accentGreen, size: 20),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'This match has been manually scored and is protected from API updates',
+                        style: TextStyle(
+                          color: AppColors.accentGreen,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            const SizedBox(height: 16),
 
             // Score Input
             if (widget.sport == AppConstants.sportCricket)
@@ -589,16 +714,20 @@ class _MatchScoreScreenState extends State<MatchScoreScreen> {
               width: double.infinity,
               height: 50,
               child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.accentGreen,
+                  foregroundColor: Colors.white,
+                  textStyle: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 onPressed: _isLoading ? null : _saveScore,
-                child: _isLoading
-                    ? const LoadingSpinner(
-                        size: 24,
-                        color: AppColors.textPrimary,
-                      )
-                    : const Text('Save Result'),
+                child: Text(_isLoading ? 'Saving...' : 'Save Score'),
               ),
             ),
-            if (widget.match.status == AppConstants.matchStatusCompleted ||
+
+            if (widget.match.isCompleted ||
                 widget.match.status == AppConstants.matchStatusLive ||
                 widget.match.actualScore != null) ...[
               const SizedBox(height: 16),
@@ -698,6 +827,18 @@ class _MatchScoreScreenState extends State<MatchScoreScreen> {
                     style: const TextStyle(color: AppColors.textPrimary),
                     decoration: const InputDecoration(
                       labelText: 'Wickets',
+                      filled: true,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _t2OversController,
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    style: const TextStyle(color: AppColors.textPrimary),
+                    decoration: const InputDecoration(
+                      labelText: 'Overs (e.g. 10.3)',
                       filled: true,
                     ),
                   ),
@@ -826,23 +967,6 @@ class _MatchScoreScreenState extends State<MatchScoreScreen> {
           ),
       ],
     );
-  }
-
-  String _getRunRange(int runs) {
-    for (String range in AppConstants.cricketRunMargins) {
-      if (range.contains('+')) {
-        int min = int.tryParse(range.replaceAll('+', '')) ?? 201;
-        if (runs >= min) return range;
-      } else {
-        List<String> parts = range.split('-');
-        if (parts.length == 2) {
-          int min = int.tryParse(parts[0]) ?? 0;
-          int max = int.tryParse(parts[1]) ?? 999;
-          if (runs >= min && runs <= max) return range;
-        }
-      }
-    }
-    return AppConstants.cricketRunMargins.first; // Fallback
   }
 
   Widget _buildScoreInput(String teamName, TextEditingController controller) {

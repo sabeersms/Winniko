@@ -32,6 +32,31 @@ class MatchResultCard extends StatelessWidget {
     this.sport,
   });
 
+  /// Resolves a winner ID that may be an API name slug (e.g., "south_africa")
+  /// OR a competition UUID. Returns the matching team1Id or team2Id,
+  /// or the original value unchanged (for 'tied', 'no_result', already UUID, etc.)
+  String? _resolveWinnerId(String? wId) {
+    if (wId == null || wId.isEmpty) return wId;
+    if (wId == 'tied' || wId == 'no_result' || wId == 'draw') return wId;
+    if (wId == match.team1Id || wId == match.team2Id)
+      return wId; // already a UUID
+    if (wId.contains('-')) return wId; // looks like a UUID, pass through
+
+    // Looks like a slug — try to map to a team UUID via name fuzzy match
+    final slug = wId.toLowerCase().replaceAll('_', '');
+    final t1n = match.team1Name
+        .toLowerCase()
+        .replaceAll(' ', '')
+        .replaceAll('_', '');
+    final t2n = match.team2Name
+        .toLowerCase()
+        .replaceAll(' ', '')
+        .replaceAll('_', '');
+    if (t1n.contains(slug) || slug.contains(t1n)) return match.team1Id;
+    if (t2n.contains(slug) || slug.contains(t2n)) return match.team2Id;
+    return wId; // unresolved, return as-is
+  }
+
   @override
   Widget build(BuildContext context) {
     // Determine scores and logic
@@ -41,7 +66,9 @@ class MatchResultCard extends StatelessWidget {
     final team1Score = team1ScoreVal.toString();
     final team2Score = team2ScoreVal.toString();
 
-    final isLive = match.status == AppConstants.matchStatusLive;
+    final isLive =
+        match.status == AppConstants.matchStatusLive ||
+        match.status == AppConstants.matchStatusProgressing;
     final isUpcoming =
         match.status == AppConstants.matchStatusUpcoming ||
         match.status == AppConstants.matchStatusScheduled;
@@ -57,11 +84,14 @@ class MatchResultCard extends StatelessWidget {
 
     final AutoSizeGroup teamNameGroup = AutoSizeGroup();
 
-    // Check winnerId from root OR inside actualScore (legacy/compat)
-    String? rawWinnerId = match.winnerId;
+    // Check winnerId from root OR inside actualScore (legacy/compat),
+    // and resolve any API name slugs (e.g., "south_africa") to team UUIDs.
+    String? rawWinnerId = _resolveWinnerId(match.winnerId);
     if ((rawWinnerId == null || rawWinnerId.isEmpty) &&
         match.actualScore != null) {
-      rawWinnerId = match.actualScore!['winnerId']?.toString();
+      rawWinnerId = _resolveWinnerId(
+        match.actualScore!['winnerId']?.toString(),
+      );
     }
 
     // Check if it was a tie-breaker (scores equal but winner exists)
@@ -85,7 +115,8 @@ class MatchResultCard extends StatelessWidget {
         (rawWinnerId != null &&
             rawWinnerId.isNotEmpty &&
             rawWinnerId != 'tied' &&
-            rawWinnerId != 'no_result');
+            rawWinnerId != 'no_result' &&
+            rawWinnerId != 'draw');
 
     final gradient = _getGradient(match.competitionId);
 
@@ -170,9 +201,7 @@ class MatchResultCard extends StatelessWidget {
                       Expanded(
                         child: Column(
                           children: [
-                            if (sport == 'Cricket' &&
-                                match.status ==
-                                    AppConstants.matchStatusCompleted)
+                            if (sport == 'Cricket' && match.isFinished)
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 4.0),
                                 child: Text(
@@ -295,10 +324,11 @@ class MatchResultCard extends StatelessWidget {
                                     ),
                                   )
                                 else if (sport == 'Cricket' &&
-                                    match.status ==
-                                        AppConstants.matchStatusCompleted) ...[
+                                    match.isFinished) ...[
                                   // Cricket Completed State: Win Margin
-                                  if (match.actualScore?['winnerId'] == 'tied')
+                                  if (match.actualScore?['winnerId'] ==
+                                          'tied' ||
+                                      isTieBreaker)
                                     const Text(
                                       'MATCH TIED',
                                       textAlign: TextAlign.center,
@@ -333,6 +363,7 @@ class MatchResultCard extends StatelessWidget {
                                               final t1R =
                                                   match
                                                       .actualScore?['t1Runs'] ??
+                                                  match.actualScore?['team1'] ??
                                                   0;
                                               final t1W =
                                                   match
@@ -341,80 +372,186 @@ class MatchResultCard extends StatelessWidget {
                                               final t2R =
                                                   match
                                                       .actualScore?['t2Runs'] ??
+                                                  match.actualScore?['team2'] ??
                                                   0;
                                               final t2W =
                                                   match
                                                       .actualScore?['t2Wickets'] ??
                                                   0;
-                                              if (sport != 'Cricket') {
-                                                return Text(
-                                                  '$t1R/$t1W - $t2R/$t2W',
-                                                  textAlign: TextAlign.center,
-                                                  style: const TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontFamily: 'Roboto',
-                                                  ),
-                                                );
-                                              }
-                                              return const SizedBox.shrink();
+
+                                              bool hasWickets =
+                                                  t1W > 0 || t2W > 0;
+
+                                              return Text(
+                                                hasWickets
+                                                    ? '$t1R/$t1W - $t2R/$t2W'
+                                                    : '$t1R - $t2R',
+                                                textAlign: TextAlign.center,
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontFamily: 'Roboto',
+                                                ),
+                                              );
                                             },
                                           ),
                                           const SizedBox(height: 4),
                                           // Result Summary
-                                          AutoSizeText(
-                                            match.actualScore?['winnerId'] ==
-                                                    match.team1Id
-                                                ? '${match.team1Name} Won'
-                                                : '${match.team2Name} Won',
-                                            textAlign: TextAlign.center,
-                                            maxLines: 2,
-                                            minFontSize: 8,
-                                            wrapWords: true, // Allow wrapping
-                                            overflow: TextOverflow.visible,
-                                            style: const TextStyle(
-                                              color: Colors.amberAccent,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold,
+                                          if (match.actualScore != null &&
+                                              match.actualScore!['winnerId'] !=
+                                                  null &&
+                                              match.actualScore!['winnerId']
+                                                  .toString()
+                                                  .isNotEmpty &&
+                                              match.actualScore!['winnerId'] !=
+                                                  'tied' &&
+                                              match.actualScore!['winnerId'] !=
+                                                  'no_result')
+                                            AutoSizeText(
+                                              _resolveWinnerId(
+                                                        match
+                                                            .actualScore?['winnerId']
+                                                            ?.toString(),
+                                                      ) ==
+                                                      match.team1Id
+                                                  ? '${match.team1Name} Won'
+                                                  : '${match.team2Name} Won',
+                                              textAlign: TextAlign.center,
+                                              maxLines: 2,
+                                              minFontSize: 8,
+                                              wrapWords: true, // Allow wrapping
+                                              overflow: TextOverflow.visible,
+                                              style: const TextStyle(
+                                                color: Colors.amberAccent,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
-                                          ),
                                           Builder(
                                             builder: (context) {
-                                              final String type =
+                                              final String rawType =
                                                   match
                                                       .actualScore?['marginType']
                                                       ?.toString() ??
                                                   '';
-
-                                              String val =
+                                              final String type = rawType
+                                                  .toLowerCase();
+                                              final String val =
                                                   match
                                                       .actualScore?['marginValue']
                                                       ?.toString() ??
-                                                  '?';
+                                                  '';
 
-                                              // If Won by Runs, calculate exact difference
+                                              String marginText = '';
+                                              final t1r =
+                                                  int.tryParse(
+                                                    match.actualScore?['t1Runs']
+                                                            ?.toString() ??
+                                                        '0',
+                                                  ) ??
+                                                  0;
+                                              final t2r =
+                                                  int.tryParse(
+                                                    match.actualScore?['t2Runs']
+                                                            ?.toString() ??
+                                                        '0',
+                                                  ) ??
+                                                  0;
+                                              final t1w =
+                                                  int.tryParse(
+                                                    match.actualScore?['t1Wickets']
+                                                            ?.toString() ??
+                                                        '0',
+                                                  ) ??
+                                                  0;
+                                              final t2w =
+                                                  int.tryParse(
+                                                    match.actualScore?['t2Wickets']
+                                                            ?.toString() ??
+                                                        '0',
+                                                  ) ??
+                                                  0;
+
                                               if (type == 'runs') {
-                                                final t1 =
-                                                    int.tryParse(
-                                                      match.actualScore?['t1Runs']
-                                                              ?.toString() ??
-                                                          '0',
-                                                    ) ??
-                                                    0;
-                                                final t2 =
-                                                    int.tryParse(
-                                                      match.actualScore?['t2Runs']
-                                                              ?.toString() ??
-                                                          '0',
-                                                    ) ??
-                                                    0;
-                                                val = (t1 - t2)
-                                                    .abs()
-                                                    .toString();
+                                                final diff = (t1r - t2r).abs();
+                                                marginText =
+                                                    '${val.isNotEmpty && val != '?' ? val : diff} runs';
+                                              } else if (type == 'wickets' ||
+                                                  type == 'wicket') {
+                                                final wId = _resolveWinnerId(
+                                                  match.actualScore?['winnerId']
+                                                      ?.toString(),
+                                                );
+                                                final winnerWkts =
+                                                    wId == match.team1Id
+                                                    ? t1w
+                                                    : t2w;
+                                                final wLeft = (10 - winnerWkts)
+                                                    .clamp(0, 10);
+                                                final dVal =
+                                                    val.isNotEmpty && val != '?'
+                                                    ? val
+                                                    : wLeft.toString();
+                                                marginText =
+                                                    '$dVal ${dVal == '1' ? 'wicket' : 'wickets'}';
+                                              } else if (type.isEmpty) {
+                                                final wId = _resolveWinnerId(
+                                                  match.actualScore?['winnerId']
+                                                      ?.toString(),
+                                                );
+                                                final rawBattingFirstId = match
+                                                    .actualScore?['battingFirstId']
+                                                    ?.toString();
+                                                // battingFirstId may also be a slug — resolve it
+                                                final battingFirstId =
+                                                    _resolveWinnerId(
+                                                      rawBattingFirstId,
+                                                    );
+
+                                                if (battingFirstId != null &&
+                                                    battingFirstId.isNotEmpty) {
+                                                  if (wId == battingFirstId) {
+                                                    // Defender won: by runs
+                                                    marginText =
+                                                        '${(t1r - t2r).abs()} runs';
+                                                  } else {
+                                                    // Chaser won: by wickets
+                                                    final winnerWkts =
+                                                        (wId == match.team1Id)
+                                                        ? t1w
+                                                        : t2w;
+                                                    final wLeft =
+                                                        (10 - winnerWkts).clamp(
+                                                          0,
+                                                          10,
+                                                        );
+                                                    marginText =
+                                                        '$wLeft ${wLeft == 1 ? 'wicket' : 'wickets'}';
+                                                  }
+                                                } else {
+                                                  // Legacy Fallback: Guess based on which team won
+                                                  if (wId == match.team2Id) {
+                                                    // Traditional away win = chase
+                                                    final wLeft = (10 - t2w)
+                                                        .clamp(0, 10);
+                                                    marginText =
+                                                        '$wLeft ${wLeft == 1 ? 'wicket' : 'wickets'}';
+                                                  } else if (wId ==
+                                                      match.team1Id) {
+                                                    // Traditional home win = defense
+                                                    marginText =
+                                                        '${(t1r - t2r).abs()} runs';
+                                                  }
+                                                }
                                               }
 
-                                              if (type == 'super_over') {
+                                              if (type.contains('super'))
+                                                marginText = 'Super Over';
+
+                                              if (marginText.contains(
+                                                'Super Over',
+                                              )) {
                                                 return const AutoSizeText(
                                                   '(Super Over)',
                                                   textAlign: TextAlign.center,
@@ -428,14 +565,10 @@ class MatchResultCard extends StatelessWidget {
                                                 );
                                               }
 
-                                              // Fix "1 wickets" -> "1 wicket"
-                                              final String displayType =
-                                                  (val == '1' &&
-                                                      type == 'wickets')
-                                                  ? 'wicket'
-                                                  : type;
                                               return AutoSizeText(
-                                                'by $val $displayType',
+                                                marginText.isNotEmpty
+                                                    ? 'by $marginText'
+                                                    : '',
                                                 textAlign: TextAlign.center,
                                                 maxLines: 1,
                                                 minFontSize: 10,
@@ -451,39 +584,78 @@ class MatchResultCard extends StatelessWidget {
                                       ),
                                     ),
                                 ] else
-                                  Row(
+                                  Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Text(
-                                        team1Score,
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 24, // Reduced from 28
-                                          fontWeight: FontWeight.bold,
-                                          fontFamily: 'Roboto',
-                                        ),
-                                      ),
-                                      const Padding(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 6.0,
-                                        ),
-                                        child: Text(
-                                          '-',
-                                          style: TextStyle(
-                                            color: Colors.white54,
-                                            fontSize: 20,
+                                      Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            team1Score,
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 24,
+                                              fontWeight: FontWeight.bold,
+                                              fontFamily: 'Roboto',
+                                            ),
                                           ),
-                                        ),
+                                          const Padding(
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: 6.0,
+                                            ),
+                                            child: Text(
+                                              '-',
+                                              style: TextStyle(
+                                                color: Colors.white54,
+                                                fontSize: 20,
+                                              ),
+                                            ),
+                                          ),
+                                          Text(
+                                            team2Score,
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 24,
+                                              fontWeight: FontWeight.bold,
+                                              fontFamily: 'Roboto',
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      Text(
-                                        team2Score,
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 24, // Reduced from 28
-                                          fontWeight: FontWeight.bold,
-                                          fontFamily: 'Roboto',
-                                        ),
-                                      ),
+                                      if (match.isFinished) ...[
+                                        const SizedBox(height: 4),
+                                        if (rawWinnerId == 'draw' ||
+                                            (isScoreEqual &&
+                                                (rawWinnerId == null ||
+                                                    rawWinnerId.isEmpty ||
+                                                    rawWinnerId == 'draw')))
+                                          const Text(
+                                            'DRAW',
+                                            style: TextStyle(
+                                              color: Colors.white70,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          )
+                                        else if (rawWinnerId == match.team1Id)
+                                          Text(
+                                            '${match.team1Name} Won',
+                                            style: const TextStyle(
+                                              color: Colors.amberAccent,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          )
+                                        else if (rawWinnerId == match.team2Id)
+                                          Text(
+                                            '${match.team2Name} Won',
+                                            style: const TextStyle(
+                                              color: Colors.amberAccent,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                      ],
                                     ],
                                   ),
                               ],
@@ -496,9 +668,7 @@ class MatchResultCard extends StatelessWidget {
                       Expanded(
                         child: Column(
                           children: [
-                            if (sport == 'Cricket' &&
-                                match.status ==
-                                    AppConstants.matchStatusCompleted)
+                            if (sport == 'Cricket' && match.isFinished)
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 4.0),
                                 child: Text(
@@ -545,8 +715,7 @@ class MatchResultCard extends StatelessWidget {
                   ),
 
                   // Tie Breaker / Winner Text (MOVED HERE: below the main row inside the column)
-                  if (isTieBreaker &&
-                      match.status == AppConstants.matchStatusCompleted)
+                  if (isTieBreaker && match.isFinished)
                     Padding(
                       padding: const EdgeInsets.only(top: 12.0),
                       child: Container(
@@ -563,7 +732,7 @@ class MatchResultCard extends StatelessWidget {
                           ),
                         ),
                         child: AutoSizeText(
-                          rawWinnerId == match.team1Id
+                          (rawWinnerId == match.team1Id)
                               ? '${match.team1Name} Won by Tie Breaker'
                               : '${match.team2Name} Won by Tie Breaker',
                           textAlign: TextAlign.center,

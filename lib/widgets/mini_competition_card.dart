@@ -123,7 +123,7 @@ class MiniCompetitionCard extends StatelessWidget {
                             )
                           else
                             Text(
-                              '${competition.participantCount} joined',
+                              '${competition.displayParticipantCount} joined',
                               style: TextStyle(
                                 color: Colors.white.withValues(alpha: 0.6),
                                 fontSize: 8, // Reduced font (9 -> 8)

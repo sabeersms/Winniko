@@ -16,11 +16,13 @@ import '../services/auth_service.dart';
 class UserProfileScreen extends StatefulWidget {
   final UserModel user;
   final bool isCurrentUser;
+  final bool isOrganizer;
 
   const UserProfileScreen({
     super.key,
     required this.user,
     this.isCurrentUser = false,
+    this.isOrganizer = false,
   });
 
   @override
@@ -176,6 +178,39 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                 ),
                               ),
                             ],
+                          ),
+                        ],
+
+                        // Display Contact Info for Owner or Organizer
+                        if (widget.isCurrentUser || widget.isOrganizer) ...[
+                          const SizedBox(height: 16),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.cardBackground.withValues(
+                                alpha: 0.5,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: AppColors.dividerColor.withValues(
+                                  alpha: 0.1,
+                                ),
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                if (_user.phone.isNotEmpty)
+                                  _buildContactRow(Icons.phone, _user.phone),
+                                if (_user.phone.isNotEmpty &&
+                                    _user.email.isNotEmpty)
+                                  const SizedBox(height: 8),
+                                if (_user.email.isNotEmpty)
+                                  _buildContactRow(Icons.email, _user.email),
+                              ],
+                            ),
                           ),
                         ],
                       ],
@@ -409,6 +444,25 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         Text(
           label,
           style: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildContactRow(IconData icon, String text) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, color: AppColors.accentGreen, size: 16),
+        const SizedBox(width: 8),
+        Flexible(
+          child: SelectableText(
+            text,
+            style: const TextStyle(
+              color: AppColors.textSecondary,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
         ),
       ],
     );

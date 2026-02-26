@@ -11,6 +11,7 @@ import 'recycle_bin_screen.dart';
 import 'matches_list_screen.dart';
 import 'leaderboard_screen.dart';
 import 'competition_detail_screen.dart';
+
 import 'organizer_chat_list_screen.dart';
 import '../widgets/loading_spinner.dart';
 
@@ -529,6 +530,7 @@ class _MyCompetitionsScreenState extends State<MyCompetitionsScreen>
               );
             },
           ),
+
           ListTile(
             leading: const Icon(Icons.delete, color: AppColors.error),
             title: const Text(
@@ -563,7 +565,7 @@ class _MyCompetitionsScreenState extends State<MyCompetitionsScreen>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Type "DELETE" to confirm. This will move "${competition.name}" to the Recycle Bin for 30 days.',
+              'Type "DELETE" to confirm. This will move "${competition.name}" to the Recycle Bin for 7 days.',
               style: const TextStyle(color: AppColors.textSecondary),
             ),
             const SizedBox(height: 16),

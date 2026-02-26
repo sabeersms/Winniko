@@ -15,7 +15,7 @@ import '../services/storage_service.dart';
 import '../services/auth_service.dart';
 import '../models/competition_model.dart';
 import 'competition_format_screen.dart';
-import 'tournament_selection_screen.dart';
+import 'official_tournament_search_screen.dart';
 import 'dialogs/image_adjustment_dialog.dart';
 import '../widgets/default_competition_background.dart';
 import 'terms_editor_screen.dart';
@@ -328,7 +328,10 @@ class _CompetitionCreateScreenState extends State<CompetitionCreateScreen>
       // If the doc doesn't exist, the upload will fail with Permission Denied.
       if (!isRealEditing && _draftCompetition == null) {
         setState(() => _statusText = 'Establishing secure draft...');
-        await firestoreService.createCompetition(competition);
+        await firestoreService.createCompetition(
+          competition,
+          organizerPhotoUrl: user.photoUrl,
+        );
         _draftCompetition = competition; // Now it exists in DB!
       }
 
@@ -425,8 +428,9 @@ class _CompetitionCreateScreenState extends State<CompetitionCreateScreen>
           await Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) =>
-                  TournamentSelectionScreen(competitionPrototype: competition),
+              builder: (_) => OfficialTournamentSearchScreen(
+                competitionPrototype: competition,
+              ),
             ),
           );
         } else {
@@ -553,7 +557,7 @@ class _CompetitionCreateScreenState extends State<CompetitionCreateScreen>
 
             // Sport Selection
             DropdownButtonFormField<String>(
-              value: _selectedSport,
+              initialValue: _selectedSport,
               dropdownColor: AppColors.cardBackground,
               style: const TextStyle(color: AppColors.textPrimary),
               decoration: const InputDecoration(
