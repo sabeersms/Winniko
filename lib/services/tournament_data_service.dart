@@ -1611,10 +1611,6 @@ class TournamentDataService {
         'home': 'Pakistan',
         'away': 'Netherlands',
         'time': '2026-06-07T14:30:00Z',
-        'status': 'Pakistan won by 3 wickets',
-        'winner': 'Pakistan',
-        'marginType': 'wickets',
-        'marginValue': '3',
         'location': 'Sinhalese Sports Club, Colombo',
         'round': 'Group A',
       },
@@ -1622,10 +1618,6 @@ class TournamentDataService {
         'home': 'West Indies',
         'away': 'Scotland',
         'time': '2026-06-07T18:30:00Z',
-        'status': 'West Indies won by 35 runs',
-        'winner': 'West Indies',
-        'marginType': 'runs',
-        'marginValue': '35',
         'location': 'Eden Gardens, Kolkata',
         'round': 'Group C',
       },
@@ -1633,10 +1625,6 @@ class TournamentDataService {
         'home': 'India',
         'away': 'United States',
         'time': '2026-06-07T18:30:00Z',
-        'status': 'India won by 29 runs',
-        'winner': 'India',
-        'marginType': 'runs',
-        'marginValue': '29',
         'location': 'Wankhede Stadium, Mumbai',
         'round': 'Group A',
       },
@@ -1645,10 +1633,6 @@ class TournamentDataService {
         'home': 'New Zealand',
         'away': 'Afghanistan',
         'time': '2026-06-08T14:30:00Z',
-        'status': 'New Zealand won by 5 wickets',
-        'winner': 'New Zealand',
-        'marginType': 'wickets',
-        'marginValue': '5',
         'location': 'MA Chidambaram Stadium, Chennai',
         'round': 'Group D',
       },
@@ -1656,10 +1640,6 @@ class TournamentDataService {
         'home': 'England',
         'away': 'Nepal',
         'time': '2026-06-08T18:30:00Z',
-        'status': 'England won by 4 runs',
-        'winner': 'England',
-        'marginType': 'runs',
-        'marginValue': '4',
         'location': 'Wankhede Stadium, Mumbai',
         'round': 'Group C',
       },
@@ -1667,10 +1647,6 @@ class TournamentDataService {
         'home': 'Sri Lanka',
         'away': 'Ireland',
         'time': '2026-06-08T18:30:00Z',
-        'status': 'Sri Lanka won by 20 runs',
-        'winner': 'Sri Lanka',
-        'marginType': 'runs',
-        'marginValue': '20',
         'location': 'R. Premadasa Stadium, Colombo',
         'round': 'Group B',
       },
@@ -1679,10 +1655,6 @@ class TournamentDataService {
         'home': 'Scotland',
         'away': 'Italy',
         'time': '2026-06-09T14:30:00Z',
-        'status': 'Scotland won by 73 runs',
-        'winner': 'Scotland',
-        'marginType': 'runs',
-        'marginValue': '73',
         'location': 'Eden Gardens, Kolkata',
         'round': 'Group C',
       },
@@ -1690,10 +1662,6 @@ class TournamentDataService {
         'home': 'Zimbabwe',
         'away': 'Oman',
         'time': '2026-06-09T14:30:00Z',
-        'status': 'Zimbabwe won by 8 wickets',
-        'winner': 'Zimbabwe',
-        'marginType': 'wickets',
-        'marginValue': '8',
         'location': 'Sinhalese Sports Club, Colombo',
         'round': 'Group B',
       },
@@ -1701,10 +1669,6 @@ class TournamentDataService {
         'home': 'South Africa',
         'away': 'Canada',
         'time': '2026-06-09T18:30:00Z',
-        'status': 'South Africa won by 57 runs',
-        'winner': 'South Africa',
-        'marginType': 'runs',
-        'marginValue': '57',
         'location': 'Narendra Modi Stadium, Ahmedabad',
         'round': 'Group D',
       },
@@ -1717,29 +1681,24 @@ class TournamentDataService {
       if (t1 != null && t2 != null) {
         // Resolve Winner ID
         String? winnerId;
-        final winnerName = f['winner']!;
+        final winnerName = f['winner'];
 
-        if (t1.name.toLowerCase() == winnerName.toLowerCase() ||
-            t1.name.toLowerCase().contains(winnerName.toLowerCase())) {
-          winnerId = t1.id;
-        } else if (t2.name.toLowerCase() == winnerName.toLowerCase() ||
-            t2.name.toLowerCase().contains(winnerName.toLowerCase())) {
-          winnerId = t2.id;
-        }
-
-        // Special case overrides for T20 WC 2026
-        if (winnerName == 'United States' || winnerName == 'USA') {
-          if (t1.name == 'United States' || t1.name == 'USA') {
+        if (winnerName != null) {
+          if (t1.name.toLowerCase() == winnerName.toLowerCase() ||
+              t1.name.toLowerCase().contains(winnerName.toLowerCase())) {
             winnerId = t1.id;
-          } else if (t2.name == 'United States' || t2.name == 'USA')
+          } else if (t2.name.toLowerCase() == winnerName.toLowerCase() ||
+              t2.name.toLowerCase().contains(winnerName.toLowerCase())) {
             winnerId = t2.id;
-        }
+          }
 
-        // Debug
-        if (winnerId == null) {
-          debugPrint(
-            'T20 WC 2026: Could not determine winner ID for $winnerName in ${t1.name} vs ${t2.name}',
-          );
+          // Special case overrides for T20 WC 2026
+          if (winnerName == 'United States' || winnerName == 'USA') {
+            if (t1.name == 'United States' || t1.name == 'USA') {
+              winnerId = t1.id;
+            } else if (t2.name == 'United States' || t2.name == 'USA')
+              winnerId = t2.id;
+          }
         }
 
         matches.add(
@@ -1760,12 +1719,14 @@ class TournamentDataService {
             matchNumber: matches.length + 1,
             location: f['location'],
             winnerId: winnerId,
-            actualScore: {
-              'status': f['status'],
-              'winnerId': winnerId,
-              'marginType': f['marginType'],
-              'marginValue': f['marginValue'],
-            },
+            actualScore: (f['status'] != null)
+                ? {
+                    'status': f['status'],
+                    'winnerId': winnerId,
+                    'marginType': f['marginType'],
+                    'marginValue': f['marginValue'],
+                  }
+                : null,
           ),
         );
       } else {

@@ -34,9 +34,15 @@ class _GeneratedFixturesPreviewScreenState
   @override
   void initState() {
     super.initState();
-    // Create a mutable copy and sort by date
+    // Create a mutable copy and sort by date, then matchNumber
     _matches = List.from(widget.matches);
-    _matches.sort((a, b) => a.scheduledTime.compareTo(b.scheduledTime));
+    _matches.sort((a, b) {
+      final timeCompare = a.scheduledTime.compareTo(b.scheduledTime);
+      if (timeCompare != 0) return timeCompare;
+      final aNum = a.matchNumber ?? 0;
+      final bNum = b.matchNumber ?? 0;
+      return aNum.compareTo(bNum);
+    });
   }
 
   Future<void> _selectDate(BuildContext context, int index) async {
@@ -77,7 +83,13 @@ class _GeneratedFixturesPreviewScreenState
       setState(() {
         _matches[index] = match.copyWith(scheduledTime: newDateTime);
         // Re-sort to keep order
-        _matches.sort((a, b) => a.scheduledTime.compareTo(b.scheduledTime));
+        _matches.sort((a, b) {
+          final timeCompare = a.scheduledTime.compareTo(b.scheduledTime);
+          if (timeCompare != 0) return timeCompare;
+          final aNum = a.matchNumber ?? 0;
+          final bNum = b.matchNumber ?? 0;
+          return aNum.compareTo(bNum);
+        });
       });
     }
   }

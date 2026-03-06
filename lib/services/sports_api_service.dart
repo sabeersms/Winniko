@@ -197,10 +197,17 @@ class SportsApiService {
     try {
       final firestore = FirestoreService();
 
-      // Fetch blacklist first
-      final blacklist = await firestore.getBlacklistedTournamentIds();
+      // Fetch blacklist with timeout
+      final blacklist = await firestore.getBlacklistedTournamentIds().timeout(
+        const Duration(seconds: 5),
+        onTimeout: () => <String>{},
+      );
 
-      final discovered = await firestore.getDiscoveredTournaments();
+      // Fetch discovered with timeout
+      final discovered = await firestore.getDiscoveredTournaments().timeout(
+        const Duration(seconds: 5),
+        onTimeout: () => [],
+      );
 
       final filteredDiscovered = discovered.where((t) {
         if (blacklist.contains(t.id)) return false; // Filter blacklisted
@@ -231,6 +238,12 @@ class SportsApiService {
     String query,
   ) async {
     try {
+      final firestore = FirestoreService();
+      final blacklist = await firestore.getBlacklistedTournamentIds().timeout(
+        const Duration(seconds: 5),
+        onTimeout: () => <String>{},
+      );
+
       const url = 'https://fixturedownload.com/index';
       final response = await http.get(Uri.parse(url));
       if (response.statusCode != 200) return [];
@@ -269,6 +282,8 @@ class SportsApiService {
           final fullName = '$cleanedLeague $cleanedSeason';
 
           // Apply filters
+          if (blacklist.contains(id)) continue;
+
           if (q.isNotEmpty &&
               !fullName.toLowerCase().contains(q) &&
               !id.toLowerCase().contains(q)) {

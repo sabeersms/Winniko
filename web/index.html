@@ -35,8 +35,44 @@
 </head>
 
 <body>
+  <style>
+    body {
+      background-color: #0A0F0D;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      color: white;
+      font-family: sans-serif;
+    }
+    .loading {
+      text-align: center;
+    }
+    .spinner {
+      border: 4px solid rgba(255, 255, 255, 0.1);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border-left-color: #00FFC2;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+  <div id="loading" class="loading">
+    <div class="spinner"></div>
+    <div>Loading Winniko...</div>
+  </div>
+
   <script>
     self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+
+    // Force HTML renderer for mobile browsers to avoid CanvasKit issues on iOS
+    window.flutterWebRenderer = "html";
 
     // PWA Install Prompt Capture
     let deferredPrompt;
@@ -66,6 +102,13 @@
     function isInstallPromptAvailable() {
       return !!deferredPrompt;
     }
+
+    // Hide loading when app starts
+    window.addEventListener('load', function(ev) {
+      // The app might take a few more seconds to actually render
+      // We rely on the bootstrap or main.dart to signal readiness if needed
+      // But for now, we'll let Flutter overwrite the body or we can hide it manually
+    });
   </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>

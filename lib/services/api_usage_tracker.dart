@@ -158,7 +158,7 @@ class ApiUsageTracker {
   void printUsageReport() {
     final report = getUsageReport();
 
-    debugPrint('\n' + '=' * 60);
+    debugPrint('\n${'=' * 60}');
     debugPrint('📊 API USAGE REPORT');
     debugPrint('=' * 60);
 
@@ -192,7 +192,7 @@ class ApiUsageTracker {
       debugPrint('   ⚠️ No rate limit info available yet');
     }
 
-    debugPrint('\n' + '=' * 60 + '\n');
+    debugPrint('\n${'=' * 60}\n');
   }
 
   /// Check if we're approaching any API limits

@@ -72,22 +72,76 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                         children: [
                           IconButton(
                             icon: const Icon(Icons.refresh),
-                            tooltip: 'Recalculate Standings',
+                            tooltip: 'Recalculate',
                             onPressed: () async {
+                              final action = await showDialog<String>(
+                                context: context,
+                                builder: (ctx) => AlertDialog(
+                                  backgroundColor: AppColors.cardBackground,
+                                  title: const Text(
+                                    'Recalculate Data',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  content: const Text(
+                                    'What would you like to refresh?',
+                                    style: TextStyle(
+                                      color: AppColors.textSecondary,
+                                    ),
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.pop(ctx, 'standings'),
+                                      child: const Text('Team Table Only'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.pop(ctx, 'all'),
+                                      child: const Text(
+                                        'Everything (Incl. Points)',
+                                        style: TextStyle(
+                                          color: AppColors.accentGreen,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+
+                              if (action == null) return;
+
                               try {
+                                if (!context.mounted) return;
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                    content: Text('Recalculating standings...'),
+                                    content: Text(
+                                      'Processing recalculation...',
+                                    ),
                                   ),
                                 );
-                                await Provider.of<FirestoreService>(
-                                  context,
-                                  listen: false,
-                                ).recalculateStandings(widget.competition.id);
+
+                                final firestoreSvc =
+                                    Provider.of<FirestoreService>(
+                                      context,
+                                      listen: false,
+                                    );
+
+                                if (action == 'all') {
+                                  await firestoreSvc
+                                      .recalculateParticipantStats(
+                                        widget.competition.id,
+                                      );
+                                }
+
+                                await firestoreSvc.recalculateStandings(
+                                  widget.competition.id,
+                                );
+
                                 if (context.mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
-                                      content: Text('Standings updated!'),
+                                      content: Text('Update complete!'),
+                                      backgroundColor: AppColors.success,
                                     ),
                                   );
                                 }
@@ -96,6 +150,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text('Error updating: $e'),
+                                      backgroundColor: AppColors.error,
                                     ),
                                   );
                                 }

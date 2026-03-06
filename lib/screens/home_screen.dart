@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -44,11 +45,26 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
   BannerAd? _bannerAd;
   bool _isAdLoaded = false;
   late Stream<List<CompetitionModel>> _allCompetitionsStream;
+  late Stream<List<CompetitionModel>> _officialCompetitionsStream;
 
   // Search State
   Timer? _debounce;
   List<CompetitionModel>? _searchResults;
   bool _isSearching = false;
+  bool _isLoadingMoreSearch = false;
+  DocumentSnapshot? _lastSearchDocument;
+  bool _hasMoreSearch = true;
+  final ScrollController _searchScrollController = ScrollController();
+
+  void _onSearchScroll() {
+    if (_searchScrollController.position.pixels >=
+            _searchScrollController.position.maxScrollExtent - 200 &&
+        !_isLoadingMoreSearch &&
+        _hasMoreSearch &&
+        _searchResults != null) {
+      _fetchNextSearchPage();
+    }
+  }
 
   @override
   void initState() {
@@ -59,6 +75,8 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
       listen: false,
     );
     _allCompetitionsStream = firestoreService.getAllCompetitions();
+    _officialCompetitionsStream = firestoreService.getOfficialCompetitions();
+    _searchScrollController.addListener(_onSearchScroll);
 
     _loadUserProfile();
     if (kIsWeb) {
@@ -505,39 +523,44 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
                   _buildCreateTab(),
                 ],
               ),
-        bottomNavigationBar: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (_isAdLoaded && _bannerAd != null)
-              Container(
-                alignment: Alignment.center,
-                width: _bannerAd!.size.width.toDouble(),
-                height: _bannerAd!.size.height.toDouble(),
-                child: AdWidget(ad: _bannerAd!),
+        bottomNavigationBar: SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (_isAdLoaded && _bannerAd != null)
+                Container(
+                  alignment: Alignment.center,
+                  width: _bannerAd!.size.width.toDouble(),
+                  height: _bannerAd!.size.height.toDouble(),
+                  child: AdWidget(ad: _bannerAd!),
+                ),
+              BottomNavigationBar(
+                currentIndex: _currentIndex,
+                onTap: (index) {
+                  setState(() {
+                    _currentIndex = index;
+                  });
+                },
+                backgroundColor: AppColors.cardBackground,
+                selectedItemColor: AppColors.accentGreen,
+                unselectedItemColor: AppColors.textSecondary,
+                items: const [
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.home),
+                    label: 'Home',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.emoji_events),
+                    label: 'My Competitions',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.add_circle_outline),
+                    label: 'Create',
+                  ),
+                ],
               ),
-            BottomNavigationBar(
-              currentIndex: _currentIndex,
-              onTap: (index) {
-                setState(() {
-                  _currentIndex = index;
-                });
-              },
-              backgroundColor: AppColors.cardBackground,
-              selectedItemColor: AppColors.accentGreen,
-              unselectedItemColor: AppColors.textSecondary,
-              items: const [
-                BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.emoji_events),
-                  label: 'My Competitions',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.add_circle_outline),
-                  label: 'Create',
-                ),
-              ],
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -551,22 +574,42 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
         setState(() {
           _searchResults = null;
           _isSearching = false;
+          _lastSearchDocument = null;
+          _hasMoreSearch = true;
         });
         return;
       }
 
-      setState(() => _isSearching = true);
+      setState(() {
+        _isSearching = true;
+        _lastSearchDocument = null;
+        _hasMoreSearch = true;
+      });
+
       try {
         final firestoreService = Provider.of<FirestoreService>(
           context,
           listen: false,
         );
-        final results = await firestoreService.searchCompetitions(query);
+        final results = await firestoreService.getCompetitionsPaginated(
+          limit: 15,
+          search: query,
+        );
 
         if (mounted) {
+          // Get the snapshot for the last item for future pagination
+          DocumentSnapshot? lastDoc;
+          if (results.isNotEmpty) {
+            lastDoc = await firestoreService.getCompetitionSnapshot(
+              results.last.id,
+            );
+          }
+
           setState(() {
             _searchResults = results;
             _isSearching = false;
+            _lastSearchDocument = lastDoc;
+            _hasMoreSearch = results.length >= 15;
           });
         }
       } catch (e) {
@@ -576,6 +619,46 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
         }
       }
     });
+  }
+
+  Future<void> _fetchNextSearchPage() async {
+    if (_isLoadingMoreSearch || !_hasMoreSearch || _searchResults == null)
+      return;
+
+    setState(() => _isLoadingMoreSearch = true);
+
+    try {
+      final firestoreService = Provider.of<FirestoreService>(
+        context,
+        listen: false,
+      );
+      final results = await firestoreService.getCompetitionsPaginated(
+        limit: 15,
+        search: _searchController.text,
+        lastDocument: _lastSearchDocument,
+      );
+
+      if (mounted) {
+        DocumentSnapshot? nextLastDoc;
+        if (results.isNotEmpty) {
+          nextLastDoc = await firestoreService.getCompetitionSnapshot(
+            results.last.id,
+          );
+        }
+
+        setState(() {
+          _searchResults!.addAll(results);
+          _isLoadingMoreSearch = false;
+          _lastSearchDocument = nextLastDoc;
+          _hasMoreSearch = results.length >= 15;
+        });
+      }
+    } catch (e) {
+      debugPrint('Pagination error: $e');
+      if (mounted) {
+        setState(() => _isLoadingMoreSearch = false);
+      }
+    }
   }
 
   Widget _buildHomeTab() {
@@ -681,21 +764,14 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
                           comp.joinCode.toLowerCase().contains(query);
                     }).toList();
 
-                    // Categorize: Custom = Not Major AND Not Single Match
-                    final singleMatchContests = filteredCompetitions
+                    // Categorize: Custom = Not Official AND Not Single Match
+                    final singleMatchContests = allCompetitions
                         .where(
                           (c) => c.format == AppConstants.formatSingleMatch,
                         )
                         .toList();
-                    final officialTournaments = filteredCompetitions
-                        .where(
-                          (c) =>
-                              c.leagueId != null &&
-                              c.leagueId!.isNotEmpty &&
-                              c.format != AppConstants.formatSingleMatch,
-                        )
-                        .toList();
-                    final customTournaments = filteredCompetitions
+
+                    final customTournaments = allCompetitions
                         .where(
                           (c) =>
                               (c.leagueId == null || c.leagueId!.isEmpty) &&
@@ -704,7 +780,7 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
                         .toList();
 
                     return SingleChildScrollView(
-                      padding: const EdgeInsets.symmetric(vertical: 0),
+                      padding: const EdgeInsets.only(bottom: 80),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -791,11 +867,29 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
                           const SizedBox(height: 24),
 
                           // ROW 2: Official Tournaments
-                          if (officialTournaments.isNotEmpty) ...[
-                            _buildSectionHeader('Official Tournaments'),
-                            _buildHorizontalList(officialTournaments),
-                            const SizedBox(height: 24),
-                          ],
+                          StreamBuilder<List<CompetitionModel>>(
+                            stream: _officialCompetitionsStream,
+                            builder: (context, officialSnapshot) {
+                              if (officialSnapshot.hasError) {
+                                debugPrint(
+                                  'Error loading official tournaments: ${officialSnapshot.error}',
+                                );
+                                return const SizedBox.shrink();
+                              }
+                              final officialTournaments =
+                                  officialSnapshot.data ?? [];
+                              if (officialTournaments.isEmpty)
+                                return const SizedBox.shrink();
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  _buildSectionHeader('Official Tournaments'),
+                                  _buildHorizontalList(officialTournaments),
+                                  const SizedBox(height: 24),
+                                ],
+                              );
+                            },
+                          ),
 
                           // ROW 3: Custom Tournaments
                           if (customTournaments.isNotEmpty) ...[
@@ -871,9 +965,19 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: _searchResults!.length,
+      controller: _searchScrollController,
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
+      itemCount: _searchResults!.length + (_hasMoreSearch ? 1 : 0),
       itemBuilder: (context, index) {
+        if (index == _searchResults!.length) {
+          return const Padding(
+            padding: EdgeInsets.symmetric(vertical: 32.0),
+            child: Center(
+              child: LoadingSpinner(color: AppColors.accentGreen, size: 24),
+            ),
+          );
+        }
+
         final competition = _searchResults![index];
         return Padding(
           padding: const EdgeInsets.only(bottom: 12.0),

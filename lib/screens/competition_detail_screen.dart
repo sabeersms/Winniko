@@ -1034,66 +1034,83 @@ class _CompetitionDetailScreenState extends State<CompetitionDetailScreen>
                   const SizedBox(height: 16),
                 ],
 
-                // Stats & Chat
-                _buildInfoCard(
-                  'Participants',
-                  '${_competition!.participantCount}',
-                  Icons.people,
-                  trailing: SizedBox(
-                    width: 130, // Fixed width for prominence
-                    child: Builder(
-                      builder: (context) {
-                        int unread = 0;
-                        if (_participant != null) {
-                          final total = _competition!.messageCount;
-                          final read = _participant!.lastReadMessageCount;
-                          unread = total - read;
-                        }
+                StreamBuilder<Map<String, int>>(
+                  stream: Provider.of<FirestoreService>(
+                    context,
+                    listen: false,
+                  ).getShardedCounts(_competition!.id),
+                  builder: (context, snapshot) {
+                    final shardedCounts = snapshot.data ?? {};
+                    // Use sharded totals if available, else fallback to doc values
+                    final count =
+                        shardedCounts['participantCount'] ??
+                        _competition!.participantCount;
+                    final totalMessages =
+                        shardedCounts['messageCount'] ??
+                        _competition!.messageCount;
 
-                        // Sanity check
-                        if (unread < 0) unread = 0;
+                    return _buildInfoCard(
+                      'Participants',
+                      '$count',
+                      Icons.people,
+                      trailing: SizedBox(
+                        width: 130, // Fixed width for prominence
+                        child: Builder(
+                          builder: (context) {
+                            int unread = 0;
+                            if (_participant != null) {
+                              unread =
+                                  totalMessages -
+                                  _participant!.lastReadMessageCount;
+                            }
+                            if (unread < 0) unread = 0;
 
-                        return Badge(
-                          isLabelVisible: unread > 0,
-                          label: Text(
-                            '$unread',
-                            style: const TextStyle(color: Colors.white),
-                          ),
-                          child: ElevatedButton.icon(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.accentGreen,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 8,
+                            // Sanity check
+                            if (unread < 0) unread = 0;
+
+                            return Badge(
+                              isLabelVisible: unread > 0,
+                              label: Text(
+                                '$unread',
+                                style: const TextStyle(color: Colors.white),
                               ),
-                            ),
-                            icon: const Icon(Icons.chat, size: 18),
-                            label: const Text('Group Chat'),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => Scaffold(
-                                    appBar: AppBar(
-                                      title: const Text('Group Chat'),
-                                    ),
-                                    body: CompetitionChatScreen(
-                                      competition: _competition!,
-                                      isParticipant: _hasJoined,
-                                    ),
+                              child: ElevatedButton.icon(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.accentGreen,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 8,
                                   ),
                                 ),
-                              ).then((_) {
-                                // Refresh data when returning to update badge
-                                _loadData();
-                              });
-                            },
-                          ),
-                        );
-                      },
-                    ),
-                  ),
+                                icon: const Icon(Icons.message, size: 18),
+                                label: const Text('Message'),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => Scaffold(
+                                        appBar: AppBar(
+                                          title: const Text('Message'),
+                                        ),
+                                        body: CompetitionChatScreen(
+                                          competition: _competition!,
+                                          isParticipant: _hasJoined,
+                                        ),
+                                      ),
+                                    ),
+                                  ).then((_) {
+                                    // Refresh data when returning to update badge
+                                    _loadData();
+                                  });
+                                },
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    );
+                  },
                 ),
                 const SizedBox(height: 12),
 

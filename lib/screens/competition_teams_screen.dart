@@ -100,11 +100,20 @@ class _CompetitionTeamsScreenState extends State<CompetitionTeamsScreen> {
 
       // Upload file if provided
       if (logoFile != null) {
-        finalLogoUrl = await storage.uploadCompetitionTeamLogo(
-          logoFile,
-          widget.competition.id,
-          teamId,
-        );
+        if (widget.competition.id.startsWith('master_override_')) {
+          // Use Global Library path because master_override is a virtual competition and might not have storage permissions
+          finalLogoUrl = await storage.uploadGlobalTeamLogo(
+            logoFile,
+            widget.competition.organizerId,
+            teamId,
+          );
+        } else {
+          finalLogoUrl = await storage.uploadCompetitionTeamLogo(
+            logoFile,
+            widget.competition.id,
+            teamId,
+          );
+        }
       }
 
       final team = TeamModel(
@@ -891,10 +900,43 @@ class _CompetitionTeamsScreenState extends State<CompetitionTeamsScreen> {
     if (teams.length < 2) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Add at least 2 teams to create fixtures'),
+          content: Text('Add at least 2 teams to create matches'),
           backgroundColor: AppColors.error,
         ),
       );
+      return;
+    }
+
+    // Special handling for Master Verification Override
+    if (widget.competition.id.startsWith('master_override_')) {
+      final proceed = await showDialog<String>(
+        context: context,
+        builder: (context) => AlertDialog(
+          backgroundColor: AppColors.cardBackground,
+          title: const Text('Teams Ready'),
+          content: const Text(
+            'Would you like to add a match now with these teams?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, 'finish'),
+              child: const Text('Finish'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context, 'add_match'),
+              child: const Text('Add Match'),
+            ),
+          ],
+        ),
+      );
+
+      if (mounted) {
+        if (proceed == 'add_match') {
+          Navigator.pop(context, 'add_match');
+        } else if (proceed == 'finish') {
+          Navigator.pop(context);
+        }
+      }
       return;
     }
 

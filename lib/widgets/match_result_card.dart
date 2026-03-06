@@ -38,8 +38,9 @@ class MatchResultCard extends StatelessWidget {
   String? _resolveWinnerId(String? wId) {
     if (wId == null || wId.isEmpty) return wId;
     if (wId == 'tied' || wId == 'no_result' || wId == 'draw') return wId;
-    if (wId == match.team1Id || wId == match.team2Id)
+    if (wId == match.team1Id || wId == match.team2Id) {
       return wId; // already a UUID
+    }
     if (wId.contains('-')) return wId; // looks like a UUID, pass through
 
     // Looks like a slug — try to map to a team UUID via name fuzzy match
@@ -201,7 +202,7 @@ class MatchResultCard extends StatelessWidget {
                       Expanded(
                         child: Column(
                           children: [
-                            if (sport == 'Cricket' && match.isFinished)
+                            if (sport == 'Cricket')
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 4.0),
                                 child: Text(
@@ -357,46 +358,6 @@ class MatchResultCard extends StatelessWidget {
                                       child: Column(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          // Actual Scores (Runs/Wickets)
-                                          Builder(
-                                            builder: (context) {
-                                              final t1R =
-                                                  match
-                                                      .actualScore?['t1Runs'] ??
-                                                  match.actualScore?['team1'] ??
-                                                  0;
-                                              final t1W =
-                                                  match
-                                                      .actualScore?['t1Wickets'] ??
-                                                  0;
-                                              final t2R =
-                                                  match
-                                                      .actualScore?['t2Runs'] ??
-                                                  match.actualScore?['team2'] ??
-                                                  0;
-                                              final t2W =
-                                                  match
-                                                      .actualScore?['t2Wickets'] ??
-                                                  0;
-
-                                              bool hasWickets =
-                                                  t1W > 0 || t2W > 0;
-
-                                              return Text(
-                                                hasWickets
-                                                    ? '$t1R/$t1W - $t2R/$t2W'
-                                                    : '$t1R - $t2R',
-                                                textAlign: TextAlign.center,
-                                                style: const TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontFamily: 'Roboto',
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                          const SizedBox(height: 4),
                                           // Result Summary
                                           if (match.actualScore != null &&
                                               match.actualScore!['winnerId'] !=
@@ -546,8 +507,9 @@ class MatchResultCard extends StatelessWidget {
                                                 }
                                               }
 
-                                              if (type.contains('super'))
+                                              if (type.contains('super')) {
                                                 marginText = 'Super Over';
+                                              }
 
                                               if (marginText.contains(
                                                 'Super Over',
@@ -583,7 +545,7 @@ class MatchResultCard extends StatelessWidget {
                                         ],
                                       ),
                                     ),
-                                ] else
+                                ] else if (sport != 'Cricket')
                                   Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
@@ -668,7 +630,7 @@ class MatchResultCard extends StatelessWidget {
                       Expanded(
                         child: Column(
                           children: [
-                            if (sport == 'Cricket' && match.isFinished)
+                            if (sport == 'Cricket')
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 4.0),
                                 child: Text(

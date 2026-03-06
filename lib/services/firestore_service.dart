@@ -53,11 +53,8 @@ class FirestoreService {
 
       batch.set(messageRef, messageWithId.toMap());
 
-      // 2. Increment Message Count
-      final competitionRef = _firestore
-          .collection('competitions')
-          .doc(competitionId);
-      batch.update(competitionRef, {'messageCount': FieldValue.increment(1)});
+      // 2. Increment Message Count using Sharded Counter
+      await _incrementShardedCounter(competitionId, 'messageCount', 1);
 
       await batch.commit();
     } catch (e) {
@@ -130,7 +127,7 @@ class FirestoreService {
     }
   }
 
-  // Typing Indicators
+  // Typing Indicators (Safe Version for Scaling)
   Future<void> setTypingStatus(
     String competitionId,
     String userId,
@@ -153,7 +150,7 @@ class FirestoreService {
         await docRef.delete();
       }
     } catch (e) {
-      debugPrint('Error setting typing status: $e');
+      // Fail silently for typing
     }
   }
 
@@ -171,6 +168,7 @@ class FirestoreService {
             DateTime.now().subtract(const Duration(seconds: 10)),
           ),
         )
+        .limit(5)
         .snapshots()
         .map(
           (snapshot) => snapshot.docs
@@ -499,22 +497,15 @@ class FirestoreService {
           .doc(userId)
           .delete();
 
-      // 2. Decrement participant count
-      // NOTE: This often fails in official tournaments due to restricted update rules
-      // (only organizers or master admins can update the main doc).
-      // We wrap this in a separate try-catch so leaving still succeeds even if count update is denied.
+      // 2. Decrement participant count using Sharded Counter and update main doc
       try {
+        await _incrementShardedCounter(competitionId, 'participantCount', -1);
         await _firestore.collection('competitions').doc(competitionId).update({
           'participantCount': FieldValue.increment(-1),
-          'participantsCount': FieldValue.increment(-1),
         });
-        debugPrint('✅ participantCount decremented successfully.');
       } catch (e) {
         debugPrint(
-          '🛡️ Permission Warning: Could not decrement participantCount for $competitionId: $e',
-        );
-        debugPrint(
-          'This is expected for some restricted competitions. The participant record has been removed successfully.',
+          '🛡️ Warning: Could not decrement participantCount for $competitionId: $e',
         );
       }
     } catch (e) {
@@ -672,38 +663,148 @@ class FirestoreService {
     }
   }
 
-  // Get all competitions
+  // Get all competitions (Paginated)
+  Future<List<CompetitionModel>> getCompetitionsPaginated({
+    int limit = 10,
+    DocumentSnapshot? lastDocument,
+    String? search,
+    String? organizerId,
+    bool orderByPopularity = true,
+  }) async {
+    try {
+      List<CompetitionModel> combinedResults = [];
+      String? searchQuery = search?.trim();
+
+      if (searchQuery != null &&
+          searchQuery.isNotEmpty &&
+          lastDocument == null) {
+        // 1. Try Partial Join Code Match (Starts With)
+        // Note: We remove the 'status' equality filter from the query itself
+        // so that it doesn't require a composite index.
+        final codeSnapshot = await _firestore
+            .collection('competitions')
+            .where(
+              'joinCode',
+              isGreaterThanOrEqualTo: searchQuery.toUpperCase(),
+            )
+            .where(
+              'joinCode',
+              isLessThanOrEqualTo: '${searchQuery.toUpperCase()}\uf8ff',
+            )
+            .limit(10)
+            .get();
+
+        for (var doc in codeSnapshot.docs) {
+          final comp = CompetitionModel.fromSnapshot(doc);
+          // FIlter in memory to avoid needing composite indexes
+          if (comp.status == 'active' &&
+              comp.deletedAt == null &&
+              (organizerId == null || comp.organizerId == organizerId)) {
+            combinedResults.add(comp);
+          }
+        }
+      }
+
+      // 2. Main Query (Name based search or general browse)
+      var query = _firestore
+          .collection('competitions')
+          .where('status', isEqualTo: 'active');
+
+      if (organizerId != null) {
+        query = query.where('organizerId', isEqualTo: organizerId);
+      }
+
+      if (searchQuery != null && searchQuery.isNotEmpty) {
+        // IF SEARCHING: We must avoid ordering by participantCount/createdAt
+        // to avoid index requirements. We'll sort in memory instead.
+        query = query
+            .where('name', isGreaterThanOrEqualTo: searchQuery)
+            .where('name', isLessThanOrEqualTo: '$searchQuery\uf8ff');
+
+        // Limit a bit larger for in-memory sorting
+        query = query.limit(limit * 2);
+      } else {
+        // BROWSE MODE: Keep original logic
+        if (orderByPopularity) {
+          query = query.orderBy('participantCount', descending: true);
+        } else {
+          query = query.orderBy('createdAt', descending: true);
+        }
+        query = query.limit(limit);
+      }
+
+      if (lastDocument != null) {
+        query = query.startAfterDocument(lastDocument);
+      }
+
+      final snapshot = await query.get();
+      List<CompetitionModel> nameResults = snapshot.docs
+          .map((doc) => CompetitionModel.fromSnapshot(doc))
+          .where((comp) => comp.deletedAt == null)
+          .toList();
+
+      // If we were searching, we need to sort the name results manually
+      // since we couldn't do it in the query without an index
+      if (searchQuery != null && searchQuery.isNotEmpty) {
+        if (orderByPopularity) {
+          nameResults.sort(
+            (a, b) => b.participantCount.compareTo(a.participantCount),
+          );
+        } else {
+          nameResults.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+        }
+      }
+
+      // Combine and Deduplicate
+      for (var comp in nameResults) {
+        if (!combinedResults.any((existing) => existing.id == comp.id)) {
+          combinedResults.add(comp);
+        }
+      }
+
+      // Adjust to limit
+      if (combinedResults.length > limit) {
+        return combinedResults.sublist(0, limit);
+      }
+
+      return combinedResults;
+    } catch (e) {
+      debugPrint('Error in getCompetitionsPaginated: $e');
+      return [];
+    }
+  }
+
+  // Get all competitions (Stream - Legacy/Small Lists)
   Stream<List<CompetitionModel>> getAllCompetitions() {
     debugPrint('🏠 Setting up HOME stream for all competitions');
     return _firestore
         .collection('competitions')
         .where('status', isEqualTo: 'active')
         .orderBy('participantCount', descending: true)
-        .limit(50) // Increased limit to ensure new/smaller competitions show up
+        .limit(20) // Reduced limit for initial load
         .snapshots()
-        .handleError((e) {
-          if (!e.toString().contains('permission-denied')) {
-            debugPrint('Error in getAllCompetitions: $e');
-          }
-        })
         .map((snapshot) {
-          debugPrint(
-            '🏠 HOME: Firestore snapshot received: ${snapshot.docs.length} docs',
-          );
-          final allComps = snapshot.docs
+          return snapshot.docs
               .map((doc) => CompetitionModel.fromSnapshot(doc))
-              .toList();
-          debugPrint(
-            '🏠 HOME: All competitions: ${allComps.map((c) => '${c.name} (deleted: ${c.deletedAt != null}, status: ${c.status})').join(", ")}',
-          );
-
-          final filtered = allComps
               .where((comp) => comp.deletedAt == null)
               .toList();
-          debugPrint(
-            '🏠 HOME: Filtered (active, non-deleted): ${filtered.map((c) => c.name).join(", ")}',
-          );
-          return filtered;
+        });
+  }
+
+  // Get official competitions (Stream)
+  Stream<List<CompetitionModel>> getOfficialCompetitions() {
+    return _firestore
+        .collection('competitions')
+        .where('status', isEqualTo: 'active')
+        .orderBy('participantCount', descending: true)
+        .limit(50)
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs
+              .map((doc) => CompetitionModel.fromSnapshot(doc))
+              .where((comp) => comp.leagueId != null && comp.deletedAt == null)
+              .take(20)
+              .toList();
         });
   }
 
@@ -2886,7 +2987,7 @@ class FirestoreService {
     Map<String, dynamic>? oldScore,
   }) async {
     try {
-      // 1. Get competition rules
+      // 1. Get competition context
       final compDoc = await _firestore
           .collection('competitions')
           .doc(competitionId)
@@ -2898,7 +2999,6 @@ class FirestoreService {
       final pointsForScore = rules['correctScore'] ?? 2;
 
       // 2. Get all predictions for this match
-      // 2. Get all predictions for this match
       final predictionsSnapshot = await _firestore
           .collection('predictions')
           .where('matchId', isEqualTo: matchId)
@@ -2907,10 +3007,21 @@ class FirestoreService {
       final allDocs = predictionsSnapshot.docs;
       if (allDocs.isEmpty) return;
 
-      final int batchSize = 400; // Limit is 500, keeping safety margin
+      // 3. Fetch current participants to avoid batch failures (orphaned predictions)
+      // Batch updates fail the entire batch if a document is missing.
+      // If a user left the competition, their participant doc is gone.
+      final participantsRef = _firestore
+          .collection('competitions')
+          .doc(competitionId)
+          .collection('participants');
 
-      // 3. Fetch the match to resolve team IDs (needed for slug→UUID resolution)
-      MatchModel? matchDoc;
+      final participantsSnapshot = await participantsRef.get();
+      final currentParticipantIds = participantsSnapshot.docs
+          .map((d) => d.id)
+          .toSet();
+
+      // 4. Fetch the match for name resolution (Cricker/Team slugs)
+      MatchModel? matchModel;
       try {
         final matchSnap = await _firestore
             .collection('competitions')
@@ -2919,14 +3030,11 @@ class FirestoreService {
             .doc(matchId)
             .get();
         if (matchSnap.exists) {
-          matchDoc = MatchModel.fromSnapshot(matchSnap);
+          matchModel = MatchModel.fromSnapshot(matchSnap);
         }
       } catch (_) {}
 
-      final participantsRef = _firestore
-          .collection('competitions')
-          .doc(competitionId)
-          .collection('participants');
+      final int batchSize = 450; // Firestore limit is 500
 
       for (int i = 0; i < allDocs.length; i += batchSize) {
         final batch = _firestore.batch();
@@ -2938,56 +3046,60 @@ class FirestoreService {
         for (var doc in currentChunk) {
           final prediction = PredictionModel.fromSnapshot(doc);
           final predScore = prediction.prediction;
-          // Calculate points and stats
+
           int points = 0;
           bool isPerfectScore = false;
           bool isCorrectOutcome = false;
 
-          // ... (Logic remains mostly same, just ensuring variables are scoped correctly)
           if (competition.sport == AppConstants.sportCricket) {
-            // Cricket Logic
+            // --- Cricket Scoring Logic ---
             String? actualWinnerId = actualScore['winnerId'];
             final String? predWinnerId = predScore['winnerId'];
             String? startMarginType = actualScore['marginType'];
             final String? actualMarginValue = actualScore['marginValue']
                 ?.toString();
 
-            // 1. Resolve winner ID: API stores slugs (e.g., "south_africa"),
-            //    but predictions store UUIDs. Map slug → UUID using team names.
+            // Slug to UUID Resolution (e.g. "india" -> UUID)
             if (actualWinnerId != null &&
                 actualWinnerId != 'tied' &&
                 actualWinnerId != 'no_result' &&
                 !actualWinnerId.contains('-') &&
-                matchDoc != null) {
-              // Normalize: "south_africa" → "south africa"
-              final slug = actualWinnerId.toLowerCase().replaceAll('_', '');
-              final t1n = matchDoc.team1Name
+                matchModel != null) {
+              final slug = actualWinnerId
+                  .toLowerCase()
+                  .replaceAll('_', '')
+                  .replaceAll(' ', '');
+              final t1n = matchModel.team1Name
                   .toLowerCase()
                   .replaceAll(' ', '')
                   .replaceAll('_', '');
-              final t2n = matchDoc.team2Name
+              final t2n = matchModel.team2Name
                   .toLowerCase()
                   .replaceAll(' ', '')
                   .replaceAll('_', '');
+
               if (t1n.contains(slug) || slug.contains(t1n)) {
-                actualWinnerId = matchDoc.team1Id;
+                actualWinnerId = matchModel.team1Id;
               } else if (t2n.contains(slug) || slug.contains(t2n)) {
-                actualWinnerId = matchDoc.team2Id;
+                actualWinnerId = matchModel.team2Id;
               }
             }
 
-            // 2. Infer Winner if still missing (tied check from run scores)
+            // Infer Winner from runs if missing
             if (actualWinnerId == null && actualScore['t1Runs'] != null) {
               final t1 =
                   int.tryParse(actualScore['t1Runs']?.toString() ?? '0') ?? 0;
               final t2 =
                   int.tryParse(actualScore['t2Runs']?.toString() ?? '0') ?? 0;
-              if (t1 == t2) {
+              if (t1 == t2)
                 actualWinnerId = 'tied';
-              }
+              else if (t1 > t2)
+                actualWinnerId = matchModel?.team1Id;
+              else if (t2 > t1)
+                actualWinnerId = matchModel?.team2Id;
             }
 
-            // 3. Check Winner Points
+            // Check Winner
             if (actualWinnerId != null &&
                 predWinnerId != null &&
                 actualWinnerId == predWinnerId) {
@@ -2995,139 +3107,100 @@ class FirestoreService {
               isCorrectOutcome = true;
             }
 
-            // 3. Infer Margin Type if missing (Fix for 'null' marginType issue)
-            if (startMarginType == null && actualMarginValue != null) {
-              final val = int.tryParse(actualMarginValue) ?? -1;
-              final t1 =
-                  int.tryParse(actualScore['t1Runs']?.toString() ?? '0') ?? 0;
-              final t2 =
-                  int.tryParse(actualScore['t2Runs']?.toString() ?? '0') ?? 0;
-              final diffRuns = (t1 - t2).abs();
-
-              // Use Batting First to determine margin type (Standard Cricket Rules)
-              final String? battingFirstId = actualScore['battingFirstId'];
-              if (battingFirstId != null && actualWinnerId != null) {
-                if (battingFirstId == actualWinnerId) {
-                  startMarginType = 'runs';
-                } else {
-                  startMarginType = 'wickets';
-                }
-              } else if (val == diffRuns) {
-                startMarginType = 'runs';
-              }
-            }
-
-            // 4. Prepare for Margin Check
-            final String? predRuns = predScore['runs']?.toString();
-            final String? predWickets = predScore['wickets']?.toString();
+            // Margin Check
             bool marginCorrect = false;
-
             if (startMarginType != null && actualMarginValue != null) {
-              String cleanMarginType = startMarginType.toLowerCase();
-              if (cleanMarginType == 'runs' && predRuns != null) {
+              final String cleanMarginType = startMarginType.toLowerCase();
+              if (cleanMarginType == 'runs') {
                 marginCorrect = _checkMargin(
                   actualMarginValue,
-                  predRuns,
+                  predScore['runs']?.toString() ?? '',
                   'runs',
                 );
-              } else if (cleanMarginType == 'wickets' && predWickets != null) {
+              } else if (cleanMarginType == 'wickets') {
                 marginCorrect = _checkMargin(
                   actualMarginValue,
-                  predWickets,
+                  predScore['wickets']?.toString() ?? '',
                   'wickets',
                 );
               }
             }
-            // Treat super over as a tie for scoring purposes
-            final String? actualMarginType = actualScore['marginType'];
-            final bool isSuperOver =
-                actualMarginType?.toLowerCase() == 'super_over';
 
-            if (actualWinnerId == 'tied' && predWinnerId == 'tied') {
-              marginCorrect = true;
-            } else if (isSuperOver && predWinnerId == 'tied') {
-              // Super over match: user predicted tie, award full points
-              marginCorrect = true;
+            // Special handling for Ties/Super Overs
+            final bool isSuperOver =
+                actualScore['marginType']?.toString().toLowerCase() ==
+                'super_over';
+            if ((actualWinnerId == 'tied' || isSuperOver) &&
+                predWinnerId == 'tied') {
+              points = pointsForWinner;
               isCorrectOutcome = true;
-              points =
-                  pointsForWinner; // Award winner points for predicting tie
+              marginCorrect =
+                  true; // Predicting a tie in a tie match gets full points
             }
 
             if (marginCorrect &&
-                (isCorrectOutcome || actualWinnerId == 'tied' || isSuperOver)) {
+                (isCorrectOutcome || actualWinnerId == 'tied')) {
               points += pointsForScore;
               if (isCorrectOutcome) isPerfectScore = true;
             }
           } else {
-            // Football / Default Logic
-            final bool predictedTie = prediction.prediction['isTie'] == true;
-            final bool actualTie = actualScore['marginType'] == 'tie';
+            // --- Football / Other Scoring Logic ---
+            final int actualHome =
+                int.tryParse(actualScore['team1']?.toString() ?? '-1') ?? -1;
+            final int actualAway =
+                int.tryParse(actualScore['team2']?.toString() ?? '-1') ?? -1;
+            final int predHome =
+                int.tryParse(predScore['team1']?.toString() ?? '-1') ?? -1;
+            final int predAway =
+                int.tryParse(predScore['team2']?.toString() ?? '-1') ?? -1;
 
-            if (predictedTie) {
-              if (actualTie) {
-                points += pointsForWinner; // 3
+            final bool actualTie =
+                (actualScore['marginType'] == 'tie') ||
+                (actualHome != -1 &&
+                    actualAway != -1 &&
+                    actualHome == actualAway);
+
+            final bool predictedTie =
+                (predScore['isTie'] == true) ||
+                (predHome != -1 && predAway != -1 && predHome == predAway);
+
+            if (actualHome != -1 &&
+                actualAway != -1 &&
+                predHome != -1 &&
+                predAway != -1) {
+              bool outcomeMatches = false;
+              if (actualHome > actualAway && predHome > predAway)
+                outcomeMatches = true;
+              else if (actualHome < actualAway && predHome < predAway)
+                outcomeMatches = true;
+              else if (actualTie && predictedTie)
+                outcomeMatches = true;
+
+              final bool scoreMatches =
+                  (actualHome == predHome && actualAway == predAway);
+
+              if (outcomeMatches) {
+                points += pointsForWinner;
                 isCorrectOutcome = true;
-                points += pointsForScore; // +2
-                isPerfectScore = true;
               }
-            } else if (actualTie) {
-              // predicted winner but was tie -> 0
+              if (scoreMatches) {
+                points += pointsForScore;
+                if (isCorrectOutcome) isPerfectScore = true;
+              }
             } else {
-              // Normal Winner Logic
-              final actualHome = actualScore['team1'] is num
-                  ? (actualScore['team1'] as num).toInt()
-                  : -1;
-              final actualAway = actualScore['team2'] is num
-                  ? (actualScore['team2'] as num).toInt()
-                  : -1;
-              final predHome = predScore['team1'] is num
-                  ? (predScore['team1'] as num).toInt()
-                  : -1;
-              final predAway = predScore['team2'] is num
-                  ? (predScore['team2'] as num).toInt()
-                  : -1;
-
-              if (actualHome != -1 &&
-                  actualAway != -1 &&
-                  predHome != -1 &&
-                  predAway != -1) {
-                bool outcomeMatches = false;
-                if (actualHome > actualAway && predHome > predAway) {
-                  outcomeMatches = true;
-                } else if (actualHome < actualAway && predHome < predAway) {
-                  outcomeMatches = true;
-                } else if (actualHome == actualAway && predHome == predAway) {
-                  outcomeMatches = true;
-                }
-
-                final bool scoreMatches =
-                    actualHome == predHome && actualAway == predAway;
-
-                if (outcomeMatches) {
-                  points += pointsForWinner;
-                  isCorrectOutcome = true;
-                }
-                if (scoreMatches && outcomeMatches) {
-                  points += pointsForScore;
-                }
-                if (outcomeMatches && scoreMatches) {
-                  isPerfectScore = true;
-                }
-              } else {
-                // Fallback for incomplete scores (e.g. Cricket without detailed stats but with winnerId)
-                final String? actualWinnerId = actualScore['winnerId'];
-                final String? predWinnerId = prediction.prediction['winnerId'];
-                if (actualWinnerId != null &&
-                    predWinnerId != null &&
-                    actualWinnerId == predWinnerId) {
-                  points += pointsForWinner;
-                  isCorrectOutcome = true;
-                }
+              // Fallback to Winner ID only
+              final String? actualWinnerId = actualScore['winnerId'];
+              final String? predWinnerId = predScore['winnerId'];
+              if (actualWinnerId != null &&
+                  predWinnerId != null &&
+                  actualWinnerId == predWinnerId) {
+                points += pointsForWinner;
+                isCorrectOutcome = true;
               }
             }
           }
 
-          // Update Logic
+          // Update Logic with Point Diff
           int pointsDiff = points;
           int perfectScoresDiff = isPerfectScore ? 1 : 0;
           int correctOutcomesDiff = isCorrectOutcome ? 1 : 0;
@@ -3141,14 +3214,17 @@ class FirestoreService {
                 (prediction.wasCorrectOutcome ? 1 : 0);
           }
 
-          if (pointsDiff != 0 ||
-              perfectScoresDiff != 0 ||
-              correctOutcomesDiff != 0) {
-            batch.update(participantsRef.doc(prediction.userId), {
-              'totalPoints': FieldValue.increment(pointsDiff),
-              'perfectScores': FieldValue.increment(perfectScoresDiff),
-              'correctOutcomes': FieldValue.increment(correctOutcomesDiff),
-            });
+          // 🛡️ ONLY update if participant exists! (CRITICAL FIX)
+          if (currentParticipantIds.contains(prediction.userId)) {
+            if (pointsDiff != 0 ||
+                perfectScoresDiff != 0 ||
+                correctOutcomesDiff != 0) {
+              batch.update(participantsRef.doc(prediction.userId), {
+                'totalPoints': FieldValue.increment(pointsDiff),
+                'perfectScores': FieldValue.increment(perfectScoresDiff),
+                'correctOutcomes': FieldValue.increment(correctOutcomesDiff),
+              });
+            }
           }
 
           batch.update(doc.reference, {
@@ -3159,13 +3235,10 @@ class FirestoreService {
           });
         }
 
-        // Commit this chunk
         await batch.commit();
       }
     } catch (e) {
-      debugPrint('Error processing predictions: $e');
-      // Don't throw, as we don't want to fail the match update if predictions fail
-      // but maybe log it properly
+      debugPrint('🚨 ERROR in _processPredictions: $e');
     }
   }
 
@@ -3745,6 +3818,47 @@ class FirestoreService {
     }
   }
 
+  // Get competitions joined by user (Paginated)
+  Future<List<CompetitionModel>> getJoinedCompetitionsPaginated(
+    String userId, {
+    int limit = 10,
+    DocumentSnapshot? lastDocument,
+  }) async {
+    try {
+      var query = _firestore
+          .collectionGroup('participants')
+          .where('userId', isEqualTo: userId)
+          .orderBy('joinedAt', descending: true)
+          .limit(limit);
+
+      if (lastDocument != null) {
+        query = query.startAfterDocument(lastDocument);
+      }
+
+      final snapshot = await query.get();
+      List<CompetitionModel> competitions = [];
+
+      for (var doc in snapshot.docs) {
+        final competitionRef = doc.reference.parent.parent;
+        if (competitionRef != null) {
+          final compDoc = await competitionRef.get();
+          if (compDoc.exists) {
+            final competition = CompetitionModel.fromSnapshot(compDoc);
+            if (competition.deletedAt == null) {
+              competitions.add(competition);
+            }
+          }
+        }
+      }
+      return competitions;
+    } catch (e) {
+      debugPrint('Error in getJoinedCompetitionsPaginated: $e');
+      return [];
+    }
+  }
+
+  // Remove duplicate method
+
   // ========== PARTICIPANTS ==========
 
   // Join competition
@@ -3794,25 +3908,15 @@ class FirestoreService {
       await participantDocRef.set(participantData);
       debugPrint('✅ Participant added successfully.');
 
-      // 3. Increment participant count on the main competition document
-      // NOTE: This often fails in official tournaments due to restricted update rules
-      // (only organizers or master admins can update the main doc).
-      // We wrap this in a separate try-catch so joining still succeeds even if count update is denied.
+      // 3. Increment participant count using Sharded Counter and update main doc
       try {
-        debugPrint('🔢 Incrementing participantCount for $competitionId...');
+        await _incrementShardedCounter(competitionId, 'participantCount', 1);
         await _firestore.collection('competitions').doc(competitionId).update({
           'participantCount': FieldValue.increment(1),
-          'participantsCount': FieldValue.increment(
-            1,
-          ), // Added plural as fallback for some older data
         });
-        debugPrint('✅ participantCount incremented successfully.');
       } catch (e) {
         debugPrint(
-          '🛡️ Permission Warning: Could not increment participantCount for $competitionId: $e',
-        );
-        debugPrint(
-          'This is expected for some restricted competitions where only admins can change the master document. The participant record itself has been created successfully.',
+          '🛡️ Warning: Could not increment participantCount for $competitionId: $e',
         );
       }
     } catch (e) {
@@ -3871,7 +3975,7 @@ class FirestoreService {
     }
   }
 
-  // Get leaderboard for competition (Top 100)
+  // Get leaderboard for competition (Top 100 - Legacy)
   Stream<List<ParticipantModel>> getLeaderboard(String competitionId) {
     return _firestore
         .collection('competitions')
@@ -3880,14 +3984,8 @@ class FirestoreService {
         .orderBy('totalPoints', descending: true)
         .limit(100) // Optimization for large competitions
         .snapshots()
-        .handleError((e) {
-          if (!e.toString().contains('permission-denied')) {
-            debugPrint('Error in getLeaderboard: $e');
-          }
-        })
         .map((snapshot) {
           List<ParticipantModel> participants = [];
-
           for (int i = 0; i < snapshot.docs.length; i++) {
             var doc = snapshot.docs[i];
             ParticipantModel participant = ParticipantModel.fromMap(doc.data());
@@ -3900,11 +3998,78 @@ class FirestoreService {
             } else {
               rank = i + 1;
             }
-
             participants.add(participant.copyWith(rank: rank));
           }
           return participants;
         });
+  }
+
+  // Get leaderboard (Paginated)
+  Future<List<ParticipantModel>> getLeaderboardPaginated(
+    String competitionId, {
+    int limit = 50,
+    DocumentSnapshot? lastDocument,
+    int? lastRank,
+    int? lastPoints,
+  }) async {
+    try {
+      var query = _firestore
+          .collection('competitions')
+          .doc(competitionId)
+          .collection('participants')
+          .orderBy('totalPoints', descending: true)
+          .limit(limit);
+
+      if (lastDocument != null) {
+        query = query.startAfterDocument(lastDocument);
+      }
+
+      final snapshot = await query.get();
+      List<ParticipantModel> results = [];
+
+      for (int i = 0; i < snapshot.docs.length; i++) {
+        var doc = snapshot.docs[i];
+        ParticipantModel p = ParticipantModel.fromMap(doc.data());
+
+        // Ranking logic for paginated results (Needs context of last page)
+        int rank;
+        if (i == 0 && lastRank != null && lastPoints != null) {
+          // Compare with last item of previous page
+          rank = (p.totalPoints == lastPoints) ? lastRank : (lastRank + 1);
+        } else if (i > 0) {
+          // Compare with previous item in THIS page
+          rank = (p.totalPoints == results[i - 1].totalPoints)
+              ? results[i - 1].rank
+              : (results[i - 1].rank + 1);
+        } else {
+          // First item of first page
+          rank = 1;
+        }
+
+        results.add(p.copyWith(rank: rank));
+      }
+      return results;
+    } catch (e) {
+      debugPrint('Error in getLeaderboardPaginated: $e');
+      return [];
+    }
+  }
+
+  // Get participant snapshot for pagination
+  Future<DocumentSnapshot?> getParticipantSnapshot(
+    String competitionId,
+    String userId,
+  ) async {
+    try {
+      return await _firestore
+          .collection('competitions')
+          .doc(competitionId)
+          .collection('participants')
+          .doc(userId)
+          .get();
+    } catch (e) {
+      return null;
+    }
   }
 
   // Update participant points
@@ -4009,6 +4174,11 @@ class FirestoreService {
       throw Exception('Failed to search competitions: ${e.toString()}');
     }
   }
+
+  // Get last document for paginated queries (helper)
+  Future<DocumentSnapshot?> getCompetitionSnapshot(String competitionId) async {
+    return await _firestore.collection('competitions').doc(competitionId).get();
+  }
   // ========== USER STATS ==========
 
   // Get all competitions a user has joined (and total stats)
@@ -4097,27 +4267,39 @@ class FirestoreService {
             }
           }
 
-          // Process participants
+          // Process participants in batches of 30 (Firestore limit for 'whereIn')
+          final List<String> compIdsToFetch = [];
           for (var doc in participantDocs) {
             final data = doc.data() as Map<String, dynamic>;
             String? compId = data['competitionId'];
-
             if (compId == null || compId.isEmpty) {
               final parts = doc.reference.path.split('/');
               if (parts.length >= 2) compId = parts[1];
             }
-
             if (compId != null &&
                 compId.isNotEmpty &&
                 !competitionsMap.containsKey(compId)) {
-              final compDoc = await _firestore
+              if (!compIdsToFetch.contains(compId)) {
+                compIdsToFetch.add(compId);
+              }
+            }
+          }
+
+          if (compIdsToFetch.isNotEmpty) {
+            for (var i = 0; i < compIdsToFetch.length; i += 30) {
+              final chunk = compIdsToFetch.sublist(
+                i,
+                min(i + 30, compIdsToFetch.length),
+              );
+              final snapshot = await _firestore
                   .collection('competitions')
-                  .doc(compId)
+                  .where(FieldPath.documentId, whereIn: chunk)
                   .get();
-              if (compDoc.exists) {
-                final comp = CompetitionModel.fromSnapshot(compDoc);
+
+              for (var doc in snapshot.docs) {
+                final comp = CompetitionModel.fromSnapshot(doc);
                 if (comp.deletedAt == null) {
-                  competitionsMap[compId] = comp;
+                  competitionsMap[comp.id] = comp;
                 }
               }
             }
@@ -5146,5 +5328,60 @@ class FirestoreService {
       }
     }
     return actual == predicted;
+  }
+
+  // ========== SHARDED COUNTER HELPERS ==========
+
+  /// Increments or decrements a random shard for a competition's participant count.
+  /// This avoids the 1-write-per-second limit on a single document.
+  Future<void> _incrementShardedCounter(
+    String competitionId,
+    String fieldName,
+    int change,
+  ) async {
+    final shardIdx = Random().nextInt(AppConstants.numCounterShards);
+    final shardRef = _firestore
+        .collection('competitions')
+        .doc(competitionId)
+        .collection('sharded_counters')
+        .doc(shardIdx.toString());
+
+    try {
+      await _firestore.runTransaction((transaction) async {
+        final snapshot = await transaction.get(shardRef);
+        if (!snapshot.exists) {
+          transaction.set(shardRef, {fieldName: change});
+        } else {
+          final data = snapshot.data() ?? {};
+          final currentCount = data[fieldName] ?? 0;
+          transaction.update(shardRef, {fieldName: currentCount + change});
+        }
+      });
+    } catch (e) {
+      debugPrint('Error incrementing shard $fieldName: $e');
+      // Fallback: Just try to set it directly if transaction fails (optional)
+    }
+  }
+
+  /// Gets the total participant count by summing all shards.
+  /// Warning: For 1M users, this is 20 reads. Use cached value on main doc for UI lists.
+  Stream<Map<String, int>> getShardedCounts(String competitionId) {
+    return _firestore
+        .collection('competitions')
+        .doc(competitionId)
+        .collection('sharded_counters')
+        .snapshots()
+        .map((snapshot) {
+          Map<String, int> totals = {};
+          for (var doc in snapshot.docs) {
+            final data = doc.data();
+            data.forEach((key, value) {
+              if (value is int) {
+                totals[key] = (totals[key] ?? 0) + value;
+              }
+            });
+          }
+          return totals;
+        });
   }
 }

@@ -142,7 +142,7 @@ class _MyCompetitionsScreenState extends State<MyCompetitionsScreen>
               }
 
               return ListView.builder(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
                 itemCount: competitions.length,
                 itemBuilder: (context, index) {
                   final competition = competitions[index];
@@ -186,7 +186,7 @@ class _MyCompetitionsScreenState extends State<MyCompetitionsScreen>
         }
 
         return ListView.builder(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
           itemCount: competitions.length,
           itemBuilder: (context, index) {
             final competition = competitions[index];
@@ -427,37 +427,100 @@ class _MyCompetitionsScreenState extends State<MyCompetitionsScreen>
     showModalBottomSheet(
       context: context,
       backgroundColor: AppColors.cardBackground,
+      isScrollControlled: true,
+      useSafeArea: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
-      builder: (context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ListTile(
-            leading: const Icon(Icons.edit, color: AppColors.textPrimary),
-            title: const Text(
-              'Edit Details',
-              style: TextStyle(color: AppColors.textPrimary),
-            ),
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => CompetitionCreateScreen(
-                    organizerId: widget.organizerId,
-                    organizerName: competition.organizerName,
-                    competition: competition,
-                  ),
-                ),
-              );
-            },
-          ),
-          if (!competition.isPublic) ...[
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
             ListTile(
-              leading: const Icon(Icons.group, color: AppColors.textPrimary),
+              leading: const Icon(Icons.edit, color: AppColors.textPrimary),
               title: const Text(
-                'Manage Teams',
+                'Edit Details',
+                style: TextStyle(color: AppColors.textPrimary),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => CompetitionCreateScreen(
+                      organizerId: widget.organizerId,
+                      organizerName: competition.organizerName,
+                      competition: competition,
+                    ),
+                  ),
+                );
+              },
+            ),
+            if (!competition.isPublic) ...[
+              ListTile(
+                leading: const Icon(Icons.group, color: AppColors.textPrimary),
+                title: const Text(
+                  'Manage Teams',
+                  style: TextStyle(color: AppColors.textPrimary),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          CompetitionTeamsScreen(competition: competition),
+                    ),
+                  );
+                },
+              ),
+              ListTile(
+                leading: const Icon(
+                  Icons.calendar_month,
+                  color: AppColors.textPrimary,
+                ),
+                title: const Text(
+                  'Manage Matches',
+                  style: TextStyle(color: AppColors.textPrimary),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          MatchesListScreen(competition: competition),
+                    ),
+                  );
+                },
+              ),
+            ],
+            ListTile(
+              leading: const Icon(
+                Icons.format_list_numbered,
+                color: AppColors.textPrimary,
+              ),
+              title: const Text(
+                'Standings',
+                style: TextStyle(color: AppColors.textPrimary),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => LeaderboardScreen(competition: competition),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(
+                Icons.mail_outline,
+                color: AppColors.textPrimary,
+              ),
+              title: const Text(
+                'Messages',
                 style: TextStyle(color: AppColors.textPrimary),
               ),
               onTap: () {
@@ -466,81 +529,23 @@ class _MyCompetitionsScreenState extends State<MyCompetitionsScreen>
                   context,
                   MaterialPageRoute(
                     builder: (_) =>
-                        CompetitionTeamsScreen(competition: competition),
+                        OrganizerChatListScreen(competition: competition),
                   ),
                 );
               },
             ),
             ListTile(
-              leading: const Icon(
-                Icons.calendar_month,
-                color: AppColors.textPrimary,
-              ),
+              leading: const Icon(Icons.delete, color: AppColors.error),
               title: const Text(
-                'Manage Matches',
-                style: TextStyle(color: AppColors.textPrimary),
+                'Delete Competition',
+                style: TextStyle(color: AppColors.error),
               ),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => MatchesListScreen(competition: competition),
-                  ),
-                );
-              },
+              onTap: () =>
+                  _handleDelete(context, competition, firestoreService),
             ),
+            const SizedBox(height: 8),
           ],
-          ListTile(
-            leading: const Icon(
-              Icons.format_list_numbered,
-              color: AppColors.textPrimary,
-            ),
-            title: const Text(
-              'Standings',
-              style: TextStyle(color: AppColors.textPrimary),
-            ),
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => LeaderboardScreen(competition: competition),
-                ),
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(
-              Icons.mail_outline,
-              color: AppColors.textPrimary,
-            ),
-            title: const Text(
-              'Messages',
-              style: TextStyle(color: AppColors.textPrimary),
-            ),
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) =>
-                      OrganizerChatListScreen(competition: competition),
-                ),
-              );
-            },
-          ),
-
-          ListTile(
-            leading: const Icon(Icons.delete, color: AppColors.error),
-            title: const Text(
-              'Delete Competition',
-              style: TextStyle(color: AppColors.error),
-            ),
-            onTap: () => _handleDelete(context, competition, firestoreService),
-          ),
-          const SizedBox(height: 16),
-        ],
+        ),
       ),
     );
   }

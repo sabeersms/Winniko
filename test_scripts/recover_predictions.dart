@@ -83,7 +83,7 @@ void main() async {
     final orphanedPredictions = <QueryDocumentSnapshot>[];
     int alreadyValid = 0;
     for (var pDoc in predictionsSnap.docs) {
-      final pData = pDoc.data() as Map<String, dynamic>;
+      final pData = pDoc.data();
       final matchId = pData['matchId'] ?? '';
       if (currentMatches.containsKey(matchId)) {
         alreadyValid++;

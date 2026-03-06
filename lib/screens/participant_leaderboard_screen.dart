@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../constants/app_constants.dart';
@@ -11,8 +12,6 @@ import '../utils/share_util.dart';
 import 'user_profile_screen.dart';
 import '../services/pdf_service.dart';
 import '../services/ad_service.dart';
-import '../models/match_model.dart';
-import '../models/prediction_model.dart';
 
 class ParticipantLeaderboardScreen extends StatefulWidget {
   final CompetitionModel competition;
@@ -27,177 +26,229 @@ class ParticipantLeaderboardScreen extends StatefulWidget {
 class _ParticipantLeaderboardScreenState
     extends State<ParticipantLeaderboardScreen> {
   final GlobalKey _boundaryKey = GlobalKey();
+  final ScrollController _scrollController = ScrollController();
+  List<ParticipantModel> _participants = [];
+  bool _isLoadingNextPage = false;
+  bool _hasMore = true;
+  DocumentSnapshot? _lastDocument;
+  ParticipantModel? _myParticipant;
+  bool _isInitialLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+    _loadInitialData();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+            _scrollController.position.maxScrollExtent - 200 &&
+        !_isLoadingNextPage &&
+        _hasMore) {
+      _loadNextPage();
+    }
+  }
+
+  Future<void> _loadInitialData() async {
+    final firestore = Provider.of<FirestoreService>(context, listen: false);
+    final authService = Provider.of<AuthService>(context, listen: false);
+    final userId = authService.currentUser?.uid;
+
+    try {
+      // 1. Get My Participant info separately (for Sticky Row)
+      if (userId != null) {
+        _myParticipant = await firestore.getParticipant(
+          widget.competition.id,
+          userId,
+        );
+      }
+
+      // 2. Load first page
+      final firstPage = await firestore.getLeaderboardPaginated(
+        widget.competition.id,
+        limit: 50,
+      );
+
+      _participants = firstPage;
+      _hasMore = firstPage.length >= 50;
+
+      if (firstPage.isNotEmpty) {
+        _lastDocument = await firestore.getParticipantSnapshot(
+          widget.competition.id,
+          firstPage.last.userId,
+        );
+      }
+
+      if (mounted) {
+        setState(() => _isInitialLoading = false);
+      }
+    } catch (e) {
+      debugPrint('Error loading initial leaderboard: $e');
+      if (mounted) {
+        setState(() => _isInitialLoading = false);
+      }
+    }
+  }
+
+  Future<void> _loadNextPage() async {
+    if (_isLoadingNextPage || !_hasMore) return;
+
+    setState(() => _isLoadingNextPage = true);
+
+    try {
+      final firestore = Provider.of<FirestoreService>(context, listen: false);
+
+      int? lastRank;
+      int? lastPoints;
+      if (_participants.isNotEmpty) {
+        lastRank = _participants.last.rank;
+        lastPoints = _participants.last.totalPoints;
+      }
+
+      final nextPage = await firestore.getLeaderboardPaginated(
+        widget.competition.id,
+        limit: 50,
+        lastDocument: _lastDocument,
+        lastRank: lastRank,
+        lastPoints: lastPoints,
+      );
+
+      if (nextPage.isNotEmpty) {
+        _lastDocument = await firestore.getParticipantSnapshot(
+          widget.competition.id,
+          nextPage.last.userId,
+        );
+        _participants.addAll(nextPage);
+        _hasMore = nextPage.length >= 50;
+      } else {
+        _hasMore = false;
+      }
+
+      if (mounted) {
+        setState(() => _isLoadingNextPage = false);
+      }
+    } catch (e) {
+      debugPrint('Error loading next leaderboard page: $e');
+      if (mounted) {
+        setState(() => _isLoadingNextPage = false);
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final firestore = Provider.of<FirestoreService>(context, listen: false);
     final authService = Provider.of<AuthService>(context, listen: false);
     final currentUserId = authService.currentUser?.uid;
     final isOrganizer =
         currentUserId != null &&
         currentUserId == widget.competition.organizerId;
 
+    if (_isInitialLoading) {
+      return Scaffold(
+        backgroundColor: AppColors.backgroundDark,
+        body: Center(child: LoadingSpinner(color: AppColors.accentGreen)),
+      );
+    }
+
+    final bool isTieForFirst =
+        _participants.length > 1 && _participants[1].rank == 1;
+    final bool showPodium = _participants.length >= 3 && !isTieForFirst;
+
     return Scaffold(
       backgroundColor: AppColors.backgroundDark,
-      body: StreamBuilder<List<ParticipantModel>>(
-        stream: firestore.getLeaderboard(widget.competition.id),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: LoadingSpinner(color: AppColors.accentGreen),
-            );
-          }
-
-          if (snapshot.hasError) {
-            final errorStr = snapshot.error.toString();
-            if (errorStr.contains('permission-denied')) {
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(32.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.lock_outline,
-                        size: 64,
-                        color: AppColors.textSecondary,
-                      ),
-                      const SizedBox(height: 16),
-                      const Text(
-                        'Access Restricted',
+      body: RepaintBoundary(
+        key: _boundaryKey,
+        child: Container(
+          color: AppColors.backgroundDark,
+          child: CustomScrollView(
+            controller: _scrollController,
+            slivers: [
+              _buildSliverAppBar(
+                _participants.length,
+                isOrganizer,
+                _participants,
+                showPodium,
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate([
+                    const Padding(
+                      padding: EdgeInsets.only(left: 4, bottom: 8, top: 16),
+                      child: Text(
+                        'Rankings',
                         style: TextStyle(
-                          fontSize: 20,
+                          color: Colors.white,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
                         ),
+                      ),
+                    ),
+                    // Sticky "You" Row
+                    if (_myParticipant != null) ...[
+                      _buildParticipantTile(
+                        _myParticipant!,
+                        _myParticipant!.rank - 1,
+                        true, // isMe is true
+                        isOrganizer,
+                        onDownload: () => _downloadUserReport(_myParticipant!),
                       ),
                       const SizedBox(height: 8),
-                      const Text(
-                        'This leaderboard is only visible to participants of this competition.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: AppColors.textSecondary),
-                      ),
-                      const SizedBox(height: 24),
-                      const Text(
-                        'Please join the competition to see the full rankings and detailed stats.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: AppColors.textSecondary,
-                          fontSize: 13,
-                        ),
-                      ),
+                      Divider(color: Colors.white.withOpacity(0.1)),
+                      const SizedBox(height: 8),
                     ],
+                  ]),
+                ),
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      // If we have podium, skip first 3 in the general list
+                      final adjustedIndex = showPodium ? index + 3 : index;
+                      if (adjustedIndex >= _participants.length) {
+                        if (_hasMore) {
+                          return const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 32.0),
+                            child: Center(
+                              child: LoadingSpinner(
+                                color: AppColors.accentGreen,
+                                size: 24,
+                              ),
+                            ),
+                          );
+                        }
+                        return null;
+                      }
+
+                      final participant = _participants[adjustedIndex];
+
+                      return _buildParticipantTile(
+                        participant,
+                        adjustedIndex,
+                        participant.userId == currentUserId,
+                        isOrganizer,
+                        onDownload: () => _downloadUserReport(participant),
+                      );
+                    },
+                    childCount: showPodium
+                        ? (_participants.length - 3) + (_hasMore ? 1 : 0)
+                        : _participants.length + (_hasMore ? 1 : 0),
                   ),
                 ),
-              );
-            }
-            return Center(
-              child: Text(
-                'Error: $errorStr',
-                style: const TextStyle(color: AppColors.error),
-                textAlign: TextAlign.center,
               ),
-            );
-          }
-
-          final participants = snapshot.data ?? [];
-
-          if (participants.isEmpty) {
-            return const Center(
-              child: Text(
-                'No participants yet.',
-                style: TextStyle(color: AppColors.textSecondary),
-              ),
-            );
-          }
-
-          // Determine if we show podium:
-          // 1. Need at least 3 participants.
-          // 2. No tie for 1st place (i.e. rank of 2nd participant is NOT 1).
-          final bool isTieForFirst =
-              participants.length > 1 && participants[1].rank == 1;
-          final bool showPodium = participants.length >= 3 && !isTieForFirst;
-
-          // Find current user's participant model
-          final myParticipant = participants
-              .where((p) => p.userId == currentUserId)
-              .firstOrNull;
-
-          return RepaintBoundary(
-            key: _boundaryKey,
-            child: Container(
-              color: AppColors.backgroundDark,
-              child: CustomScrollView(
-                slivers: [
-                  _buildSliverAppBar(
-                    participants.length,
-                    isOrganizer,
-                    participants,
-                    showPodium,
-                  ),
-                  SliverPadding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    sliver: SliverList(
-                      delegate: SliverChildListDelegate([
-                        const Padding(
-                          padding: EdgeInsets.only(left: 4, bottom: 8, top: 16),
-                          child: Text(
-                            'Rankings',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        // Sticky "You" Row
-                        if (myParticipant != null) ...[
-                          _buildParticipantTile(
-                            myParticipant,
-                            myParticipant.rank - 1, // index is rank-1 roughly
-                            true, // isMe is true
-                            isOrganizer,
-                            onDownload: () =>
-                                _downloadUserReport(myParticipant),
-                          ),
-                          const SizedBox(height: 8),
-                          Divider(color: Colors.white.withValues(alpha: 0.1)),
-                          const SizedBox(height: 8),
-                        ],
-                      ]),
-                    ),
-                  ),
-                  SliverPadding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    sliver: SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                          // If we have podium, skip first 3 in the general list
-                          final adjustedIndex = showPodium ? index + 3 : index;
-                          if (adjustedIndex >= participants.length) return null;
-
-                          final participant = participants[adjustedIndex];
-
-                          return _buildParticipantTile(
-                            participant,
-                            adjustedIndex,
-                            participant.userId == currentUserId,
-                            isOrganizer,
-                            onDownload: () => _downloadUserReport(participant),
-                          );
-                        },
-                        childCount: showPodium
-                            ? participants.length - 3
-                            : participants.length,
-                      ),
-                    ),
-                  ),
-                  const SliverToBoxAdapter(child: SizedBox(height: 100)),
-                ],
-              ),
-            ),
-          );
-        },
+              const SliverToBoxAdapter(child: SizedBox(height: 100)),
+            ],
+          ),
+        ),
       ),
     );
   }

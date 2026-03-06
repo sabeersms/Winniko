@@ -12,6 +12,8 @@ import '../constants/app_constants.dart';
 import '../widgets/loading_spinner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dialogs/tournament_discovery_dialog.dart';
+import 'competition_teams_screen.dart';
+import '../models/competition_model.dart';
 
 class MasterVerificationScreen extends StatefulWidget {
   const MasterVerificationScreen({super.key});
@@ -30,7 +32,7 @@ class _MasterVerificationScreenState extends State<MasterVerificationScreen>
   // Manual list of important leagues if not fully exposed,
   // but we added supportedLeagues to TournamentDataService.
   // Mapping of League ID to Display Name
-  Map<String, String> _baseLeagues = {};
+  final Map<String, String> _baseLeagues = {};
   Map<String, String> _leagues = {};
   final TextEditingController _searchController = TextEditingController();
   late TabController _tabController;
@@ -64,9 +66,16 @@ class _MasterVerificationScreenState extends State<MasterVerificationScreen>
 
   Future<void> _loadCustomLeaguePreferences() async {
     try {
+      final firestore = context.read<FirestoreService>();
+      final blacklist = await firestore.getBlacklistedTournamentIds();
+
       final prefs = await SharedPreferences.getInstance();
 
       final removed = prefs.getStringList('verification_removed_leagues') ?? [];
+
+      // Filter out blacklist from base leagues
+      _baseLeagues.removeWhere((id, name) => blacklist.contains(id));
+
       for (var rId in removed) {
         _baseLeagues.remove(rId);
       }
@@ -75,7 +84,10 @@ class _MasterVerificationScreenState extends State<MasterVerificationScreen>
       for (var a in added) {
         final parts = a.split('||');
         if (parts.length == 2) {
-          _baseLeagues[parts[0]] = parts[1];
+          final id = parts[0];
+          if (!blacklist.contains(id)) {
+            _baseLeagues[id] = parts[1];
+          }
         }
       }
 
@@ -250,6 +262,161 @@ class _MasterVerificationScreenState extends State<MasterVerificationScreen>
         }
       }
     }
+  }
+
+  Future<void> _showAddTournamentDialog() async {
+    final nameController = TextEditingController();
+    final idController = TextEditingController();
+    String selectedSport = AppConstants.sportCricket;
+
+    await showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          backgroundColor: AppColors.cardBackground,
+          title: const Text(
+            'Add Tournament Manually',
+            style: TextStyle(color: Colors.white),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameController,
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  labelText: 'Tournament Name',
+                  labelStyle: const TextStyle(color: Colors.white70),
+                  hintText: 'e.g. IPL 2025',
+                  hintStyle: TextStyle(color: Colors.white.withOpacity(0.3)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: idController,
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  labelText: 'Tournament ID (Slug)',
+                  labelStyle: const TextStyle(color: Colors.white70),
+                  hintText: 'e.g. ipl-2025',
+                  hintStyle: TextStyle(color: Colors.white.withOpacity(0.3)),
+                  helperText: 'Must be unique, lowercase, no spaces',
+                  helperStyle: const TextStyle(
+                    color: Colors.white38,
+                    fontSize: 10,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: selectedSport,
+                dropdownColor: AppColors.cardBackground,
+                style: const TextStyle(color: Colors.white),
+                items: [AppConstants.sportCricket, AppConstants.sportFootball]
+                    .map((s) => DropdownMenuItem(value: s, child: Text(s)))
+                    .toList(),
+                onChanged: (v) => setDialogState(() => selectedSport = v!),
+                decoration: InputDecoration(
+                  labelText: 'Sport',
+                  labelStyle: const TextStyle(color: Colors.white70),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final name = nameController.text.trim();
+                final id = idController.text.trim().toLowerCase().replaceAll(
+                  ' ',
+                  '-',
+                );
+
+                if (name.isEmpty || id.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Please fill all fields')),
+                  );
+                  return;
+                }
+
+                Navigator.pop(ctx);
+                setState(() => _isLoading = true);
+
+                try {
+                  // 1. Save to SharedPreferences (for the list)
+                  final prefs = await SharedPreferences.getInstance();
+                  final added =
+                      prefs.getStringList('verification_added_leagues') ?? [];
+                  final entry = '$id||$name';
+
+                  if (!added.contains(entry)) {
+                    added.add(entry);
+                    await prefs.setStringList(
+                      'verification_added_leagues',
+                      added,
+                    );
+                  }
+
+                  // 2. Register in Firestore discovered_tournaments
+                  await FirebaseFirestore.instance
+                      .collection('discovered_tournaments')
+                      .doc(id)
+                      .set({
+                        'id': id,
+                        'name': name,
+                        'sport': selectedSport,
+                        'discoveredAt': FieldValue.serverTimestamp(),
+                        'status': 'active',
+                        'source': 'manual',
+                      }, SetOptions(merge: true));
+
+                  // 3. Update local state
+                  await _loadCustomLeaguePreferences();
+
+                  if (mounted) {
+                    setState(() {
+                      _selectedLeagueId = id;
+                      _leagues[id] = name;
+                      _isLoading = false;
+                    });
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Tournament "$name" added successfully!'),
+                      ),
+                    );
+                  }
+                } catch (e) {
+                  if (mounted) {
+                    setState(() => _isLoading = false);
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text('Error: $e')));
+                  }
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.accentGreen,
+                foregroundColor: Colors.black,
+              ),
+              child: const Text('Add Tournament'),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   void _openDiscovery() {
@@ -564,7 +731,7 @@ class _MasterVerificationScreenState extends State<MasterVerificationScreen>
       }
 
       await TournamentDataService.fetchAndSaveSoftCopy(
-        'master_override_${_selectedLeagueId}', // Dummy Comp ID
+        'master_override_$_selectedLeagueId', // Dummy Comp ID
         _selectedLeagueId!,
         dummyTeams,
       );
@@ -943,7 +1110,7 @@ class _MasterVerificationScreenState extends State<MasterVerificationScreen>
                 ),
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(
-                  value: selectedWinnerId,
+                  initialValue: selectedWinnerId,
                   dropdownColor: AppColors.cardBackground,
                   style: const TextStyle(color: Colors.white),
                   decoration: const InputDecoration(
@@ -984,7 +1151,7 @@ class _MasterVerificationScreenState extends State<MasterVerificationScreen>
                     AppConstants.sportCricket) ...[
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
-                    value: selectedBattingFirstId,
+                    initialValue: selectedBattingFirstId,
                     dropdownColor: AppColors.cardBackground,
                     style: const TextStyle(color: Colors.white),
                     decoration: const InputDecoration(
@@ -1013,7 +1180,7 @@ class _MasterVerificationScreenState extends State<MasterVerificationScreen>
                     children: [
                       Expanded(
                         child: DropdownButtonFormField<String>(
-                          value: selectedMarginType,
+                          initialValue: selectedMarginType,
                           dropdownColor: AppColors.cardBackground,
                           style: const TextStyle(color: Colors.white),
                           decoration: const InputDecoration(
@@ -1055,7 +1222,7 @@ class _MasterVerificationScreenState extends State<MasterVerificationScreen>
                 ],
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(
-                  value: selectedStatus,
+                  initialValue: selectedStatus,
                   dropdownColor: AppColors.cardBackground,
                   style: const TextStyle(color: Colors.white),
                   decoration: const InputDecoration(
@@ -1156,7 +1323,47 @@ class _MasterVerificationScreenState extends State<MasterVerificationScreen>
     );
   }
 
-  Future<void> _showAddMatchDialog() async {
+  void _navigateToTeamsScreen() {
+    if (_selectedLeagueId == null) return;
+
+    final name = _baseLeagues[_selectedLeagueId!] ?? _selectedLeagueId!;
+    final dummyCompId = 'master_override_$_selectedLeagueId';
+    final sport = _getSportForLeague(_selectedLeagueId!);
+    final user = FirebaseAuth.instance.currentUser;
+
+    final dummyComp = CompetitionModel(
+      id: dummyCompId,
+      organizerId: user?.uid ?? 'master_system',
+      organizerName: 'System Master',
+      name: name,
+      sport: sport,
+      format: 'League',
+      isPublic: true,
+      joinCode: '000000',
+      locationRestrictionType: 'none',
+      rules: {'correctWinner': 3, 'correctScore': 1},
+      isPaid: false,
+      participantCount: 0,
+      createdAt: DateTime.now(),
+      status: 'active',
+      leagueId: _selectedLeagueId,
+    );
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => CompetitionTeamsScreen(competition: dummyComp),
+      ),
+    ).then((result) {
+      if (result == 'add_match') {
+        _showMatchPairingDialog();
+      } else {
+        _loadSoftMatches(_selectedLeagueId!);
+      }
+    });
+  }
+
+  Future<void> _showMatchPairingDialog() async {
     // We need teams to select from
     setState(() => _isLoading = true);
     try {
@@ -1215,7 +1422,7 @@ class _MasterVerificationScreenState extends State<MasterVerificationScreen>
               mainAxisSize: MainAxisSize.min,
               children: [
                 DropdownButtonFormField<TeamModel>(
-                  value: t1,
+                  initialValue: t1,
                   dropdownColor: AppColors.cardBackground,
                   items: teams
                       .map(
@@ -1233,7 +1440,7 @@ class _MasterVerificationScreenState extends State<MasterVerificationScreen>
                 ),
                 const SizedBox(height: 12),
                 DropdownButtonFormField<TeamModel>(
-                  value: t2,
+                  initialValue: t2,
                   dropdownColor: AppColors.cardBackground,
                   items: teams
                       .map(
@@ -1344,165 +1551,245 @@ class _MasterVerificationScreenState extends State<MasterVerificationScreen>
         controller: _tabController,
         children: [
           // Tab 1: Tournaments List
-          Container(
-            color: AppColors.cardBackground,
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextField(
-                    controller: _searchController,
-                    style: const TextStyle(color: Colors.white, fontSize: 13),
-                    decoration: const InputDecoration(
-                      hintText: 'Search Tournaments...',
-                      hintStyle: TextStyle(
-                        color: AppColors.textSecondary,
-                        fontSize: 13,
-                      ),
-                      prefixIcon: Icon(
-                        Icons.search,
-                        color: AppColors.textSecondary,
-                        size: 18,
-                      ),
-                      filled: true,
-                      fillColor: AppColors.backgroundDark,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(8)),
-                        borderSide: BorderSide.none,
-                      ),
-                      isDense: true,
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 8,
+          Stack(
+            children: [
+              Container(
+                color: AppColors.cardBackground,
+                padding: const EdgeInsets.only(
+                  bottom: 140,
+                ), // Room for bottom buttons
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextField(
+                        controller: _searchController,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 13,
+                        ),
+                        decoration: const InputDecoration(
+                          hintText: 'Search Tournaments...',
+                          hintStyle: TextStyle(
+                            color: AppColors.textSecondary,
+                            fontSize: 13,
+                          ),
+                          prefixIcon: Icon(
+                            Icons.search,
+                            color: AppColors.textSecondary,
+                            size: 18,
+                          ),
+                          filled: true,
+                          fillColor: AppColors.backgroundDark,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                            borderSide: BorderSide.none,
+                          ),
+                          isDense: true,
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 8,
+                          ),
+                        ),
+                        onSubmitted: _performSearch,
                       ),
                     ),
-                    onSubmitted: _performSearch,
-                  ),
-                ),
-                Expanded(
-                  child: _leagues.isEmpty && _searchController.text.isNotEmpty
-                      ? Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(24.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(
-                                  Icons.search_off,
-                                  size: 48,
-                                  color: Colors.white24,
+                    Expanded(
+                      child:
+                          _leagues.isEmpty && _searchController.text.isNotEmpty
+                          ? Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(24.0),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Icon(
+                                      Icons.search_off,
+                                      size: 48,
+                                      color: Colors.white24,
+                                    ),
+                                    const SizedBox(height: 16),
+                                    const Text(
+                                      'No local matches for this search.',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    const Text(
+                                      'Try searching globally with the "Discover" tool below.',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(color: Colors.white54),
+                                    ),
+                                    const SizedBox(height: 16),
+                                    TextButton.icon(
+                                      onPressed: _showAddTournamentDialog,
+                                      icon: const Icon(
+                                        Icons.add,
+                                        color: AppColors.accentGreen,
+                                      ),
+                                      label: const Text(
+                                        'Add Manually',
+                                        style: TextStyle(
+                                          color: AppColors.accentGreen,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(height: 16),
-                                const Text(
-                                  'No local matches for this search.',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
+                              ),
+                            )
+                          : ListView.builder(
+                              itemCount: _leagues.length,
+                              itemBuilder: (context, index) {
+                                final leagueId = _leagues.keys.elementAt(index);
+                                final leagueName = _leagues[leagueId]!;
+                                final isSelected =
+                                    leagueId == _selectedLeagueId;
+                                final isPinned = _baseLeagues.containsKey(
+                                  leagueId,
+                                );
+
+                                return ListTile(
+                                  title: Text(
+                                    leagueName,
+                                    style: TextStyle(
+                                      color: isSelected
+                                          ? AppColors.accentGreen
+                                          : AppColors.textPrimary,
+                                      fontWeight: isSelected
+                                          ? FontWeight.bold
+                                          : FontWeight.normal,
+                                      fontSize: 14,
+                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                ),
-                                const SizedBox(height: 8),
-                                const Text(
-                                  'Try searching globally with the "Discover" tool below.',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(color: Colors.white54),
-                                ),
-                              ],
+                                  subtitle: Text(
+                                    leagueId,
+                                    style: const TextStyle(
+                                      color: AppColors.textSecondary,
+                                      fontSize: 9,
+                                    ),
+                                  ),
+                                  trailing: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      IconButton(
+                                        icon: Icon(
+                                          isPinned
+                                              ? Icons.star
+                                              : Icons.star_border,
+                                          color: isPinned
+                                              ? AppColors.accentGreen
+                                              : AppColors.textSecondary,
+                                          size: 20,
+                                        ),
+                                        onPressed: () => _toggleLeaguePin(
+                                          leagueId,
+                                          leagueName,
+                                        ),
+                                        tooltip: isPinned
+                                            ? 'Remove from Major Tournaments'
+                                            : 'Add to Major Tournaments',
+                                      ),
+                                      const SizedBox(width: 4),
+                                      IconButton(
+                                        icon: const Icon(
+                                          Icons.delete_outline,
+                                          color: AppColors.error,
+                                          size: 20,
+                                        ),
+                                        onPressed: () => _handleMasterDelete(
+                                          leagueId,
+                                          leagueName,
+                                        ),
+                                        tooltip: 'Master Delete Tournament',
+                                      ),
+                                    ],
+                                  ),
+                                  selected: isSelected,
+                                  selectedTileColor: AppColors.accentGreen
+                                      .withOpacity(0.05),
+                                  onTap: () => _loadSoftMatches(leagueId),
+                                );
+                              },
+                            ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Sticky Bottom Buttons
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.cardBackground,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.5),
+                        blurRadius: 10,
+                        offset: const Offset(0, -5),
+                      ),
+                    ],
+                  ),
+                  child: SafeArea(
+                    top: false,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ElevatedButton.icon(
+                            onPressed: _openDiscovery,
+                            icon: const Icon(Icons.sync),
+                            label: const Text('Discover New Tournaments'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.accentGreen,
+                              foregroundColor: Colors.black,
+                              minimumSize: const Size(double.infinity, 48),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
                             ),
                           ),
-                        )
-                      : ListView.builder(
-                          itemCount: _leagues.length,
-                          itemBuilder: (context, index) {
-                            final leagueId = _leagues.keys.elementAt(index);
-                            final leagueName = _leagues[leagueId]!;
-                            final isSelected = leagueId == _selectedLeagueId;
-                            final isPinned = _baseLeagues.containsKey(leagueId);
-
-                            return ListTile(
-                              title: Text(
-                                leagueName,
-                                style: TextStyle(
-                                  color: isSelected
-                                      ? AppColors.accentGreen
-                                      : AppColors.textPrimary,
-                                  fontWeight: isSelected
-                                      ? FontWeight.bold
-                                      : FontWeight.normal,
-                                  fontSize: 14,
-                                ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
+                          const SizedBox(height: 8),
+                          OutlinedButton.icon(
+                            onPressed: _showAddTournamentDialog,
+                            icon: const Icon(
+                              Icons.add_circle_outline,
+                              color: AppColors.accentGreen,
+                              size: 18,
+                            ),
+                            label: const Text(
+                              'Add Tournament Manually',
+                              style: TextStyle(
+                                color: AppColors.accentGreen,
+                                fontWeight: FontWeight.bold,
                               ),
-                              subtitle: Text(
-                                leagueId,
-                                style: const TextStyle(
-                                  color: AppColors.textSecondary,
-                                  fontSize: 9,
-                                ),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              side: const BorderSide(
+                                color: AppColors.accentGreen,
                               ),
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconButton(
-                                    icon: Icon(
-                                      isPinned ? Icons.star : Icons.star_border,
-                                      color: isPinned
-                                          ? AppColors.accentGreen
-                                          : AppColors.textSecondary,
-                                      size: 20,
-                                    ),
-                                    onPressed: () =>
-                                        _toggleLeaguePin(leagueId, leagueName),
-                                    tooltip: isPinned
-                                        ? 'Remove from Major Tournaments'
-                                        : 'Add to Major Tournaments',
-                                  ),
-                                  const SizedBox(width: 4),
-                                  IconButton(
-                                    icon: const Icon(
-                                      Icons.delete_outline,
-                                      color: AppColors.error,
-                                      size: 20,
-                                    ),
-                                    onPressed: () => _handleMasterDelete(
-                                      leagueId,
-                                      leagueName,
-                                    ),
-                                    tooltip: 'Master Delete (Permanent)',
-                                  ),
-                                ],
+                              minimumSize: const Size(double.infinity, 48),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
                               ),
-                              selected: isSelected,
-                              selectedTileColor: AppColors.accentGreen
-                                  .withOpacity(0.1),
-                              onTap: () => _loadSoftMatches(leagueId),
-                            );
-                          },
-                        ),
-                ),
-                const SizedBox(height: 8),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  child: ElevatedButton.icon(
-                    onPressed: _openDiscovery,
-                    icon: const Icon(Icons.sync),
-                    label: const Text('Discover New Tournaments'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.accentGreen,
-                      foregroundColor: Colors.black,
-                      minimumSize: const Size(double.infinity, 48),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
 
           // Tab 2: Matches Content
@@ -1545,8 +1832,9 @@ class _MasterVerificationScreenState extends State<MasterVerificationScreen>
                                     .snapshots(),
                                 builder: (context, snapshot) {
                                   if (!snapshot.hasData ||
-                                      !snapshot.data!.exists)
+                                      !snapshot.data!.exists) {
                                     return const SizedBox.shrink();
+                                  }
                                   final data =
                                       snapshot.data!.data()
                                           as Map<String, dynamic>;
@@ -1574,7 +1862,7 @@ class _MasterVerificationScreenState extends State<MasterVerificationScreen>
                                         ),
                                       Switch(
                                         value: !isPaused,
-                                        activeColor: AppColors.accentGreen,
+                                        activeThumbColor: AppColors.accentGreen,
                                         onChanged: (val) async {
                                           await FirebaseFirestore.instance
                                               .collection('official_leagues')
@@ -1637,7 +1925,7 @@ class _MasterVerificationScreenState extends State<MasterVerificationScreen>
                                 OutlinedButton.icon(
                                   onPressed: _isLoading
                                       ? null
-                                      : _showAddMatchDialog,
+                                      : _navigateToTeamsScreen,
                                   icon: const Icon(Icons.add, size: 16),
                                   label: const Text('Add Match'),
                                 ),
@@ -1827,13 +2115,28 @@ class _MasterVerificationScreenState extends State<MasterVerificationScreen>
                               ),
                             )
                           : _softMatches.isEmpty
-                          ? const Center(
-                              child: Text(
-                                'No soft matches found.\nRun the fetch script first.',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: AppColors.textSecondary,
-                                ),
+                          ? Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Text(
+                                    'No soft matches found.\nRun the fetch script first.',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: AppColors.textSecondary,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  ElevatedButton.icon(
+                                    onPressed: _navigateToTeamsScreen,
+                                    icon: const Icon(Icons.group_add),
+                                    label: const Text('Add Teams & Matches'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColors.accentGreen,
+                                      foregroundColor: Colors.black,
+                                    ),
+                                  ),
+                                ],
                               ),
                             )
                           : ListView.builder(

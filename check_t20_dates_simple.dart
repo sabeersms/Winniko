@@ -1,7 +1,6 @@
 // Simple script to check T20 match dates
 // Run with: dart run check_t20_dates_simple.dart
 
-import 'dart:io';
 
 void main() {
   print('''

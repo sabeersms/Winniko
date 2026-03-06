@@ -9,6 +9,8 @@ import '../../services/sports_api_service.dart';
 import '../../services/tournament_data_service.dart';
 import '../../models/team_model.dart';
 import '../../models/official_tournament_model.dart';
+import '../../services/firestore_service.dart';
+import 'package:provider/provider.dart';
 
 class TournamentDiscoveryDialog extends StatefulWidget {
   const TournamentDiscoveryDialog({super.key});
@@ -41,10 +43,18 @@ class _TournamentDiscoveryDialogState extends State<TournamentDiscoveryDialog> {
 
     try {
       final query = _searchController.text.trim().toLowerCase();
+      final firestoreService = Provider.of<FirestoreService>(
+        context,
+        listen: false,
+      );
+      final blacklist = await firestoreService.getBlacklistedTournamentIds();
 
       if (_selectedSport == AppConstants.sportCricket) {
         final list = await _cricService.getSeriesList();
         final relevant = list.where((s) {
+          final id = s['id']?.toString() ?? '';
+          if (blacklist.contains(id)) return false;
+
           final name = (s['name'] as String).toLowerCase();
           if (query.isNotEmpty) {
             return name.contains(query);

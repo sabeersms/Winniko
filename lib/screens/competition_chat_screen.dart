@@ -301,10 +301,9 @@ class _CompetitionChatScreenState extends State<CompetitionChatScreen> {
                           style: TextStyle(color: AppColors.textSecondary),
                         ),
                         const SizedBox(height: 8),
-                        if (widget.isParticipant ||
-                            widget.competition.organizerId == currentUserId)
+                        if (widget.competition.organizerId == currentUserId)
                           const Text(
-                            'Start the conversation!',
+                            'Send an announcement to your participants!',
                             style: TextStyle(
                               color: AppColors.textSecondary,
                               fontSize: 12,
@@ -354,9 +353,23 @@ class _CompetitionChatScreenState extends State<CompetitionChatScreen> {
             ),
           ),
 
-          if (widget.isParticipant ||
-              widget.competition.organizerId == currentUserId)
-            _buildInputArea(),
+          if (widget.competition.organizerId == currentUserId)
+            _buildInputArea()
+          else
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              color: AppColors.cardBackground,
+              width: double.infinity,
+              child: const Text(
+                'Only organizers can send messages',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 12,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -708,7 +721,7 @@ class _CompetitionChatScreenState extends State<CompetitionChatScreen> {
               style: const TextStyle(color: Colors.white),
               textCapitalization: TextCapitalization.sentences,
               decoration: InputDecoration(
-                hintText: 'Type a message...',
+                hintText: 'Broadcast a message...',
                 hintStyle: const TextStyle(color: AppColors.textSecondary),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24),

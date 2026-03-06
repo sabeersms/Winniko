@@ -214,11 +214,19 @@ class _MatchesListScreenState extends State<MatchesListScreen> {
                     if (isCompletedFilter || allCompleted) {
                       // Reverse order (Newest first)
                       if (timeCompare != 0) return -timeCompare;
+                      // Secondary sort by matchNumber (descending for completed)
+                      final aNum = a.matchNumber ?? 0;
+                      final bNum = b.matchNumber ?? 0;
+                      if (aNum != bNum) return bNum.compareTo(aNum);
                       return 0;
                     }
 
                     // For "All" / "Pending" / "Live": Ascending (Oldest first)
-                    return timeCompare;
+                    if (timeCompare != 0) return timeCompare;
+                    // Secondary sort by matchNumber (ascending)
+                    final aNum = a.matchNumber ?? 0;
+                    final bNum = b.matchNumber ?? 0;
+                    return aNum.compareTo(bNum);
                   });
 
                   // Apply Filter
@@ -400,9 +408,11 @@ class _MatchesListScreenState extends State<MatchesListScreen> {
                                           _itemScrollController,
                                       itemPositionsListener:
                                           _itemPositionsListener,
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 16,
-                                        vertical: 8,
+                                      padding: const EdgeInsets.fromLTRB(
+                                        16,
+                                        8,
+                                        16,
+                                        80,
                                       ),
                                       itemCount: matches.length,
                                       itemBuilder: (context, index) {
@@ -437,9 +447,11 @@ class _MatchesListScreenState extends State<MatchesListScreen> {
                                   initialScrollIndex: targetIndex,
                                   itemScrollController: _itemScrollController,
                                   itemPositionsListener: _itemPositionsListener,
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 8,
+                                  padding: const EdgeInsets.fromLTRB(
+                                    16,
+                                    8,
+                                    16,
+                                    80,
                                   ),
                                   itemCount: matches.length,
                                   itemBuilder: (context, index) {
@@ -1343,7 +1355,7 @@ class _MatchCardWidgetState extends State<MatchCardWidget> {
         widget.match.scheduledTime.isAfter(DateTime.now()) &&
         widget.match.scheduledTime.difference(DateTime.now()).inHours <= 24;
 
-    if (widget.match.actualScore != null) {
+    if (widget.match.actualScore != null && !widget.match.isUpcoming) {
       // If the match is currently LIVE/PROGRESSING, show scores if available, else show message
       if (widget.match.status == AppConstants.matchStatusLive ||
           widget.match.status == AppConstants.matchStatusProgressing) {

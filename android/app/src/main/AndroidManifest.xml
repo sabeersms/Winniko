@@ -16,7 +16,8 @@
     <application
         android:label="Winniko"
         android:name="${applicationName}"
-        android:icon="@mipmap/launcher_icon">
+        android:icon="@mipmap/launcher_icon"
+        android:resizeableActivity="true">
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -25,7 +26,9 @@
             android:theme="@style/LaunchTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize"
+            android:resizeableActivity="true"
+            android:screenOrientation="fullUser">
             <!-- Specifies an Android theme to apply to this Activity as soon as
                  the Android process has started. This theme is visible to the user
                  while the Flutter UI initializes. After that, this theme continues
@@ -78,10 +81,19 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <!-- Override Razorpay's activity to remove unwanted intent filters -->
-        <activity android:name="com.razorpay.DeeplinkActivity" tools:node="merge">
+        <!-- Override Razorpay's activity to remove unwanted intent filters and satisfy Android 16 -->
+        <activity android:name="com.razorpay.DeeplinkActivity" tools:node="merge"
+            tools:replace="android:screenOrientation"
+            android:resizeableActivity="true"
+            android:screenOrientation="fullUser">
             <intent-filter tools:node="removeAll"/>
         </activity>
+
+        <activity android:name="com.razorpay.CheckoutActivity" tools:node="merge"
+            tools:replace="android:configChanges,android:screenOrientation"
+            android:resizeableActivity="true"
+            android:screenOrientation="fullUser"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|density"/>
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

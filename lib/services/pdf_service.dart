@@ -621,14 +621,14 @@ class PdfService {
 
         if (margin.isNotEmpty) {
           scoreLine +=
-              (scoreLine.isEmpty ? '' : '\n') + '$winnerName won by $margin';
+              '${scoreLine.isEmpty ? '' : '\n'}$winnerName won by $margin';
         } else {
-          scoreLine += (scoreLine.isEmpty ? '' : '\n') + '$winnerName won';
+          scoreLine += '${scoreLine.isEmpty ? '' : '\n'}$winnerName won';
         }
       } else if (score['winnerId'] == 'tied') {
-        scoreLine += (scoreLine.isEmpty ? '' : '\n') + 'Match Tied';
+        scoreLine += '${scoreLine.isEmpty ? '' : '\n'}Match Tied';
       } else if (score['winnerId'] == 'no_result') {
-        scoreLine += (scoreLine.isEmpty ? '' : '\n') + 'No Result';
+        scoreLine += '${scoreLine.isEmpty ? '' : '\n'}No Result';
       } else if (scoreLine.isEmpty && resultStatus != null) {
         // Last resort fallback
         scoreLine = resultStatus;

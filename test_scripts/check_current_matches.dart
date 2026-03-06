@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 
 Future<void> checkMatches() async {
   final db = FirebaseFirestore.instance;

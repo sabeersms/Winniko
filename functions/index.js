@@ -354,6 +354,48 @@ async function recalculateLeaderboard(competitionId) {
   } catch (e) { console.error("Leaderboard Error:", e); }
 }
 
+/**
+ * Summarize Sharded Counters
+ * Runs every 30 minutes to update the main competition document with accurate counts
+ */
+exports.consolidateShardedCounters = functions.pubsub
+  .schedule("every 30 minutes")
+  .onRun(async (context) => {
+    console.log("📊 STARTED: Shard Consolidation");
+    try {
+      const snapshot = await db.collection("competitions").where("status", "==", "active").get();
+      const promises = [];
+
+      for (const compDoc of snapshot.docs) {
+        promises.push(consolidateForCompetition(compDoc.id));
+      }
+
+      await Promise.all(promises);
+      console.log("✅ FINISHED: Shard Consolidation");
+      return null;
+    } catch (error) {
+      console.error("❌ ERROR in Shard Consolidation:", error);
+      return null;
+    }
+  });
+
+async function consolidateForCompetition(competitionId) {
+  const shardsSnapshot = await db.collection("competitions").doc(competitionId).collection("sharded_counters").get();
+
+  const totals = {};
+  shardsSnapshot.forEach(doc => {
+    const data = doc.data();
+    Object.keys(data).forEach(key => {
+      totals[key] = (totals[key] || 0) + (data[key] || 0);
+    });
+  });
+
+  if (Object.keys(totals).length > 0) {
+    await db.collection("competitions").doc(competitionId).update(totals);
+    console.log(`📊 Updated totals for ${competitionId}:`, totals);
+  }
+}
+
 function checkMargin(act, pred, type) {
   if (type === 'wickets') return act === pred;
   const a = parseInt(act); if (isNaN(a)) return false;

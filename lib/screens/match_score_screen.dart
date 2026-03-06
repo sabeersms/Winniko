@@ -204,6 +204,7 @@ class _MatchScoreScreenState extends State<MatchScoreScreen> {
           'team1': homeScore,
           'team2': awayScore,
           'manuallyScored': true,
+          if (homeScore == awayScore) 'marginType': 'tie',
           if (homeScore == awayScore && _tieBreakWinnerId != null)
             'winnerId': _tieBreakWinnerId,
         };

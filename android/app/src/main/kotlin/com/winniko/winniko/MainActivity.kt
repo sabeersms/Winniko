@@ -1,12 +1,19 @@
 package com.winniko.winniko
 
 import android.os.Bundle
+import androidx.core.view.WindowCompat
 import com.google.android.gms.common.images.WebImage
 import com.google.android.gms.security.ProviderInstaller
 import io.flutter.embedding.android.FlutterActivity
 
 class MainActivity : FlutterActivity() {
     private val CHANNEL = "com.winniko.winniko/share"
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        // Enable edge-to-edge display for Android 15+ compatibility
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+    }
 
     override fun configureFlutterEngine(flutterEngine: io.flutter.embedding.engine.FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)

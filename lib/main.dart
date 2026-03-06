@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'package:firebase_app_check/firebase_app_check.dart';
@@ -17,7 +18,7 @@ import 'screens/home_screen.dart';
 import 'screens/signup_screen.dart'; // import signup screen
 import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/privacy_policy_screen.dart';
-import 'widgets/loading_spinner.dart';
+import 'screens/splash_screen.dart';
 // import 'screens/waiting_verification_screen.dart';
 import 'firebase_options.dart';
 
@@ -29,9 +30,11 @@ void main() async {
   // Initialize Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // Initialize App Check (Debug)
+  // Initialize App Check
   await FirebaseAppCheck.instance.activate(
-    androidProvider: AndroidProvider.debug,
+    androidProvider: kDebugMode
+        ? AndroidProvider.debug
+        : AndroidProvider.playIntegrity,
     appleProvider: AppleProvider.appAttest,
     webProvider: ReCaptchaV3Provider('pass-key'),
   );
@@ -161,8 +164,31 @@ class WinnikoApp extends StatelessWidget {
   }
 }
 
-class AuthWrapper extends StatelessWidget {
+class AuthWrapper extends StatefulWidget {
   const AuthWrapper({super.key});
+
+  @override
+  State<AuthWrapper> createState() => _AuthWrapperState();
+}
+
+class _AuthWrapperState extends State<AuthWrapper> {
+  bool _minTimeElapsed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _startMinSplashTimer();
+  }
+
+  void _startMinSplashTimer() {
+    Future.delayed(const Duration(milliseconds: 2000), () {
+      if (mounted) {
+        setState(() {
+          _minTimeElapsed = true;
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -171,10 +197,11 @@ class AuthWrapper extends StatelessWidget {
     return StreamBuilder(
       stream: authService.authStateChanges,
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.active) {
+        // Show splash until snapshot is active AND minimum time has elapsed
+        if (snapshot.connectionState == ConnectionState.active &&
+            _minTimeElapsed) {
           final user = snapshot.data;
           if (user == null) {
-            // Check if first run
             return FutureBuilder<bool>(
               future: _checkFirstRun(),
               builder: (context, snapshot) {
@@ -183,43 +210,23 @@ class AuthWrapper extends StatelessWidget {
                       ? const SignupScreen()
                       : const LoginScreen();
                 }
-                return const Scaffold(
-                  body: Center(
-                    child: LoadingSpinner(color: AppColors.accentGreen),
-                  ),
-                );
+                return const SplashScreen();
               },
             );
           } else {
-            // Register admin UID in Firestore (needed for Firestore security rules)
-            // This is safe to call every time — it's a no-op if user is not admin.
             authService.registerAdminUidIfNeeded();
             return const HomeScreen();
           }
         }
-        return const Scaffold(
-          body: Center(child: LoadingSpinner(color: AppColors.accentGreen)),
-        );
+        return const SplashScreen();
       },
     );
   }
 
   Future<bool> _checkFirstRun() async {
     final prefs = await SharedPreferences.getInstance();
-    // Default to true if not set
     bool isFirstRun = prefs.getBool('is_first_run') ?? true;
     if (isFirstRun) {
-      // Mark as seen so next time it goes to Login (unless they sign up, which logs them in)
-      // Actually, if they don't sign up and close app, we probably still want Signup?
-      // User request: "1st open signup screen, if user did not signup ever."
-      // If they explicitly go to Login, we should remember that?
-      // For now, let's strictly follow: "if user did not signup ever" -> implies no account.
-      // But standard UX is: Show Signup. If they click "Login", show Login.
-      // We will leave 'is_first_run' as is until they successfully sign up or we might toggle it elsewhere.
-      // But to prevent stuck on Signup, usually we set it to false once shown?
-      // Let's keep it simple: defaulting to SignupScreen for null user if no pref set.
-      // NOTE: We should set it to false somewhere if we want to default to Login later.
-      // For now, we only read it.
       await prefs.setBool('is_first_run', false);
     }
     return isFirstRun;

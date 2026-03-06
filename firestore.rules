@@ -115,14 +115,36 @@ service cloud.firestore {
       // Participants: Users join/leave themselves
       match /participants/{participantId} {
          allow read: if true;
-         // Allow creating/updating/deleting if documented ID matches UID OR data.userId matches UID
-         allow create, update, delete: if isAuthenticated() && (
+         
+         // Only Organizer, Admin, or the user themselves can delete
+         allow delete: if isAuthenticated() && (
             participantId == request.auth.uid ||
-            request.auth.uid == participantId ||
             (resource != null && (resource.data.userId == request.auth.uid || resource.data.id == request.auth.uid)) ||
-            (request.resource != null && (request.resource.data.userId == request.auth.uid || request.resource.data.id == request.auth.uid)) ||
             get(/databases/$(database)/documents/competitions/$(competitionId)).data.organizerId == request.auth.uid ||
             isMasterAdmin()
+         );
+
+         // Creating: Cannot grant yourself initial points
+         allow create: if isAuthenticated() && (
+            get(/databases/$(database)/documents/competitions/$(competitionId)).data.organizerId == request.auth.uid ||
+            isMasterAdmin() ||
+            (
+               (participantId == request.auth.uid || request.resource.data.userId == request.auth.uid || request.resource.data.id == request.auth.uid) &&
+               (!request.resource.data.keys().hasAny(['totalPoints', 'rank', 'perfectScores', 'correctOutcomes']) || 
+                (request.resource.data.totalPoints == 0 && request.resource.data.rank == 0))
+            )
+         );
+
+         // Updating: Normal users CANNOT edit their points or rank
+         allow update: if isAuthenticated() && (
+            get(/databases/$(database)/documents/competitions/$(competitionId)).data.organizerId == request.auth.uid ||
+            isMasterAdmin() ||
+            (
+               (participantId == request.auth.uid || (resource.data.userId == request.auth.uid || resource.data.id == request.auth.uid)) &&
+               (!request.resource.data.diff(resource.data).affectedKeys().hasAny([
+                  'totalPoints', 'rank', 'perfectScores', 'correctOutcomes', 'totalPredictions'
+               ]))
+            )
          );
       }
 
@@ -162,12 +184,30 @@ service cloud.firestore {
     // --- PREDICTIONS COLLECTION (Root Level) ---
     match /predictions/{predictionId} {
       allow read: if isAuthenticated();
-      // Only create/update own predictions
-      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
-      allow update, delete: if isAuthenticated() && (
-        resource.data.userId == request.auth.uid || 
-        isMasterAdmin() ||
-        get(/databases/$(database)/documents/competitions/$(resource.data.competitionId)).data.organizerId == request.auth.uid
+      
+      // Creating: Normal users cannot set points or mark as scored
+      allow create: if isAuthenticated() && 
+         request.resource.data.userId == request.auth.uid &&
+         (request.resource.data.points == null || request.resource.data.points == 0) &&
+         request.resource.data.isScored == false;
+
+      // Updating: Normal users CANNOT edit scoring fields (points, isScored, etc.)
+      allow update: if isAuthenticated() && (
+         isMasterAdmin() ||
+         get(/databases/$(database)/documents/competitions/$(resource.data.competitionId)).data.organizerId == request.auth.uid ||
+         (
+            resource.data.userId == request.auth.uid &&
+            (!request.resource.data.diff(resource.data).affectedKeys().hasAny([
+               'points', 'isScored', 'wasPerfectScore', 'wasCorrectOutcome', 'tieBreakerWinnerId'
+            ]))
+         )
+      );
+
+      // Deleting: Owner, Organizer, or Admin
+      allow delete: if isAuthenticated() && (
+         resource.data.userId == request.auth.uid || 
+         isMasterAdmin() ||
+         get(/databases/$(database)/documents/competitions/$(resource.data.competitionId)).data.organizerId == request.auth.uid
       );
     }
     

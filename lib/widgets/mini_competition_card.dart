@@ -122,12 +122,44 @@ class MiniCompetitionCard extends StatelessWidget {
                               ),
                             )
                           else
-                            Text(
-                              '${competition.displayParticipantCount} joined',
-                              style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.6),
-                                fontSize: 8, // Reduced font (9 -> 8)
-                              ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  '${competition.displayParticipantCount} joined',
+                                  style: TextStyle(
+                                    color: Colors.white.withValues(alpha: 0.6),
+                                    fontSize: 8,
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 4,
+                                    vertical: 1,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.accentGreen.withOpacity(
+                                      0.2,
+                                    ),
+                                    borderRadius: BorderRadius.circular(4),
+                                    border: Border.all(
+                                      color: AppColors.accentGreen.withOpacity(
+                                        0.3,
+                                      ),
+                                      width: 0.5,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    competition.joinCode,
+                                    style: const TextStyle(
+                                      color: AppColors.accentGreen,
+                                      fontSize: 7,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 0.5,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                         ],
                       ),

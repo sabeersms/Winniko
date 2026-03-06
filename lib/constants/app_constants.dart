@@ -112,6 +112,7 @@ class AppTheme {
 // App Constants
 class AppConstants {
   static const String appName = 'Winniko';
+  static const int numCounterShards = 20;
 
   // Admin Configuration
   static const List<String> adminEmails = [

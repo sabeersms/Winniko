@@ -383,8 +383,8 @@ class TutorialPage extends StatelessWidget {
           ),
           _buildTutorialStep(
             Icons.chat_bubble_outline,
-            'Tournament Chat',
-            'Every competition has a dedicated chat room. Discuss matches, share results, and coordinate with participants in real-time.',
+            'Tournament Messages',
+            'Stay updated with official broadcasts from the tournament organizer. Organizers can share rules, match links, and live updates directly with participants.',
           ),
           _buildTutorialStep(
             Icons.picture_as_pdf,
@@ -394,7 +394,7 @@ class TutorialPage extends StatelessWidget {
           _buildTutorialStep(
             Icons.notifications_active,
             'Smart Notifications',
-            'Stay updated with push notifications for match start times, result updates, and chat messages.',
+            'Stay updated with push notifications for match start times, result updates, and official messages.',
           ),
 
           const SizedBox(height: 16),
