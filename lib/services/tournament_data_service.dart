@@ -523,6 +523,72 @@ class TournamentDataService {
     return matches;
   }
 
+  /// Discovers unique teams by scanning the curated matches in a league
+  static Future<List<Map<String, String>>> discoverTeamsFromOfficialLeagues(
+    String leagueId,
+  ) async {
+    final firestore = FirebaseFirestore.instance;
+    final snapshot = await firestore
+        .collection('official_leagues')
+        .doc(leagueId)
+        .collection('matches')
+        .get();
+
+    if (snapshot.docs.isEmpty) return [];
+
+    final Map<String, Map<String, String>> uniqueTeams = {}; // Name -> {code, logo}
+    for (var doc in snapshot.docs) {
+      final data = doc.data();
+      final hName = (data['homeTeamName'] ?? data['team1Name'] ?? '')
+          .toString();
+      final hCode = data['homeTeamCode']?.toString() ?? '';
+      final hLogo = (data['homeTeamLogoUrl'] ?? data['team1LogoUrl'] ?? '')
+          .toString();
+
+      final aName = (data['awayTeamName'] ?? data['team2Name'] ?? '')
+          .toString();
+      final aCode = data['awayTeamCode']?.toString() ?? '';
+      final aLogo = (data['awayTeamLogoUrl'] ?? data['team2LogoUrl'] ?? '')
+          .toString();
+
+      if (hName.isNotEmpty) {
+        if (!uniqueTeams.containsKey(hName) || uniqueTeams[hName]!['code']!.isEmpty) {
+          uniqueTeams[hName] = {'code': hCode, 'logo': hLogo};
+        } else if (hLogo.isNotEmpty && (uniqueTeams[hName]!['logo']?.isEmpty ?? true)) {
+          uniqueTeams[hName]!['logo'] = hLogo;
+        }
+      }
+      if (aName.isNotEmpty) {
+        if (!uniqueTeams.containsKey(aName) || uniqueTeams[aName]!['code']!.isEmpty) {
+          uniqueTeams[aName] = {'code': aCode, 'logo': aLogo};
+        } else if (aLogo.isNotEmpty && (uniqueTeams[aName]!['logo']?.isEmpty ?? true)) {
+          uniqueTeams[aName]!['logo'] = aLogo;
+        }
+      }
+    }
+
+    return uniqueTeams.entries.map((e) {
+      String code = e.value['code'] ?? '';
+      String logo = e.value['logo'] ?? '';
+      if (code.isEmpty) {
+        // Generate a 3-letter code from the name
+        final parts = e.key.split(' ');
+        if (parts.length >= 2) {
+          code = (parts[0][0] + (parts.length > 1 ? parts[1][0] : ''))
+              .toUpperCase();
+          if (code.length < 3 && e.key.length >= 3) {
+            code = e.key.substring(0, 3).toUpperCase();
+          }
+        } else if (e.key.length >= 3) {
+          code = e.key.substring(0, 3).toUpperCase();
+        } else {
+          code = e.key.toUpperCase();
+        }
+      }
+      return {'name': e.key, 'code': code, 'logo': logo};
+    }).toList();
+  }
+
   static Future<List<MatchModel>> _fetchAndParseFixtures(
     String competitionId,
     String leagueId,

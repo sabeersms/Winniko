@@ -36,12 +36,17 @@ service cloud.firestore {
     }
 
 
+    // --- TEAM LIBRARY (Top Level) ---
+    match /users/{userId}/team_library/{teamId} {
+        allow read, write: if isAuthenticated() && (request.auth.uid == userId || isMasterAdmin());
+    }
+
     // --- USERS COLLECTION ---
     match /users/{userId} {
       // Anyone logged in can read users (for leaderboards/profiles)
       allow read: if isAuthenticated();
       // Only the user themselves or a Master Admin can update their profile
-      allow write: if isAuthenticated() && (isOwner(userId) || isMasterAdmin());
+      allow write: if isAuthenticated() && (request.auth.uid == userId || isMasterAdmin());
     }
 
     // --- INDICES (For existence checks) ---
@@ -111,6 +116,19 @@ service cloud.firestore {
             isMasterAdmin()
          );
        }
+       
+      // Standings: Client calculates and writes standings, so any authenticated user can update for now 
+      // (or restrict to organizer/admin if future calculation moves fully server-side)
+      match /standings/{standingId} {
+         allow read: if true;
+         allow write: if isAuthenticated();
+      }
+
+      // Sharded Counters: For participant count increments
+      match /sharded_counters/{shardId} {
+         allow read: if true;
+         allow write: if isAuthenticated();
+      }
       
       // Participants: Users join/leave themselves
       match /participants/{participantId} {

@@ -780,7 +780,7 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
                         .toList();
 
                     return SingleChildScrollView(
-                      padding: const EdgeInsets.only(bottom: 80),
+                      padding: const EdgeInsets.only(bottom: 120),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -966,7 +966,7 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
 
     return ListView.builder(
       controller: _searchScrollController,
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 120),
       itemCount: _searchResults!.length + (_hasMoreSearch ? 1 : 0),
       itemBuilder: (context, index) {
         if (index == _searchResults!.length) {

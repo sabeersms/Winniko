@@ -15,7 +15,7 @@ import '../services/storage_service.dart';
 import '../services/auth_service.dart';
 import '../models/competition_model.dart';
 import 'competition_format_screen.dart';
-import 'official_tournament_search_screen.dart';
+import 'tournament_selection_screen.dart';
 import 'dialogs/image_adjustment_dialog.dart';
 import '../widgets/default_competition_background.dart';
 import 'terms_editor_screen.dart';
@@ -428,9 +428,8 @@ class _CompetitionCreateScreenState extends State<CompetitionCreateScreen>
           await Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) => OfficialTournamentSearchScreen(
-                competitionPrototype: competition,
-              ),
+              builder: (_) =>
+                  TournamentSelectionScreen(competitionPrototype: competition),
             ),
           );
         } else {
@@ -473,287 +472,297 @@ class _CompetitionCreateScreenState extends State<CompetitionCreateScreen>
       appBar: AppBar(
         title: Text(isEditing ? 'Edit Competition' : 'Create Competition'),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Logo
-            Center(
-              child: GestureDetector(
-                onTap: _pickLogo,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 120),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Logo
+              Center(
+                child: GestureDetector(
+                  onTap: _pickLogo,
+                  child: Container(
+                    width: 120,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      color: AppColors.cardBackground,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppColors.primaryGreenLight),
+                    ),
+                    child: _buildLogoWidget(isEditing),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Competition Logo',
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
+              ),
+              const SizedBox(height: 24),
+
+              // Card Background Image
+              const Text(
+                'Card Background Image (Optional)',
+                style: TextStyle(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 12),
+              GestureDetector(
+                onTap: _pickBackground,
                 child: Container(
-                  width: 120,
+                  width: double.infinity,
                   height: 120,
                   decoration: BoxDecoration(
                     color: AppColors.cardBackground,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: AppColors.primaryGreenLight),
                   ),
-                  child: _buildLogoWidget(isEditing),
+                  child: _buildBackgroundWidget(isEditing),
                 ),
               ),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Competition Logo',
-              style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
-            ),
-            const SizedBox(height: 24),
+              const SizedBox(height: 24),
 
-            // Card Background Image
-            const Text(
-              'Card Background Image (Optional)',
-              style: TextStyle(
-                color: AppColors.textPrimary,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 12),
-            GestureDetector(
-              onTap: _pickBackground,
-              child: Container(
-                width: double.infinity,
-                height: 120,
-                decoration: BoxDecoration(
-                  color: AppColors.cardBackground,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.primaryGreenLight),
-                ),
-                child: _buildBackgroundWidget(isEditing),
-              ),
-            ),
-            const SizedBox(height: 24),
+              // Public / Private Toggle removed (handled in Drawer)
+              const SizedBox(height: 24),
 
-            // Public / Private Toggle removed (handled in Drawer)
-            const SizedBox(height: 24),
+              // Template Import (Only for Private)
 
-            // Template Import (Only for Private)
-
-            // Name
-            TextField(
-              controller: _nameController,
-              style: const TextStyle(color: AppColors.textPrimary),
-              decoration: const InputDecoration(
-                labelText: 'Competition Name',
-                prefixIcon: Icon(
-                  Icons.emoji_events,
-                  color: AppColors.accentGreen,
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Sponsor Name
-            TextField(
-              controller: _sponsorController,
-              style: const TextStyle(color: AppColors.textPrimary),
-              decoration: const InputDecoration(
-                labelText: 'Sponsor Name',
-                prefixIcon: Icon(Icons.business, color: AppColors.accentGreen),
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Sport Selection
-            DropdownButtonFormField<String>(
-              initialValue: _selectedSport,
-              dropdownColor: AppColors.cardBackground,
-              style: const TextStyle(color: AppColors.textPrimary),
-              decoration: const InputDecoration(
-                labelText: 'Sport',
-                prefixIcon: Icon(Icons.category, color: AppColors.accentGreen),
-              ),
-              items: AppConstants.sports.map((sport) {
-                IconData icon;
-                switch (sport) {
-                  case AppConstants.sportFootball:
-                    icon = Icons.sports_soccer;
-                    break;
-                  case AppConstants.sportCricket:
-                    icon = Icons.sports_cricket;
-                    break;
-                  case AppConstants.sportBasketball:
-                    icon = Icons.sports_basketball;
-                    break;
-                  case AppConstants.sportHockey:
-                    icon = Icons.sports_hockey;
-                    break;
-                  case AppConstants.sportVolleyball:
-                    icon = Icons.sports_volleyball;
-                    break;
-                  case AppConstants.sportHandball:
-                    icon = Icons.sports_handball;
-                    break;
-                  case AppConstants.sportBadminton:
-                    icon =
-                        Icons.sports_tennis; // Closest available generic racket
-                    break;
-                  default:
-                    icon = Icons.sports;
-                }
-                return DropdownMenuItem(
-                  value: sport,
-                  child: Row(
-                    children: [
-                      Icon(icon, color: AppColors.accentGreen, size: 20),
-                      const SizedBox(width: 8),
-                      Text(sport),
-                    ],
+              // Name
+              TextField(
+                controller: _nameController,
+                style: const TextStyle(color: AppColors.textPrimary),
+                decoration: const InputDecoration(
+                  labelText: 'Competition Name',
+                  prefixIcon: Icon(
+                    Icons.emoji_events,
+                    color: AppColors.accentGreen,
                   ),
-                );
-              }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  _selectedSport = value!;
-                  if (_selectedSport == AppConstants.sportCricket) {
-                    _correctWinnerPoints =
-                        3; // Standard: 3 pts for win (as requested)
-                    _correctScorePoints = 2;
-                    _tieBreakerRules = [
-                      AppConstants.tieBreakerWins,
-                      AppConstants.tieBreakerNrr,
-                    ];
-                  } else {
-                    _correctWinnerPoints = 3;
-                    _correctScorePoints = 2;
-                    _tieBreakerRules = [AppConstants.tieBreakerGoalDiff];
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Sponsor Name
+              TextField(
+                controller: _sponsorController,
+                style: const TextStyle(color: AppColors.textPrimary),
+                decoration: const InputDecoration(
+                  labelText: 'Sponsor Name',
+                  prefixIcon: Icon(
+                    Icons.business,
+                    color: AppColors.accentGreen,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Sport Selection
+              DropdownButtonFormField<String>(
+                initialValue: _selectedSport,
+                dropdownColor: AppColors.cardBackground,
+                style: const TextStyle(color: AppColors.textPrimary),
+                decoration: const InputDecoration(
+                  labelText: 'Sport',
+                  prefixIcon: Icon(
+                    Icons.category,
+                    color: AppColors.accentGreen,
+                  ),
+                ),
+                items: AppConstants.sports.map((sport) {
+                  IconData icon;
+                  switch (sport) {
+                    case AppConstants.sportFootball:
+                      icon = Icons.sports_soccer;
+                      break;
+                    case AppConstants.sportCricket:
+                      icon = Icons.sports_cricket;
+                      break;
+                    case AppConstants.sportBasketball:
+                      icon = Icons.sports_basketball;
+                      break;
+                    case AppConstants.sportHockey:
+                      icon = Icons.sports_hockey;
+                      break;
+                    case AppConstants.sportVolleyball:
+                      icon = Icons.sports_volleyball;
+                      break;
+                    case AppConstants.sportHandball:
+                      icon = Icons.sports_handball;
+                      break;
+                    case AppConstants.sportBadminton:
+                      icon = Icons
+                          .sports_tennis; // Closest available generic racket
+                      break;
+                    default:
+                      icon = Icons.sports;
                   }
-                });
-              },
-            ),
-            const SizedBox(height: 24),
-            // Terms and Conditions Section (Replaced Description)
-            const Text(
-              'Terms & Conditions',
-              style: TextStyle(
-                color: AppColors.accentGreen,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: OutlinedButton.icon(
-                icon: const Icon(
-                  Icons.description,
-                  color: AppColors.textPrimary,
-                ),
-                label: Text(
-                  _termsMetadata.isEmpty
-                      ? 'Add Terms & Conditions'
-                      : 'Edit Terms & Conditions (${_termsMetadata.where((e) => e['isVisible'] == true).length} active roles)',
-                  style: const TextStyle(color: AppColors.textPrimary),
-                ),
-                style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: AppColors.textSecondary),
-                ),
-                onPressed: _openTermsEditor,
-              ),
-            ),
-            if (_termsMetadata.isEmpty)
-              const Padding(
-                padding: EdgeInsets.only(top: 8.0),
-                child: Text(
-                  'Adding T&C is recommended for organizing a fair competition.',
-                  style: TextStyle(
-                    color: AppColors.textSecondary,
-                    fontSize: 12,
-                  ),
-                ),
-              ),
-
-            const SizedBox(height: 32),
-
-            // Prediction Points
-            Text(
-              'Prediction Points',
-              style: Theme.of(
-                context,
-              ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    keyboardType: TextInputType.number,
-                    style: const TextStyle(color: AppColors.textPrimary),
-                    decoration: InputDecoration(
-                      labelText: 'Per Winner',
-                      hintText: '$_correctWinnerPoints pts',
+                  return DropdownMenuItem(
+                    value: sport,
+                    child: Row(
+                      children: [
+                        Icon(icon, color: AppColors.accentGreen, size: 20),
+                        const SizedBox(width: 8),
+                        Text(sport),
+                      ],
                     ),
-                    onChanged: (v) => _correctWinnerPoints =
-                        int.tryParse(v) ?? _correctWinnerPoints,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: TextField(
-                    keyboardType: TextInputType.number,
-                    style: const TextStyle(color: AppColors.textPrimary),
-                    decoration: InputDecoration(
-                      labelText: _selectedSport == AppConstants.sportCricket
-                          ? 'Per Exact Runs'
-                          : 'Per Exact Score',
-                      hintText: '$_correctScorePoints pts',
-                    ),
-                    onChanged: (v) => _correctScorePoints =
-                        int.tryParse(v) ?? _correctScorePoints,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
-
-            const SizedBox(height: 24),
-
-            if (_errorMessage != null)
-              Container(
-                padding: const EdgeInsets.all(12),
-                margin: const EdgeInsets.only(bottom: 16),
-                color: AppColors.error.withValues(alpha: 0.2),
-                child: Text(
-                  _errorMessage!,
-                  style: const TextStyle(color: AppColors.error),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedSport = value!;
+                    if (_selectedSport == AppConstants.sportCricket) {
+                      _correctWinnerPoints =
+                          3; // Standard: 3 pts for win (as requested)
+                      _correctScorePoints = 2;
+                      _tieBreakerRules = [
+                        AppConstants.tieBreakerWins,
+                        AppConstants.tieBreakerNrr,
+                      ];
+                    } else {
+                      _correctWinnerPoints = 3;
+                      _correctScorePoints = 2;
+                      _tieBreakerRules = [AppConstants.tieBreakerGoalDiff];
+                    }
+                  });
+                },
+              ),
+              const SizedBox(height: 24),
+              // Terms and Conditions Section (Replaced Description)
+              const Text(
+                'Terms & Conditions',
+                style: TextStyle(
+                  color: AppColors.accentGreen,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
+              const SizedBox(height: 8),
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: OutlinedButton.icon(
+                  icon: const Icon(
+                    Icons.description,
+                    color: AppColors.textPrimary,
+                  ),
+                  label: Text(
+                    _termsMetadata.isEmpty
+                        ? 'Add Terms & Conditions'
+                        : 'Edit Terms & Conditions (${_termsMetadata.where((e) => e['isVisible'] == true).length} active roles)',
+                    style: const TextStyle(color: AppColors.textPrimary),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(color: AppColors.textSecondary),
+                  ),
+                  onPressed: _openTermsEditor,
+                ),
+              ),
+              if (_termsMetadata.isEmpty)
+                const Padding(
+                  padding: EdgeInsets.only(top: 8.0),
+                  child: Text(
+                    'Adding T&C is recommended for organizing a fair competition.',
+                    style: TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
 
-            // Button
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                onPressed: _isLoading ? null : _submitForm,
-                child: _isLoading
-                    ? Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: LoadingSpinner(
-                              size: 20,
-                              color: AppColors.textPrimary,
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Text(_statusText),
-                        ],
-                      )
-                    : Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            isEditing ? 'Save Changes' : 'Next: Add Teams',
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ],
+              const SizedBox(height: 32),
+
+              // Prediction Points
+              Text(
+                'Prediction Points',
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      keyboardType: TextInputType.number,
+                      style: const TextStyle(color: AppColors.textPrimary),
+                      decoration: InputDecoration(
+                        labelText: 'Per Winner',
+                        hintText: '$_correctWinnerPoints pts',
                       ),
+                      onChanged: (v) => _correctWinnerPoints =
+                          int.tryParse(v) ?? _correctWinnerPoints,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: TextField(
+                      keyboardType: TextInputType.number,
+                      style: const TextStyle(color: AppColors.textPrimary),
+                      decoration: InputDecoration(
+                        labelText: _selectedSport == AppConstants.sportCricket
+                            ? 'Per Exact Runs'
+                            : 'Per Exact Score',
+                        hintText: '$_correctScorePoints pts',
+                      ),
+                      onChanged: (v) => _correctScorePoints =
+                          int.tryParse(v) ?? _correctScorePoints,
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
+              const SizedBox(height: 24),
+
+              const SizedBox(height: 24),
+
+              if (_errorMessage != null)
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  margin: const EdgeInsets.only(bottom: 16),
+                  color: AppColors.error.withValues(alpha: 0.2),
+                  child: Text(
+                    _errorMessage!,
+                    style: const TextStyle(color: AppColors.error),
+                  ),
+                ),
+
+              // Button
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: _isLoading ? null : _submitForm,
+                  child: _isLoading
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: LoadingSpinner(
+                                size: 20,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Text(_statusText),
+                          ],
+                        )
+                      : Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              isEditing ? 'Save Changes' : 'Next: Add Teams',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

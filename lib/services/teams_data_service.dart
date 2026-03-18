@@ -1435,21 +1435,29 @@ class TeamsDataService {
       }
     }
 
-    // 2. Check Club Teams (Logos)
+    // 2. Check Club & Cricket Teams (Logos)
     // If leagueId is provided, check that specifically first
     if (leagueId != null) {
       final clubTeams = getClubTeams(leagueId);
       for (var t in clubTeams) {
         if (t['name'] == name) return t['logo'];
       }
+      final cricketTeams = getCricketTeams(leagueId);
+      for (var t in cricketTeams) {
+        if (t['name'] == name) return t['logo'];
+      }
     }
 
-    // 3. Global Club Search (fallback)
-    final leagues = ['pl', 'laliga', 'bundesliga', 'seriea', 'ligue1', 'ucl'];
+    // 3. Global search (fallback)
+    final leagues = ['pl', 'laliga', 'bundesliga', 'seriea', 'ligue1', 'ucl', 'ipl', 'bbl', 'isl-2025'];
     for (var l in leagues) {
       if (l == leagueId) continue; // Already checked
       final clubTeams = getClubTeams(l);
       for (var t in clubTeams) {
+        if (t['name'] == name) return t['logo'];
+      }
+      final cricketTeams = getCricketTeams(l);
+      for (var t in cricketTeams) {
         if (t['name'] == name) return t['logo'];
       }
     }

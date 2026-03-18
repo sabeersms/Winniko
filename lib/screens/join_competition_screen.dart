@@ -206,7 +206,7 @@ class _JoinCompetitionScreenState extends State<JoinCompetitionScreen> {
       appBar: AppBar(title: const Text('Join Competition')),
       body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 120),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

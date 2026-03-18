@@ -471,38 +471,44 @@ class _DirectChatScreenState extends State<DirectChatScreen> {
               showModalBottomSheet(
                 context: context,
                 backgroundColor: AppColors.cardBackground,
-                builder: (context) => Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (widget.amIOrganizer)
-                      ListTile(
-                        leading: Icon(
-                          message.isPinned
-                              ? Icons.push_pin_outlined
-                              : Icons.push_pin,
-                          color: Colors.white,
+                useSafeArea: true,
+                builder: (context) => SafeArea(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (widget.amIOrganizer)
+                        ListTile(
+                          leading: Icon(
+                            message.isPinned
+                                ? Icons.push_pin_outlined
+                                : Icons.push_pin,
+                            color: Colors.white,
+                          ),
+                          title: Text(
+                            message.isPinned ? 'Unpin Message' : 'Pin Message',
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          onTap: () {
+                            Navigator.pop(context);
+                            _togglePin(message);
+                          },
                         ),
-                        title: Text(
-                          message.isPinned ? 'Unpin Message' : 'Pin Message',
-                          style: const TextStyle(color: Colors.white),
+                      ListTile(
+                        leading: const Icon(
+                          Icons.delete,
+                          color: AppColors.error,
+                        ),
+                        title: const Text(
+                          'Delete Message',
+                          style: TextStyle(color: AppColors.error),
                         ),
                         onTap: () {
                           Navigator.pop(context);
-                          _togglePin(message);
+                          _deleteMessage(message.id);
                         },
                       ),
-                    ListTile(
-                      leading: const Icon(Icons.delete, color: AppColors.error),
-                      title: const Text(
-                        'Delete Message',
-                        style: TextStyle(color: AppColors.error),
-                      ),
-                      onTap: () {
-                        Navigator.pop(context);
-                        _deleteMessage(message.id);
-                      },
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               );
             }

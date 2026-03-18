@@ -254,7 +254,7 @@ class _RecycleBinScreenState extends State<RecycleBinScreen> {
               // List
               Expanded(
                 child: ListView.builder(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 120),
                   itemCount: deletedCompetitions.length,
                   itemBuilder: (context, index) {
                     final comp = deletedCompetitions[index];

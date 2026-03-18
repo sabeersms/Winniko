@@ -125,7 +125,7 @@ class StorageService {
       String fileName = '${_uuid.v4()}.jpg';
       return await _uploadData(
         data,
-        'organizers/$organizerId/team_library/$teamId/$fileName',
+        'users/$organizerId/team_library/$teamId/$fileName',
         'image/jpeg',
       );
     } catch (e) {

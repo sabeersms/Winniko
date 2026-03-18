@@ -323,7 +323,7 @@ class _TermsEditorScreenState extends State<TermsEditorScreen> {
       body: _isTranslating
           ? const Center(child: LoadingSpinner())
           : SingleChildScrollView(
-              padding: const EdgeInsets.only(bottom: 80),
+              padding: const EdgeInsets.only(bottom: 120),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

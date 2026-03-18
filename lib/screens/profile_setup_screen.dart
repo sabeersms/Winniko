@@ -189,6 +189,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                   showModalBottomSheet(
                     context: context,
                     backgroundColor: AppColors.cardBackground,
+                    useSafeArea: true,
                     builder: (context) => SafeArea(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,

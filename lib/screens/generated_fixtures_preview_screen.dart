@@ -101,73 +101,76 @@ class _GeneratedFixturesPreviewScreenState
     showModalBottomSheet(
       context: context,
       backgroundColor: AppColors.cardBackground,
+      useSafeArea: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (BuildContext builder) {
-        return Container(
-          height: 300,
-          padding: const EdgeInsets.only(top: 16),
-          child: Column(
-            children: [
-              // Header with Done button
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Select Time',
-                      style: TextStyle(
-                        color: AppColors.textPrimary,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+        return SafeArea(
+          child: Container(
+            height: 300,
+            padding: const EdgeInsets.only(top: 16),
+            child: Column(
+              children: [
+                // Header with Done button
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Select Time',
+                        style: TextStyle(
+                          color: AppColors.textPrimary,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    TextButton(
-                      child: const Text('Done'),
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: CupertinoTheme(
-                  data: const CupertinoThemeData(
-                    brightness: Brightness.dark,
-                    textTheme: CupertinoTextThemeData(
-                      dateTimePickerTextStyle: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
+                      TextButton(
+                        child: const Text('Done'),
+                        onPressed: () => Navigator.of(context).pop(),
                       ),
-                    ),
+                    ],
                   ),
-                  child: CupertinoDatePicker(
-                    mode: CupertinoDatePickerMode.time,
-                    initialDateTime: initialDateTime,
-                    use24hFormat: false,
-                    onDateTimeChanged: (DateTime newDateTime) {
-                      // Combined date from match with time from picker
-                      final updatedDateTime = DateTime(
-                        match.scheduledTime.year,
-                        match.scheduledTime.month,
-                        match.scheduledTime.day,
-                        newDateTime.hour,
-                        newDateTime.minute,
-                      );
-
-                      setState(() {
-                        _matches[index] = match.copyWith(
-                          scheduledTime: updatedDateTime,
+                ),
+                Expanded(
+                  child: CupertinoTheme(
+                    data: const CupertinoThemeData(
+                      brightness: Brightness.dark,
+                      textTheme: CupertinoTextThemeData(
+                        dateTimePickerTextStyle: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                        ),
+                      ),
+                    ),
+                    child: CupertinoDatePicker(
+                      mode: CupertinoDatePickerMode.time,
+                      initialDateTime: initialDateTime,
+                      use24hFormat: false,
+                      onDateTimeChanged: (DateTime newDateTime) {
+                        // Combined date from match with time from picker
+                        final updatedDateTime = DateTime(
+                          match.scheduledTime.year,
+                          match.scheduledTime.month,
+                          match.scheduledTime.day,
+                          newDateTime.hour,
+                          newDateTime.minute,
                         );
-                        // No need to sort just for time changes usually, but safe to do
-                        // _matches.sort((a, b) => a.scheduledTime.compareTo(b.scheduledTime));
-                      });
-                    },
+
+                        setState(() {
+                          _matches[index] = match.copyWith(
+                            scheduledTime: updatedDateTime,
+                          );
+                          // No need to sort just for time changes usually, but safe to do
+                          // _matches.sort((a, b) => a.scheduledTime.compareTo(b.scheduledTime));
+                        });
+                      },
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },

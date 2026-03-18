@@ -36,7 +36,11 @@ class _CompetitionFormatScreenState extends State<CompetitionFormatScreen> {
       widget.competition.tieBreakerRules,
     );
     if (_selectedTieBreakerRules.isEmpty) {
-      _selectedTieBreakerRules = ['goal_difference']; // Default for custom
+      if (widget.competition.sport == AppConstants.sportCricket) {
+        _selectedTieBreakerRules = [AppConstants.tieBreakerWins, AppConstants.tieBreakerNrr];
+      } else {
+        _selectedTieBreakerRules = [AppConstants.tieBreakerGoalDiff];
+      }
     }
     _pointsForWin = widget.competition.pointsForWin;
     _pointsForDraw = widget.competition.pointsForDraw;
@@ -111,103 +115,108 @@ class _CompetitionFormatScreenState extends State<CompetitionFormatScreen> {
     return Scaffold(
       backgroundColor: AppColors.backgroundDark,
       appBar: AppBar(title: const Text('Select Format')),
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  const Text(
-                    'Select a format',
-                    style: TextStyle(
-                      color: AppColors.textPrimary,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // League
-                  _buildFormatCard(
-                    title: AppConstants.formatLeague,
-                    icon: Icons.format_list_numbered,
-                    value: AppConstants.formatLeague,
-                  ),
-                  if (_selectedFormat == AppConstants.formatLeague)
-                    _buildLeagueSettingsSection(),
-
-                  // Knockout
-                  _buildFormatCard(
-                    title: AppConstants.formatKnockout,
-                    icon: Icons.account_tree,
-                    value: AppConstants.formatKnockout,
-                  ),
-                  // No specific settings for standalone knockout here yet
-
-                  // League + Knockout
-                  _buildFormatCard(
-                    title: AppConstants.formatLeagueKnockout,
-                    icon: Icons.schema,
-                    value: AppConstants.formatLeagueKnockout,
-                  ),
-                  if (_selectedFormat == AppConstants.formatLeagueKnockout)
-                    _buildLeagueSettingsSection(),
-
-                  // Groups + Knockout
-                  _buildFormatCard(
-                    title: AppConstants.formatGroupsKnockout,
-                    icon: Icons.grid_view,
-                    value: AppConstants.formatGroupsKnockout,
-                  ),
-                  if (_selectedFormat == AppConstants.formatGroupsKnockout) ...[
-                    _buildGroupSettingsSection(),
-                  ],
-
-                  // Single Match
-                  _buildFormatCard(
-                    title: AppConstants.formatSingleMatch,
-                    icon: Icons.sports_score,
-                    value: AppConstants.formatSingleMatch,
-                  ),
-
-                  // Custom
-                  _buildFormatCard(
-                    title: AppConstants.formatCustom,
-                    icon: Icons.help_outline,
-                    value: AppConstants.formatCustom,
-                  ),
-
-                  const SizedBox(height: 24),
-                ],
-              ),
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: const BoxDecoration(
-              color: AppColors.backgroundDark,
-              border: Border(
-                top: BorderSide(color: AppColors.cardBackground, width: 1),
-              ),
-            ),
-            child: SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                onPressed: (_selectedFormat == null || _isLoading)
-                    ? null
-                    : _saveFormatAndContinue,
-                child: _isLoading
-                    ? const LoadingSpinner(
-                        size: 24,
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 120),
+                child: Column(
+                  children: [
+                    const Text(
+                      'Select a format',
+                      style: TextStyle(
                         color: AppColors.textPrimary,
-                      )
-                    : const Text('Next', style: TextStyle(fontSize: 16)),
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // League
+                    _buildFormatCard(
+                      title: AppConstants.formatLeague,
+                      icon: Icons.format_list_numbered,
+                      value: AppConstants.formatLeague,
+                    ),
+                    if (_selectedFormat == AppConstants.formatLeague)
+                      _buildLeagueSettingsSection(),
+
+                    // Knockout
+                    _buildFormatCard(
+                      title: AppConstants.formatKnockout,
+                      icon: Icons.account_tree,
+                      value: AppConstants.formatKnockout,
+                    ),
+                    // No specific settings for standalone knockout here yet
+
+                    // League + Knockout
+                    _buildFormatCard(
+                      title: AppConstants.formatLeagueKnockout,
+                      icon: Icons.schema,
+                      value: AppConstants.formatLeagueKnockout,
+                    ),
+                    if (_selectedFormat == AppConstants.formatLeagueKnockout)
+                      _buildLeagueSettingsSection(),
+
+                    // Groups + Knockout
+                    _buildFormatCard(
+                      title: AppConstants.formatGroupsKnockout,
+                      icon: Icons.grid_view,
+                      value: AppConstants.formatGroupsKnockout,
+                    ),
+                    if (_selectedFormat ==
+                        AppConstants.formatGroupsKnockout) ...[
+                      _buildGroupSettingsSection(),
+                    ],
+
+                    // Single Match
+                    _buildFormatCard(
+                      title: AppConstants.formatSingleMatch,
+                      icon: Icons.sports_score,
+                      value: AppConstants.formatSingleMatch,
+                    ),
+
+                    // Custom
+                    _buildFormatCard(
+                      title: AppConstants.formatCustom,
+                      icon: Icons.help_outline,
+                      value: AppConstants.formatCustom,
+                    ),
+
+                    const SizedBox(height: 24),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+            SafeArea(
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: const BoxDecoration(
+                  color: AppColors.backgroundDark,
+                  border: Border(
+                    top: BorderSide(color: AppColors.cardBackground, width: 1),
+                  ),
+                ),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: ElevatedButton(
+                    onPressed: (_selectedFormat == null || _isLoading)
+                        ? null
+                        : _saveFormatAndContinue,
+                    child: _isLoading
+                        ? const LoadingSpinner(
+                            size: 24,
+                            color: AppColors.textPrimary,
+                          )
+                        : const Text('Next', style: TextStyle(fontSize: 16)),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

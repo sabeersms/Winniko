@@ -143,6 +143,7 @@ class _TournamentDiscoveryDialogState extends State<TournamentDiscoveryDialog> {
             'discoveredAt': FieldValue.serverTimestamp(),
             'hasFixtures': true,
             'status': 'active',
+            'isMajor': true, // Auto-pin for visibility globally
           }, SetOptions(merge: true));
 
       final collectionRef = FirebaseFirestore.instance

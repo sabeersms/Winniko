@@ -16,7 +16,7 @@ import 'leaderboard_screen.dart';
 import 'participant_leaderboard_screen.dart';
 import 'matches_list_screen.dart';
 import 'competition_chat_screen.dart';
-import 'organizer_chat_list_screen.dart';
+import 'poster_designer_screen.dart';
 
 import '../widgets/loading_spinner.dart';
 
@@ -155,15 +155,13 @@ class _CompetitionDetailScreenState extends State<CompetitionDetailScreen>
       // 3. Update TabController length if necessary
       // We now show 4 tabs for official leagues too (to show the Table/Standings)
       // unless it's a format that specifically doesn't use a table.
-      bool showTable = true;
-      if (competition.format == AppConstants.formatKnockout ||
-          competition.format == AppConstants.formatSingleMatch) {
-        showTable = false;
-      }
+      // Only show Table tab for League and Groups + Knockout formats
+      bool showTable = (competition.format == AppConstants.formatLeague ||
+          competition.format == AppConstants.formatGroupsKnockout ||
+          competition.format == AppConstants.formatLeagueKnockout);
 
-      // Hide table for official cricket tournaments as requested
-      if (competition.sport == AppConstants.sportCricket &&
-          competition.leagueId != null &&
+      // Hide table for all official (major) tournaments
+      if (competition.leagueId != null &&
           competition.leagueId!.isNotEmpty) {
         showTable = false;
       }
@@ -582,77 +580,81 @@ class _CompetitionDetailScreenState extends State<CompetitionDetailScreen>
               },
             ),
 
-          if (_currentUser?.id == _competition!.organizerId)
-            StreamBuilder<int>(
-              stream: Provider.of<FirestoreService>(
-                context,
-                listen: false,
-              ).getOrganizerUnreadCount(_competition!.id),
-              builder: (context, snapshot) {
-                final unread = snapshot.data ?? 0;
-                return Stack(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.mail_outline),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => OrganizerChatListScreen(
-                              competition: _competition!,
-                            ),
-                          ),
-                        );
-                      },
+          // Poster Designer & PDF Action
+          if (_currentUser?.id == _competition!.organizerId &&
+              _tabController.index >= 1 &&
+              _tabController.index <= 3) ...[
+            PopupMenuButton<bool>(
+              onSelected: (isResult) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => PosterDesignerScreen(
+                      competition: _competition!,
+                      isResultMode: isResult,
                     ),
-                    if (unread > 0)
-                      Positioned(
-                        right: 8,
-                        top: 8,
-                        child: Container(
-                          padding: const EdgeInsets.all(2),
-                          decoration: const BoxDecoration(
-                            color: AppColors.error,
-                            shape: BoxShape.circle,
-                          ),
-                          constraints: const BoxConstraints(
-                            minWidth: 16,
-                            minHeight: 16,
-                          ),
-                          child: Text(
-                            '$unread',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                  ],
+                  ),
                 );
               },
+              itemBuilder: (context) => [
+                const PopupMenuItem(
+                  value: false,
+                  child: Row(
+                    children: [
+                      Icon(Icons.event, size: 18),
+                      SizedBox(width: 8),
+                      Text('Match Poster'),
+                    ],
+                  ),
+                ),
+                const PopupMenuItem(
+                  value: true,
+                  child: Row(
+                    children: [
+                      Icon(Icons.emoji_events, size: 18),
+                      SizedBox(width: 8),
+                      Text('Result Poster'),
+                    ],
+                  ),
+                ),
+              ],
+              child: const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                child: Row(
+                  children: [
+                    Icon(Icons.palette, color: Colors.white, size: 20),
+                    SizedBox(width: 4),
+                    Text(
+                      'Poster',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
+            if (_tabController.index == 1)
+              IconButton(
+                icon: const Icon(Icons.picture_as_pdf, color: Colors.white),
+                tooltip: 'Download Match List',
+                onPressed: () async {
+                  final matches = await Provider.of<FirestoreService>(
+                    context,
+                    listen: false,
+                  ).getMatches(_competition!.id).first;
+                  if (context.mounted) {
+                    PdfService.generateMatchListSchedule(
+                      _competition!,
+                      matches,
+                    );
+                  }
+                },
+              ),
+          ],
 
-          // Task 17: PDF Action
-          if (_currentUser?.id == _competition!.organizerId &&
-              _tabController.index == 1) // Matches tab
-            IconButton(
-              icon: const Icon(Icons.picture_as_pdf, color: Colors.white),
-              tooltip: 'Download Match List',
-              onPressed: () async {
-                // Call PDF Service
-                final matches = await Provider.of<FirestoreService>(
-                  context,
-                  listen: false,
-                ).getMatches(_competition!.id).first;
-                if (context.mounted) {
-                  PdfService.generateMatchListSchedule(_competition!, matches);
-                }
-              },
-            ),
-
-          // Task 18: PDF Action (Table/Standings)
+          // Table/Standings PDF
           if (!_isOfficial &&
               _tabController.index == 3 &&
               _currentUser?.id == _competition!.organizerId &&
@@ -662,7 +664,6 @@ class _CompetitionDetailScreenState extends State<CompetitionDetailScreen>
               icon: const Icon(Icons.picture_as_pdf, color: Colors.white),
               tooltip: 'Download Standings',
               onPressed: () async {
-                // Call PDF Service
                 final standings = await Provider.of<FirestoreService>(
                   context,
                   listen: false,
@@ -731,6 +732,7 @@ class _CompetitionDetailScreenState extends State<CompetitionDetailScreen>
         _competition!.cardBackgroundImageUrl!.isNotEmpty;
 
     return SingleChildScrollView(
+      padding: const EdgeInsets.only(bottom: 120),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

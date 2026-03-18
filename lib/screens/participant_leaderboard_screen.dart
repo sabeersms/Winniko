@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
@@ -33,12 +34,69 @@ class _ParticipantLeaderboardScreenState
   DocumentSnapshot? _lastDocument;
   ParticipantModel? _myParticipant;
   bool _isInitialLoading = true;
+  StreamSubscription? _participantsListener;
 
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
     _loadInitialData();
+    _startListeningForUpdates();
+  }
+
+  /// Listen for real-time changes to participants so the leaderboard
+  /// auto-refreshes when scores are updated (points recalculated).
+  void _startListeningForUpdates() {
+    _participantsListener = FirebaseFirestore.instance
+        .collection('competitions')
+        .doc(widget.competition.id)
+        .collection('participants')
+        .orderBy('totalPoints', descending: true)
+        .limit(1) // We only need to detect *any* change, not fetch all data
+        .snapshots()
+        .skip(1) // Skip the first snapshot (initial load already handled)
+        .listen((_) {
+          // Data changed in Firestore — reload the leaderboard
+          if (mounted && !_isInitialLoading) {
+            _refreshData();
+          }
+        });
+  }
+
+  /// Reload leaderboard data silently (no full-screen loading spinner).
+  Future<void> _refreshData() async {
+    final firestore = Provider.of<FirestoreService>(context, listen: false);
+    final authService = Provider.of<AuthService>(context, listen: false);
+    final userId = authService.currentUser?.uid;
+
+    try {
+      if (userId != null) {
+        _myParticipant = await firestore.getParticipant(
+          widget.competition.id,
+          userId,
+        );
+      }
+
+      final firstPage = await firestore.getLeaderboardPaginated(
+        widget.competition.id,
+        limit: 50,
+      );
+
+      _participants = firstPage;
+      _hasMore = firstPage.length >= 50;
+      _lastDocument = null;
+
+      if (firstPage.isNotEmpty) {
+        _lastDocument = await firestore.getParticipantSnapshot(
+          widget.competition.id,
+          firstPage.last.userId,
+        );
+      }
+
+      if (mounted) setState(() {});
+    } catch (e) {
+      debugPrint('Error refreshing leaderboard: $e');
+    }
   }
 
   void _onScroll() {
@@ -138,6 +196,7 @@ class _ParticipantLeaderboardScreenState
 
   @override
   void dispose() {
+    _participantsListener?.cancel();
     _scrollController.dispose();
     super.dispose();
   }
@@ -245,7 +304,7 @@ class _ParticipantLeaderboardScreenState
                   ),
                 ),
               ),
-              const SliverToBoxAdapter(child: SizedBox(height: 100)),
+              const SliverToBoxAdapter(child: SizedBox(height: 120)),
             ],
           ),
         ),

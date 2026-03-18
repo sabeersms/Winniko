@@ -253,7 +253,7 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
             child: _isTranslating
                 ? const Center(child: LoadingSpinner(size: 40))
                 : SingleChildScrollView(
-                    padding: const EdgeInsets.all(20.0),
+                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 120),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [

@@ -99,87 +99,90 @@ class _MatchCreateScreenState extends State<MatchCreateScreen> {
     showModalBottomSheet(
       context: context,
       backgroundColor: AppColors.cardBackground,
+      useSafeArea: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (BuildContext builder) {
-        return SizedBox(
-          height: 250,
-          child: Column(
-            children: [
-              // Toolbar
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                decoration: const BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(color: AppColors.dividerColor),
+        return SafeArea(
+          child: SizedBox(
+            height: 250,
+            child: Column(
+              children: [
+                // Toolbar
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(color: AppColors.dividerColor),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text(
+                          'Cancel',
+                          style: TextStyle(color: AppColors.textSecondary),
+                        ),
+                      ),
+                      const Text(
+                        'Select Time',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text(
+                          'Done',
+                          style: TextStyle(
+                            color: AppColors.accentGreen,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text(
-                        'Cancel',
-                        style: TextStyle(color: AppColors.textSecondary),
-                      ),
-                    ),
-                    const Text(
-                      'Select Time',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text(
-                        'Done',
-                        style: TextStyle(
-                          color: AppColors.accentGreen,
-                          fontWeight: FontWeight.bold,
+                // Picker
+                Expanded(
+                  child: CupertinoTheme(
+                    data: const CupertinoThemeData(
+                      brightness: Brightness.dark,
+                      textTheme: CupertinoTextThemeData(
+                        dateTimePickerTextStyle: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
                         ),
                       ),
                     ),
-                  ],
-                ),
-              ),
-              // Picker
-              Expanded(
-                child: CupertinoTheme(
-                  data: const CupertinoThemeData(
-                    brightness: Brightness.dark,
-                    textTheme: CupertinoTextThemeData(
-                      dateTimePickerTextStyle: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
+                    child: CupertinoDatePicker(
+                      mode: CupertinoDatePickerMode.time,
+                      initialDateTime: DateTime(
+                        DateTime.now().year,
+                        DateTime.now().month,
+                        DateTime.now().day,
+                        _selectedTime.hour,
+                        _selectedTime.minute,
                       ),
+                      use24hFormat: false, // Force 12-hour format
+                      onDateTimeChanged: (DateTime newDateTime) {
+                        setState(() {
+                          _selectedTime = TimeOfDay.fromDateTime(newDateTime);
+                        });
+                      },
                     ),
-                  ),
-                  child: CupertinoDatePicker(
-                    mode: CupertinoDatePickerMode.time,
-                    initialDateTime: DateTime(
-                      DateTime.now().year,
-                      DateTime.now().month,
-                      DateTime.now().day,
-                      _selectedTime.hour,
-                      _selectedTime.minute,
-                    ),
-                    use24hFormat: false, // Force 12-hour format
-                    onDateTimeChanged: (DateTime newDateTime) {
-                      setState(() {
-                        _selectedTime = TimeOfDay.fromDateTime(newDateTime);
-                      });
-                    },
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },

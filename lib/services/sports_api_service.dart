@@ -189,6 +189,7 @@ class SportsApiService {
       final q = query.toLowerCase();
       final matchesSearch =
           t.name.toLowerCase().contains(q) ||
+          t.id.toLowerCase().contains(q) ||
           t.country.toLowerCase().contains(q);
       return matchesSearch && t.hasFixtures && t.status != 'finished';
     }).toList();
@@ -215,6 +216,7 @@ class SportsApiService {
         final q = query.toLowerCase();
         final matchesQuery =
             t.name.toLowerCase().contains(q) ||
+            t.id.toLowerCase().contains(q) ||
             t.country.toLowerCase().contains(q);
         // Avoid duplicates already in curated list
         final isNotCurated = !_curatedTournaments.any((c) => c.id == t.id);

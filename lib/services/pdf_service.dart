@@ -158,8 +158,15 @@ class PdfService {
   ) async {
     final pdf = pw.Document();
 
-    // Sort by time
-    matches.sort((a, b) => a.scheduledTime.compareTo(b.scheduledTime));
+    // Sort by Match Number, then Time (Ascending)
+    matches.sort((a, b) {
+      final aNum = a.matchNumber ?? 0;
+      final bNum = b.matchNumber ?? 0;
+      if (aNum != bNum && (aNum != 0 || bNum != 0)) {
+        return aNum.compareTo(bNum);
+      }
+      return a.scheduledTime.compareTo(b.scheduledTime);
+    });
 
     pdf.addPage(
       pw.MultiPage(
@@ -201,8 +208,15 @@ class PdfService {
     // Ensure sorted by rank/points
     participants.sort((a, b) => b.totalPoints.compareTo(a.totalPoints));
 
-    // Sort matches by time
-    matches.sort((a, b) => a.scheduledTime.compareTo(b.scheduledTime));
+    // Sort matches by Match Number, then Time (Ascending)
+    matches.sort((a, b) {
+      final aNum = a.matchNumber ?? 0;
+      final bNum = b.matchNumber ?? 0;
+      if (aNum != bNum && (aNum != 0 || bNum != 0)) {
+        return aNum.compareTo(bNum);
+      }
+      return a.scheduledTime.compareTo(b.scheduledTime);
+    });
 
     pdf.addPage(
       pw.MultiPage(
@@ -598,14 +612,13 @@ class PdfService {
       }
 
       // Add winner/margin if not already covered by resultStatus
-      if (score.containsKey('winnerId') &&
-          score['winnerId'] != null &&
-          score['winnerId'] != 'tied' &&
-          score['winnerId'] != 'no_result') {
-        final String winnerId = score['winnerId'];
-        final String winnerName = winnerId == match.team1Id
+      final String? rWinnerId = match.resolvedWinnerId;
+      if (rWinnerId != null &&
+          rWinnerId != 'tied' &&
+          rWinnerId != 'no_result') {
+        String winnerName = rWinnerId == match.team1Id
             ? match.team1Name
-            : match.team2Name;
+            : (rWinnerId == match.team2Id ? match.team2Name : (score['winnerName'] ?? rWinnerId));
 
         String margin = '';
         if (score.containsKey('marginType')) {
@@ -625,9 +638,9 @@ class PdfService {
         } else {
           scoreLine += '${scoreLine.isEmpty ? '' : '\n'}$winnerName won';
         }
-      } else if (score['winnerId'] == 'tied') {
+      } else if (rWinnerId == 'tied') {
         scoreLine += '${scoreLine.isEmpty ? '' : '\n'}Match Tied';
-      } else if (score['winnerId'] == 'no_result') {
+      } else if (rWinnerId == 'no_result') {
         scoreLine += '${scoreLine.isEmpty ? '' : '\n'}No Result';
       } else if (scoreLine.isEmpty && resultStatus != null) {
         // Last resort fallback
@@ -654,17 +667,19 @@ class PdfService {
   ) {
     if (c.sport == AppConstants.sportCricket) {
       final winnerId = p.prediction['winnerId']?.toString();
+      final bool isTie = p.prediction['isTie'] == true || winnerId == 'tied';
+
+      if (isTie) {
+        return 'Match Tie';
+      }
+
       final String winnerName = (m != null && winnerId != null)
-          ? (winnerId == 'tied'
-                ? 'Tie'
-                : (winnerId == 'no_result'
-                      ? 'No Result'
-                      : (winnerId == m.team1Id
-                            ? m.team1Name
-                            : (winnerId == m.team2Id
-                                  ? m.team2Name
-                                  : 'Unknown'))))
-          : 'Unknown';
+          ? (winnerId == 'no_result'
+              ? 'No Result'
+              : (winnerId == m.team1Id
+                  ? m.team1Name
+                  : (winnerId == m.team2Id ? m.team2Name : 'Unknown')))
+          : (p.prediction['winnerName']?.toString() ?? 'Unknown');
 
       String detail = '';
       // If match is finished (completed OR verified) and we have a margin type, show the RELEVANT prediction

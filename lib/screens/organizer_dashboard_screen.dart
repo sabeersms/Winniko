@@ -13,6 +13,7 @@ import 'leaderboard_screen.dart';
 import 'competition_detail_screen.dart';
 
 import 'organizer_chat_list_screen.dart';
+import 'poster_designer_screen.dart';
 import '../widgets/loading_spinner.dart';
 
 class MyCompetitionsScreen extends StatefulWidget {
@@ -142,7 +143,7 @@ class _MyCompetitionsScreenState extends State<MyCompetitionsScreen>
               }
 
               return ListView.builder(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 120),
                 itemCount: competitions.length,
                 itemBuilder: (context, index) {
                   final competition = competitions[index];
@@ -186,7 +187,7 @@ class _MyCompetitionsScreenState extends State<MyCompetitionsScreen>
         }
 
         return ListView.builder(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 120),
           itemCount: competitions.length,
           itemBuilder: (context, index) {
             final competition = competitions[index];
@@ -495,6 +496,57 @@ class _MyCompetitionsScreenState extends State<MyCompetitionsScreen>
                 },
               ),
             ],
+            ListTile(
+              leading: const Icon(Icons.palette, color: AppColors.textPrimary),
+              title: const Text(
+                'Poster Maker',
+                style: TextStyle(color: AppColors.textPrimary),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Poster Type'),
+                    content: const Text(
+                      'What type of poster do you want to create?',
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => PosterDesignerScreen(
+                                competition: competition,
+                                isResultMode: false,
+                              ),
+                            ),
+                          );
+                        },
+                        child: const Text('Match Poster'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => PosterDesignerScreen(
+                                competition: competition,
+                                isResultMode: true,
+                              ),
+                            ),
+                          );
+                        },
+                        child: const Text('Result Poster'),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
             ListTile(
               leading: const Icon(
                 Icons.format_list_numbered,

@@ -73,14 +73,16 @@ class _FullFixturesScreenState extends State<FullFixturesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Sort matches by date, then by matchNumber
+    // Sort matches: prioritize matchNumber, then fallback to scheduledTime
     final matches = List<MatchModel>.from(widget.matches)
       ..sort((a, b) {
-        final timeCompare = a.scheduledTime.compareTo(b.scheduledTime);
-        if (timeCompare != 0) return timeCompare;
         final aNum = a.matchNumber ?? 0;
         final bNum = b.matchNumber ?? 0;
-        return aNum.compareTo(bNum);
+
+        if (aNum != bNum && (aNum != 0 || bNum != 0)) {
+          return aNum.compareTo(bNum);
+        }
+        return a.scheduledTime.compareTo(b.scheduledTime);
       });
 
     final authService = Provider.of<AuthService>(context, listen: false);

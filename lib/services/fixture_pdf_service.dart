@@ -20,8 +20,15 @@ class FixturePdfService {
     // final ttf = pw.Font.ttf(font);
 
     // Group matches by Round or Date
-    // For simplicity, we just list them in order, maybe grouped by date
-    matches.sort((a, b) => a.scheduledTime.compareTo(b.scheduledTime));
+    // Sort by Match Number, then Time (Ascending)
+    matches.sort((a, b) {
+      final aNum = a.matchNumber ?? 0;
+      final bNum = b.matchNumber ?? 0;
+      if (aNum != bNum && (aNum != 0 || bNum != 0)) {
+        return aNum.compareTo(bNum);
+      }
+      return a.scheduledTime.compareTo(b.scheduledTime);
+    });
 
     pw.MemoryImage? logoImage;
     if (logoUrl != null && logoUrl.isNotEmpty) {

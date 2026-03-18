@@ -12,6 +12,7 @@ import '../utils/share_util.dart';
 
 import 'package:flutter/foundation.dart';
 import '../utils/standings_calculator.dart';
+import 'poster_designer_screen.dart';
 
 class LeaderboardScreen extends StatefulWidget {
   final CompetitionModel competition;
@@ -235,6 +236,75 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                     text:
                         'Check out the latest standings for ${widget.competition.name} on Winniko!',
                   ),
+                ),
+                Builder(
+                  builder: (context) {
+                    final currentUserId = Provider.of<AuthService>(
+                      context,
+                      listen: false,
+                    ).currentUserId;
+                    if (widget.competition.organizerId == currentUserId) {
+                      return PopupMenuButton<bool>(
+                        onSelected: (isResult) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => PosterDesignerScreen(
+                                competition: widget.competition,
+                                isResultMode: isResult,
+                              ),
+                            ),
+                          );
+                        },
+                        itemBuilder: (context) => [
+                          const PopupMenuItem(
+                            value: false,
+                            child: Row(
+                              children: [
+                                Icon(Icons.event, size: 18),
+                                SizedBox(width: 8),
+                                Text('Match Poster'),
+                              ],
+                            ),
+                          ),
+                          const PopupMenuItem(
+                            value: true,
+                            child: Row(
+                              children: [
+                                Icon(Icons.emoji_events, size: 18),
+                                SizedBox(width: 8),
+                                Text('Result Poster'),
+                              ],
+                            ),
+                          ),
+                        ],
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.palette,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                              SizedBox(width: 4),
+                              Text(
+                                'Poster',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
                 ),
               ],
             ),
@@ -467,7 +537,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
         key: _boundaryKey,
         child: Container(
           color: AppColors.backgroundDark,
-          padding: const EdgeInsets.symmetric(vertical: 8),
+          padding: const EdgeInsets.fromLTRB(0, 8, 0, 120),
           child: Column(
             children: sortedGroups.map((groupName) {
               final groupStandings = groupedData[groupName]!;

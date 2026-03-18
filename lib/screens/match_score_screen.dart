@@ -20,6 +20,7 @@ class MatchScoreScreen extends StatefulWidget {
 class _MatchScoreScreenState extends State<MatchScoreScreen> {
   final TextEditingController _homeScoreController = TextEditingController();
   final TextEditingController _awayScoreController = TextEditingController();
+  final TextEditingController _matchNumberController = TextEditingController();
   String? _tieBreakWinnerId;
 
   bool _isLoading = false;
@@ -39,6 +40,10 @@ class _MatchScoreScreenState extends State<MatchScoreScreen> {
   @override
   void initState() {
     super.initState();
+
+    if (widget.match.matchNumber != null) {
+      _matchNumberController.text = widget.match.matchNumber.toString();
+    }
 
     if (widget.match.actualScore != null) {
       if (widget.sport == AppConstants.sportCricket) {
@@ -78,16 +83,21 @@ class _MatchScoreScreenState extends State<MatchScoreScreen> {
     _awayScoreController.addListener(() => setState(() {}));
     _t1RunsController.addListener(() => setState(() {}));
     _t2RunsController.addListener(() => setState(() {}));
+    _t1OversController.addListener(() => setState(() {}));
+    _t2OversController.addListener(() => setState(() {}));
   }
 
   @override
   void dispose() {
     _homeScoreController.dispose();
     _awayScoreController.dispose();
+    _matchNumberController.dispose();
     _t1RunsController.dispose();
     _t1WicketsController.dispose();
     _t2RunsController.dispose();
     _t2WicketsController.dispose();
+    _t1OversController.dispose();
+    _t2OversController.dispose();
     super.dispose();
   }
 
@@ -334,16 +344,19 @@ class _MatchScoreScreenState extends State<MatchScoreScreen> {
         actualScore,
         AppConstants.matchStatusCompleted,
         oldScore: widget.match.actualScore,
+        matchNumber: int.tryParse(_matchNumberController.text),
       );
 
       if (!mounted) return;
-      Navigator.pop(context);
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Score updated successfully!'),
+          content: Text('Match score updated successfully!'),
           backgroundColor: AppColors.success,
+          duration: Duration(seconds: 2),
         ),
       );
+      Navigator.pop(context);
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -597,6 +610,43 @@ class _MatchScoreScreenState extends State<MatchScoreScreen> {
               ),
             const SizedBox(height: 16),
 
+            // Match Number Input
+            Container(
+              padding: const EdgeInsets.all(16),
+              margin: const EdgeInsets.only(bottom: 24),
+              decoration: BoxDecoration(
+                color: AppColors.cardBackground,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.white10),
+              ),
+              child: Row(
+                children: [
+                   const Icon(Icons.tag, color: AppColors.accentGreen, size: 20),
+                   const SizedBox(width: 12),
+                   const Text(
+                     'Match Number:',
+                     style: TextStyle(color: Colors.white70, fontSize: 14),
+                   ),
+                   const SizedBox(width: 16),
+                   Expanded(
+                     child: TextField(
+                       controller: _matchNumberController,
+                       keyboardType: TextInputType.number,
+                       style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                       decoration: const InputDecoration(
+                         hintText: 'e.g. 1',
+                         hintStyle: TextStyle(color: Colors.white24),
+                         isDense: true,
+                         contentPadding: EdgeInsets.symmetric(vertical: 8),
+                         enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white10)),
+                         focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: AppColors.accentGreen)),
+                       ),
+                     ),
+                   ),
+                ],
+              ),
+            ),
+
             // Score Input
             if (widget.sport == AppConstants.sportCricket)
               _buildCricketResultInput()
@@ -794,6 +844,18 @@ class _MatchScoreScreenState extends State<MatchScoreScreen> {
                     style: const TextStyle(color: AppColors.textPrimary),
                     decoration: const InputDecoration(
                       labelText: 'Wickets',
+                      filled: true,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _t1OversController,
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    style: const TextStyle(color: AppColors.textPrimary),
+                    decoration: const InputDecoration(
+                      labelText: 'Overs (e.g. 10.3)',
                       filled: true,
                     ),
                   ),

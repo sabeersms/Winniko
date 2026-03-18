@@ -198,35 +198,20 @@ class _MatchesListScreenState extends State<MatchesListScreen> {
                   final allMatches = matchSnapshot.data ?? [];
                   var matches = List<MatchModel>.from(allMatches);
 
-                  // Sort matches: Sort by scheduledTime first, then matchNumber
-                  // If filtering by "Completed" OR if ALL matches are completed, sort Descending (Latest first)
-                  // Otherwise Ascending (Oldest first)
-                  bool isCompletedFilter = _selectedFilter == 'Completed';
+                  // Sort matches: Sort by matchNumber first, then scheduledTime
+                  // Always Ascending (Oldest/M1 first)
                   bool allCompleted =
                       matches.isNotEmpty && matches.every((m) => m.isCompleted);
 
                   matches.sort((a, b) {
-                    final timeCompare = a.scheduledTime.compareTo(
-                      b.scheduledTime,
-                    );
-
-                    // For "Completed" or Archives, prioritize TIME (Latest first)
-                    if (isCompletedFilter || allCompleted) {
-                      // Reverse order (Newest first)
-                      if (timeCompare != 0) return -timeCompare;
-                      // Secondary sort by matchNumber (descending for completed)
-                      final aNum = a.matchNumber ?? 0;
-                      final bNum = b.matchNumber ?? 0;
-                      if (aNum != bNum) return bNum.compareTo(aNum);
-                      return 0;
-                    }
-
-                    // For "All" / "Pending" / "Live": Ascending (Oldest first)
-                    if (timeCompare != 0) return timeCompare;
-                    // Secondary sort by matchNumber (ascending)
                     final aNum = a.matchNumber ?? 0;
                     final bNum = b.matchNumber ?? 0;
-                    return aNum.compareTo(bNum);
+
+                    // Always Ascending (Oldest/M1 first)
+                    if (aNum != bNum && (aNum != 0 || bNum != 0)) {
+                      return aNum.compareTo(bNum);
+                    }
+                    return a.scheduledTime.compareTo(b.scheduledTime);
                   });
 
                   // Apply Filter
@@ -412,7 +397,7 @@ class _MatchesListScreenState extends State<MatchesListScreen> {
                                         16,
                                         8,
                                         16,
-                                        80,
+                                        120,
                                       ),
                                       itemCount: matches.length,
                                       itemBuilder: (context, index) {
@@ -451,7 +436,7 @@ class _MatchesListScreenState extends State<MatchesListScreen> {
                                     16,
                                     8,
                                     16,
-                                    80,
+                                    120,
                                   ),
                                   itemCount: matches.length,
                                   itemBuilder: (context, index) {
@@ -832,73 +817,52 @@ class _MatchCardWidgetState extends State<MatchCardWidget> {
               shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
               ),
-              builder: (ctx) => Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const SizedBox(height: 8),
-                  Container(
-                    width: 40,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[600],
-                      borderRadius: BorderRadius.circular(2),
+              useSafeArea: true,
+              builder: (ctx) => SafeArea(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SizedBox(height: 8),
+                    Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[600],
+                        borderRadius: BorderRadius.circular(2),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  ListTile(
-                    leading: const Icon(
-                      Icons.edit_calendar,
-                      color: AppColors.accentGreen,
-                    ),
-                    title: const Text(
-                      'Edit Date & Time',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onTap: () async {
-                      Navigator.pop(ctx);
+                    const SizedBox(height: 16),
+                    ListTile(
+                      leading: const Icon(
+                        Icons.edit_calendar,
+                        color: AppColors.accentGreen,
+                      ),
+                      title: const Text(
+                        'Edit Date & Time',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      onTap: () async {
+                        Navigator.pop(ctx);
 
-                      // Check if match is verified
-                      if (widget.match.actualScore?['verified'] == true) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              'This match has been verified by a super admin and cannot be rescheduled.',
-                            ),
-                            backgroundColor: AppColors.error,
-                            duration: Duration(seconds: 3),
-                          ),
-                        );
-                        return;
-                      }
-
-                      final date = await showDatePicker(
-                        context: context,
-                        initialDate: widget.match.scheduledTime,
-                        firstDate: DateTime(2020),
-                        lastDate: DateTime(2030),
-                        builder: (context, child) {
-                          return Theme(
-                            data: Theme.of(context).copyWith(
-                              colorScheme: const ColorScheme.dark(
-                                primary: AppColors.accentGreen,
-                                onPrimary: Colors.white,
-                                surface: AppColors.cardBackground,
-                                onSurface: Colors.white,
+                        // Check if match is verified
+                        if (widget.match.actualScore?['verified'] == true) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'This match has been verified by a super admin and cannot be rescheduled.',
                               ),
-                              dialogTheme: DialogThemeData(
-                                backgroundColor: AppColors.cardBackground,
-                              ),
+                              backgroundColor: AppColors.error,
+                              duration: Duration(seconds: 3),
                             ),
-                            child: child!,
                           );
-                        },
-                      );
-                      if (date != null && context.mounted) {
-                        final time = await showTimePicker(
+                          return;
+                        }
+
+                        final date = await showDatePicker(
                           context: context,
-                          initialTime: TimeOfDay.fromDateTime(
-                            widget.match.scheduledTime,
-                          ),
+                          initialDate: widget.match.scheduledTime,
+                          firstDate: DateTime(2020),
+                          lastDate: DateTime(2030),
                           builder: (context, child) {
                             return Theme(
                               data: Theme.of(context).copyWith(
@@ -908,105 +872,132 @@ class _MatchCardWidgetState extends State<MatchCardWidget> {
                                   surface: AppColors.cardBackground,
                                   onSurface: Colors.white,
                                 ),
-                                timePickerTheme: const TimePickerThemeData(
+                                dialogTheme: DialogThemeData(
                                   backgroundColor: AppColors.cardBackground,
-                                  hourMinuteTextColor: Colors.white,
-                                  dayPeriodTextColor: Colors.white,
-                                  dialHandColor: AppColors.accentGreen,
-                                  dialBackgroundColor: AppColors.backgroundDark,
                                 ),
                               ),
                               child: child!,
                             );
                           },
                         );
-
-                        if (time != null && context.mounted) {
-                          final newDateTime = DateTime(
-                            date.year,
-                            date.month,
-                            date.day,
-                            time.hour,
-                            time.minute,
+                        if (date != null && context.mounted) {
+                          final time = await showTimePicker(
+                            context: context,
+                            initialTime: TimeOfDay.fromDateTime(
+                              widget.match.scheduledTime,
+                            ),
+                            builder: (context, child) {
+                              return Theme(
+                                data: Theme.of(context).copyWith(
+                                  colorScheme: const ColorScheme.dark(
+                                    primary: AppColors.accentGreen,
+                                    onPrimary: Colors.white,
+                                    surface: AppColors.cardBackground,
+                                    onSurface: Colors.white,
+                                  ),
+                                  timePickerTheme: const TimePickerThemeData(
+                                    backgroundColor: AppColors.cardBackground,
+                                    hourMinuteTextColor: Colors.white,
+                                    dayPeriodTextColor: Colors.white,
+                                    dialHandColor: AppColors.accentGreen,
+                                    dialBackgroundColor:
+                                        AppColors.backgroundDark,
+                                  ),
+                                ),
+                                child: child!,
+                              );
+                            },
                           );
 
-                          // Update Firestore
-                          try {
-                            final updatedMatch = widget.match.copyWith(
-                              scheduledTime: newDateTime,
+                          if (time != null && context.mounted) {
+                            final newDateTime = DateTime(
+                              date.year,
+                              date.month,
+                              date.day,
+                              time.hour,
+                              time.minute,
                             );
-                            // Use updateBatchMatches for single update
-                            await widget.firestore.updateBatchMatches(
-                              widget.competition.id,
-                              [updatedMatch],
-                            );
-                            if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Match rescheduled!'),
-                                ),
+
+                            // Update Firestore
+                            try {
+                              final updatedMatch = widget.match.copyWith(
+                                scheduledTime: newDateTime,
                               );
-                            }
-                          } catch (e) {
-                            if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Error: $e')),
+                              // Use updateBatchMatches for single update
+                              await widget.firestore.updateBatchMatches(
+                                widget.competition.id,
+                                [updatedMatch],
                               );
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Match rescheduled!'),
+                                  ),
+                                );
+                              }
+                            } catch (e) {
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Error: $e')),
+                                );
+                              }
                             }
                           }
                         }
-                      }
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(
-                      Icons.scoreboard,
-                      color: AppColors.accentGreen,
+                      },
                     ),
-                    title: const Text(
-                      'Update Score',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onTap: () {
-                      Navigator.pop(ctx);
-                      if (DateTime.now().isBefore(widget.match.scheduledTime)) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              'Cannot update score before match start time',
+                    ListTile(
+                      leading: const Icon(
+                        Icons.scoreboard,
+                        color: AppColors.accentGreen,
+                      ),
+                      title: const Text(
+                        'Update Score',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      onTap: () {
+                        Navigator.pop(ctx);
+                        if (DateTime.now().isBefore(
+                          widget.match.scheduledTime,
+                        )) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Cannot update score before match start time',
+                              ),
+                            ),
+                          );
+                          return;
+                        }
+
+                        // Check if match is verified
+                        if (widget.match.actualScore?['verified'] == true &&
+                            !authService.isMasterAdmin) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'This match is verified and can only be edited by a super admin.',
+                              ),
+                              backgroundColor: AppColors.error,
+                            ),
+                          );
+                          return;
+                        }
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => MatchScoreScreen(
+                              match: widget.match,
+                              sport: widget.competition.sport,
                             ),
                           ),
                         );
-                        return;
-                      }
-
-                      // Check if match is verified
-                      if (widget.match.actualScore?['verified'] == true &&
-                          !authService.isMasterAdmin) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              'This match is verified and can only be edited by a super admin.',
-                            ),
-                            backgroundColor: AppColors.error,
-                          ),
-                        );
-                        return;
-                      }
-
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => MatchScoreScreen(
-                            match: widget.match,
-                            sport: widget.competition.sport,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                ],
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                ),
               ),
             );
           } else {
@@ -1070,8 +1061,7 @@ class _MatchCardWidgetState extends State<MatchCardWidget> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          if (widget.match.matchNumber != null &&
-                              widget.competition.leagueId == null)
+                          if (widget.match.matchNumber != null)
                             Text(
                               'Match ${widget.match.matchNumber}',
                               style: const TextStyle(
@@ -1255,7 +1245,10 @@ class _MatchCardWidgetState extends State<MatchCardWidget> {
 
                               // Determine Winner Name
                               String wName = '';
-                              if (pMap.containsKey('winnerName')) {
+                              if (pMap['isTie'] == true ||
+                                  pMap['winnerId'] == 'tied') {
+                                wName = 'Match Tie';
+                              } else if (pMap.containsKey('winnerName')) {
                                 wName = pMap['winnerName'].toString();
                               } else if (pMap['winnerId'] ==
                                   widget.match.team1Id) {
@@ -1284,21 +1277,25 @@ class _MatchCardWidgetState extends State<MatchCardWidget> {
                                   wName = 'Draw';
                                 }
                               } else {
-                                wName = 'Draw';
+                                wName = 'Tie';
                               }
                               text += wName;
 
                               // Collect Margins
                               List<String> margins = [];
-                              if (pMap.containsKey('runs')) {
-                                margins.add('${pMap['runs']} Runs');
-                              }
-                              if (pMap.containsKey('wickets')) {
-                                margins.add('${pMap['wickets']} Wickets');
+                              if (pMap['isTie'] != true) {
+                                if (pMap.containsKey('runs') &&
+                                    pMap['runs'] != null) {
+                                  margins.add('${pMap['runs']} Runs');
+                                }
+                                if (pMap.containsKey('wickets') &&
+                                    pMap['wickets'] != null) {
+                                  margins.add('${pMap['wickets']} Wickets');
+                                }
                               }
 
                               // Legacy Fallback
-                              if (margins.isEmpty) {
+                              if (margins.isEmpty && pMap['isTie'] != true) {
                                 if (pMap.containsKey('margin') &&
                                     pMap.containsKey('marginType')) {
                                   margins.add(
@@ -1403,11 +1400,11 @@ class _MatchCardWidgetState extends State<MatchCardWidget> {
             winnerId != 'no_result' &&
             winnerId.isNotEmpty;
 
-        if (winnerId == 'tied' || isTieBreaker) {
-          return Column(
+        if (winnerId == 'tied') {
+          return const Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
+              Text(
                 'MATCH TIED',
                 style: TextStyle(
                   color: AppColors.textPrimary,
@@ -1415,20 +1412,32 @@ class _MatchCardWidgetState extends State<MatchCardWidget> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              if (isTieBreaker)
-                Padding(
-                  padding: const EdgeInsets.only(top: 4),
-                  child: Text(
-                    winnerId == widget.match.team1Id
-                        ? '${widget.match.team1Name} Won (S/O)'
-                        : '${widget.match.team2Name} Won (S/O)',
-                    style: const TextStyle(
-                      color: AppColors.accentGreen,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+            ],
+          );
+        } else if (isTieBreaker) {
+          final winnerName = winnerId == widget.match.team1Id
+              ? widget.match.team1Name
+              : widget.match.team2Name;
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                winnerName,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: AppColors.textPrimary,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
                 ),
+              ),
+              const Text(
+                'WON BY S/O',
+                style: TextStyle(
+                  color: AppColors.accentGreen,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ],
           );
         } else if (winnerId == 'no_result') {

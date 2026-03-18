@@ -159,12 +159,27 @@ class MatchModel {
     if (wId == team1Id || wId == team2Id) return wId;
     if (wId.contains('-')) return wId; // looks like a UUID
 
-    // Looks like a slug — try to map to a team UUID via name fuzzy match
-    final slug = wId.toLowerCase().replaceAll('_', '');
-    final t1n = team1Name.toLowerCase().replaceAll(' ', '').replaceAll('_', '');
-    final t2n = team2Name.toLowerCase().replaceAll(' ', '').replaceAll('_', '');
-    if (t1n.contains(slug) || slug.contains(t1n)) return team1Id;
-    if (t2n.contains(slug) || slug.contains(t2n)) return team2Id;
+    // 3. Last Resort: Infer from scores
+    if (actualScore != null) {
+      // Cricket check
+      if (actualScore!.containsKey('t1Runs')) {
+        final t1 = int.tryParse(actualScore!['t1Runs']?.toString() ?? '0') ?? 0;
+        final t2 = int.tryParse(actualScore!['t2Runs']?.toString() ?? '0') ?? 0;
+        if (t1 > t2) return team1Id;
+        if (t2 > t1) return team2Id;
+        if (t1 == t2 && t1 > 0) return 'tied';
+      }
+      // Football/Other check
+      else if (actualScore!.containsKey('team1') ||
+          actualScore!.containsKey('team2')) {
+        final t1 = int.tryParse(actualScore!['team1']?.toString() ?? '0') ?? 0;
+        final t2 = int.tryParse(actualScore!['team2']?.toString() ?? '0') ?? 0;
+        if (t1 > t2) return team1Id;
+        if (t2 > t1) return team2Id;
+        if (t1 == t2 && (actualScore!['team1'] != null)) return 'draw';
+      }
+    }
+
     return wId; // unresolved, return as-is
   }
 }

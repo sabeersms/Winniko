@@ -906,6 +906,8 @@ class FirestoreService {
   Future<void> syncOfficialTournamentScores({
     required String competitionId,
     required String leagueId,
+    Timestamp?
+    lastVerifiedTime, // Optional: Pass to bypass throttling on real updates
   }) async {
     try {
       final compDoc = await _firestore
@@ -924,11 +926,24 @@ class FirestoreService {
         return;
       }
 
-      // Throttling: Max once every 15 minutes (User only wants finished scores)
+      // Throttling: Max once every 15 minutes (unless a real update is detected)
       final lastSync = compDoc.data()?['lastSyncTime'] as Timestamp?;
       if (lastSync != null) {
         final now = DateTime.now();
-        if (now.difference(lastSync.toDate()).inMinutes < 15) {
+        bool shouldThrottle = true;
+
+        // 🛡️ CRITICAL FIX: If admin JUST verified a match (lastVerifiedTime provided),
+        // we MUST bypass the throttle to show results immediately.
+        if (lastVerifiedTime != null &&
+            lastVerifiedTime.toDate().isAfter(lastSync.toDate())) {
+          debugPrint(
+            '🔄 Real Verification Update detected ($lastVerifiedTime) - Bypassing Sync Throttle for $competitionId',
+          );
+          shouldThrottle = false;
+        }
+
+        if (shouldThrottle &&
+            now.difference(lastSync.toDate()).inMinutes < 15) {
           debugPrint(
             'Sync throttled for $competitionId (Next sync in ${15 - now.difference(lastSync.toDate()).inMinutes} mins)',
           );
@@ -1070,7 +1085,7 @@ class FirestoreService {
 
             if (!teamsMatch) return false;
             return m.scheduledTime.difference(ext.scheduledTime).inHours.abs() <
-                24;
+                48;
           });
           if (intMatchIndex != -1) {
             // Check if teams are reversed
@@ -1093,7 +1108,9 @@ class FirestoreService {
 
             // 🧹 DELETE any existing duplicates by name + date before adding
             final dupes = uniqueInternalMatches.where((m) {
-              if (processedInternalIds.contains(m.id)) return false;
+              // Note: We intentionally DO NOT check processedInternalIds here because 
+              // if a match is already processed (claimed), we definitely shouldn't add it as a new one.
+              // Instead, we skip adding if it's already there.
 
               final teamsMatch =
                   TeamsDataService.areTeamNamesEquivalent(
@@ -1121,18 +1138,28 @@ class FirestoreService {
                   48;
             }).toList();
 
-            for (final dupe in dupes) {
-              debugPrint(
-                '🧹 DEDUP: Deleting duplicate ${dupe.team1Name} vs ${dupe.team2Name} (${dupe.id}) before re-population',
-              );
-              batch.delete(
-                _firestore
-                    .collection('competitions')
-                    .doc(competitionId)
-                    .collection('matches')
-                    .doc(dupe.id),
-              );
-              processedInternalIds.add(dupe.id);
+            if (dupes.isNotEmpty) {
+              bool alreadyRepresented = false;
+              for (final dupe in dupes) {
+                if (processedInternalIds.contains(dupe.id)) {
+                  alreadyRepresented = true;
+                  debugPrint(
+                    '🛡️ DEDUP: Found match ${dupe.team1Name} vs ${dupe.team2Name} already in competition (Matched). Skipping re-population.',
+                  );
+                } else {
+                  debugPrint(
+                    '🧹 DEDUP: Deleting existing unclaimed duplicate ${dupe.team1Name} vs ${dupe.team2Name} (${dupe.id}) before re-population',
+                  );
+                  batch.delete(
+                    _firestore
+                        .collection('competitions')
+                        .doc(competitionId)
+                        .collection('matches')
+                        .doc(dupe.id),
+                  );
+                }
+              }
+              if (alreadyRepresented) continue;
             }
 
             final newMatchId = _firestore
@@ -1165,13 +1192,17 @@ class FirestoreService {
         final intMatch = uniqueInternalMatches[intMatchIndex];
         processedInternalIds.add(intMatch.id);
 
-        // 🛡️ PROTECTION: Skip verified or manually scored matches entirely
-        final bool isIntVerified =
+        // 🛡️ PROTECTION: Skip verified or manually scored matches if the incoming data is NOT verified.
+        final bool isIntProtected =
             intMatch.actualScore?['verified'] == true ||
             intMatch.actualScore?['manuallyScored'] == true;
-        if (isIntVerified) {
+        final bool isExtProtected =
+            ext.actualScore?['verified'] == true ||
+            ext.actualScore?['manuallyScored'] == true;
+
+        if (isIntProtected && !isExtProtected) {
           debugPrint(
-            '🛡️ SYNC LOOP 1 PROTECTED: Skipping ${intMatch.team1Name} vs ${intMatch.team2Name} (verified/manually scored)',
+            '🛡️ SYNC LOOP 1 PROTECTED: Skipping ${intMatch.team1Name} vs ${intMatch.team2Name} (internal is verified, incoming is API)',
           );
           continue;
         }
@@ -1297,7 +1328,7 @@ class FirestoreService {
                       .difference(ext.scheduledTime)
                       .inHours
                       .abs() <
-                  24;
+                  48;
             });
             isReverse = !TeamsDataService.areTeamNamesEquivalent(
               intMatch.team1Name,
@@ -1308,13 +1339,17 @@ class FirestoreService {
 
         if (intMatch == null) continue;
 
-        // 🛡️ PROTECTION: Skip verified or manually scored matches entirely
-        final bool isIntVerified =
+        // 🛡️ PROTECTION: Skip verified or manually scored matches if the incoming data is NOT verified.
+        final bool isIntProtected =
             intMatch.actualScore?['verified'] == true ||
             intMatch.actualScore?['manuallyScored'] == true;
-        if (isIntVerified) {
+        final bool isExtProtected =
+            ext.actualScore?['verified'] == true ||
+            ext.actualScore?['manuallyScored'] == true;
+
+        if (isIntProtected && !isExtProtected) {
           debugPrint(
-            '🛡️ SYNC LOOP 2 PROTECTED: Skipping ${intMatch.team1Name} vs ${intMatch.team2Name} (verified/manually scored)',
+            '🛡️ SYNC LOOP 2 PROTECTED: Skipping ${intMatch.team1Name} vs ${intMatch.team2Name} (internal is verified, incoming is API)',
           );
           continue;
         }
@@ -1362,7 +1397,7 @@ class FirestoreService {
           await updateMatchScore(
             competitionId,
             intMatch.id,
-            extScore ?? {'team1': 0, 'team2': 0},
+            extScore ?? {},
             ext.status,
             oldScore: intMatch.actualScore,
           );
@@ -1625,6 +1660,8 @@ class FirestoreService {
     Map<String, dynamic> score,
     String status, {
     Map<String, dynamic>? oldScore,
+    MatchModel? matchToAddBeforeUpdate,
+    int? matchNumber,
   }) async {
     try {
       // 🛡️ LAST-LINE-OF-DEFENSE: Read current Firestore doc before writing.
@@ -1656,15 +1693,21 @@ class FirestoreService {
       }
 
       // Update the match in the competition
-      await _firestore
+      final matchRef = _firestore
           .collection('competitions')
           .doc(competitionId)
           .collection('matches')
-          .doc(matchId)
-          .update({
-            'actualScore': score.isEmpty ? null : score,
-            'status': status,
-          });
+          .doc(matchId);
+
+      if (matchToAddBeforeUpdate != null) {
+        await matchRef.set(matchToAddBeforeUpdate.toMap());
+      } else {
+        await matchRef.update({
+          'actualScore': score.isEmpty ? null : score,
+          'status': status,
+          if (matchNumber != null) 'matchNumber': matchNumber,
+        });
+      }
 
       // 🌍 GLOBAL PROTECTION: If manually scored OR verified, save to official_leagues
       if (score.isNotEmpty &&
@@ -2369,7 +2412,11 @@ class FirestoreService {
   }
 
   /// 3. Promote to HARD COPY (After Verification)
-  Future<void> promoteSoftToHardCopy(String leagueId) async {
+  Future<void> promoteSoftToHardCopy(
+    String leagueId, {
+    String? sport,
+    String? name,
+  }) async {
     try {
       final softMatches = await getSoftMatches(leagueId);
       if (softMatches.isEmpty) return;
@@ -2402,57 +2449,23 @@ class FirestoreService {
         }
       }
 
-      final Set<String> processedKeys = {};
-
+      // 2. Process Soft matches and prepare batch operations
       for (var soft in softMatches) {
-        final key = _generateMatchKey(soft);
-        if (processedKeys.contains(key))
-          continue; // SKIP exact duplicate soft match
-        processedKeys.add(key);
+        final softKey = _generateMatchKey(soft);
 
-        String? targetId;
-
-        // Try to find matching existing match using alias-aware logic
-        final matchIndex = existingHardMatches.indexWhere((hard) {
-          bool teamsMatch =
-              (TeamsDataService.areTeamNamesEquivalent(
-                    hard.team1Name,
-                    soft.team1Name,
-                  ) &&
-                  TeamsDataService.areTeamNamesEquivalent(
-                    hard.team2Name,
-                    soft.team2Name,
-                  )) ||
-              (TeamsDataService.areTeamNamesEquivalent(
-                    hard.team1Name,
-                    soft.team2Name,
-                  ) &&
-                  TeamsDataService.areTeamNamesEquivalent(
-                    hard.team2Name,
-                    soft.team1Name,
-                  ));
-
-          if (!teamsMatch) return false;
-
-          final hourDiff = hard.scheduledTime
-              .difference(soft.scheduledTime)
-              .inHours
-              .abs();
-          return hourDiff < 48; // Expanded window for master verification
+        // Find match in hard copy (fuzzy match)
+        final existingIdx = existingHardMatches.indexWhere((h) {
+          final hKey = _generateMatchKey(h);
+          if (hKey == softKey) return true;
+          return _isSameMatchFuzzy(h, soft);
         });
 
-        if (matchIndex != -1) {
-          targetId = existingHardMatches[matchIndex].id;
-        } else {
-          targetId = hardCollection.doc().id;
-        }
+        final DocumentReference docRef = existingIdx != -1
+            ? hardCollection.doc(existingHardMatches[existingIdx].id)
+            : hardCollection.doc();
 
-        final docRef = hardCollection.doc(targetId);
+        final Map<String, dynamic> data = soft.toMap();
 
-        // Write Soft Copy data to Hard Copy AND Mark as Verified
-        final data = soft.toMap();
-
-        // Add compatibility fields for MasterSync/Follower mapping
         data['homeTeamName'] = soft.team1Name;
         data['awayTeamName'] = soft.team2Name;
         data['homeTeamCode'] = soft.team1Id.length <= 10
@@ -2496,6 +2509,25 @@ class FirestoreService {
           'verifiedMatchCount': softMatches.length,
         },
         SetOptions(merge: true),
+      );
+
+      // 🔥 Global Sync: Mark as a major/verified tournament for organizers
+      final Map<String, dynamic> discData = {
+        'isMajor': true,
+        'status': 'active',
+      };
+      if (sport != null) discData['sport'] = sport;
+      if (name != null) discData['name'] = name;
+
+      batch.set(
+        _firestore.collection('discovered_tournaments').doc(leagueId),
+        discData,
+        SetOptions(merge: true),
+      );
+
+      // 🛑 Remove from Blacklist if it was there
+      batch.delete(
+        _firestore.collection('blacklisted_tournaments').doc(leagueId),
       );
 
       await batch.commit();
@@ -2556,11 +2588,11 @@ class FirestoreService {
       await _deleteCollection(matchesCollection);
 
       // Also update the league status: Set a tombstone to prevent re-fetch of old data
-      await _firestore.collection('official_leagues').doc(leagueId).update({
+      await _firestore.collection('official_leagues').doc(leagueId).set({
         'lastCleanedAt': FieldValue.serverTimestamp(),
         // We REMOVE setting lastMasterSync to null, as it causes immediate re-population of garbage.
         // Instead, the next scheduled sync will honor lastCleanedAt.
-      });
+      }, SetOptions(merge: true));
     } catch (e) {
       throw Exception('Failed to clean hard copy matches: $e');
     }
@@ -2575,9 +2607,9 @@ class FirestoreService {
           .collection('soft_matches');
       await _deleteCollection(softCollection);
 
-      await _firestore.collection('official_leagues').doc(leagueId).update({
+      await _firestore.collection('official_leagues').doc(leagueId).set({
         'lastSoftCopyTime': null,
-      });
+      }, SetOptions(merge: true));
       debugPrint('✅ Soft matches cleaned for $leagueId');
     } catch (e) {
       throw Exception('Failed to clean soft matches: $e');
@@ -2662,7 +2694,7 @@ class FirestoreService {
                 .difference(match.scheduledTime)
                 .inHours
                 .abs() <
-            24;
+            48;
       });
 
       if (matchIndex != -1) {
@@ -2706,6 +2738,10 @@ class FirestoreService {
       );
 
       await batch.commit();
+
+      // Ensure Master List is clean of historical duplicates
+      await _cleanupHardCopyDuplicates(leagueId);
+      
       debugPrint('✅ Individual match verified and pushed for $leagueId');
 
       // 4. Directly push this single match's score to ALL competitions linked to this league
@@ -2740,20 +2776,75 @@ class FirestoreService {
               final teamsMatch =
                   (t1 == matchT1 && t2 == matchT2) ||
                   (t1 == matchT2 && t2 == matchT1);
-              if (!teamsMatch) return false;
+              if (!teamsMatch) {
+                debugPrint(
+                  '🔍 Filter: Skipping match in competition $compId because team names do not match: ${d['team1Name']} vs ${d['team2Name']} (expected $matchT1 vs $matchT2)',
+                );
+                return false;
+              }
               final scheduledTime = (d['scheduledTime'] as Timestamp?)
                   ?.toDate();
-              if (scheduledTime == null) return false;
-              return scheduledTime
-                      .difference(match.scheduledTime)
-                      .inHours
-                      .abs() <
+              if (scheduledTime == null) {
+                debugPrint(
+                  '🔍 Filter: Skipping match in competition $compId because scheduledTime is null.',
+                );
+                return false;
+              }
+              final bool timeMatches =
+                  scheduledTime.difference(match.scheduledTime).inHours.abs() <
                   48;
+              if (!timeMatches) {
+                debugPrint(
+                  '🔍 Filter: Skipping match in competition $compId because scheduledTime difference is too large: ${scheduledTime.difference(match.scheduledTime).inHours.abs()} hours.',
+                );
+              }
+              return timeMatches;
             }).toList();
 
             if (matchingDocs.isEmpty) {
               debugPrint(
-                '  ⚠️ No match found in competition $compId for ${match.team1Name} vs ${match.team2Name}',
+                '  ➕ Match not found in competition $compId for ${match.team1Name} vs ${match.team2Name}. Adding it...',
+              );
+              // RE-POPULATION LOGIC inside Push:
+              // If it doesn't exist, we SHOULD add it so the scoring can proceed.
+              final teams = await getTeams(compId).first;
+              final Map<String, String> teamNameToId = {};
+              for (var t in teams) {
+                final aliases = TeamsDataService.getTeamAliases(t.name);
+                for (var alias in aliases) {
+                  teamNameToId[alias.toLowerCase().trim()] = t.id;
+                }
+              }
+
+              final t1Id =
+                  teamNameToId[match.team1Name.toLowerCase().trim()] ??
+                  match.team1Id;
+              final t2Id =
+                  teamNameToId[match.team2Name.toLowerCase().trim()] ??
+                  match.team2Id;
+
+              final newMatchId = _firestore
+                  .collection('competitions')
+                  .doc(compId)
+                  .collection('matches')
+                  .doc()
+                  .id;
+
+              final matchToAdd = match.copyWith(
+                id: newMatchId,
+                competitionId: compId,
+                team1Id: t1Id,
+                team2Id: t2Id,
+              );
+
+              // Use updateMatchScore to create + score
+              await updateMatchScore(
+                compId,
+                newMatchId,
+                matchToAdd.actualScore ?? {},
+                matchToAdd.status,
+                oldScore: null,
+                matchToAddBeforeUpdate: matchToAdd,
               );
               continue;
             }
@@ -2860,7 +2951,14 @@ class FirestoreService {
               updateData['winnerId'] = resolvedWinner;
             }
 
-            await primaryDoc.reference.update(updateData);
+            // 🔄 Use STABLE updateMatchScore logic to ensure predictions/standings triggers!
+            await updateMatchScore(
+              compId,
+              primaryDoc.id,
+              updateData['actualScore'] ?? {},
+              updateData['status'] ?? match.status,
+              oldScore: primaryDoc.data()['actualScore'] as Map<String, dynamic>?,
+            );
             debugPrint(
               '  ✅ Updated ${match.team1Name} vs ${match.team2Name} in competition $compId',
             );
@@ -2913,6 +3011,8 @@ class FirestoreService {
         syncOfficialTournamentScores(
           competitionId: competitionId,
           leagueId: leagueId,
+          lastVerifiedTime:
+              timestamp, // Trigger immediate sync on master update
         );
       }
     });
@@ -2998,10 +3098,11 @@ class FirestoreService {
       final pointsForWinner = rules['correctWinner'] ?? 3;
       final pointsForScore = rules['correctScore'] ?? 2;
 
-      // 2. Get all predictions for this match
+      // 2. Get all predictions for this match (Filtered by competition to avoid double-scoring)
       final predictionsSnapshot = await _firestore
           .collection('predictions')
           .where('matchId', isEqualTo: matchId)
+          .where('competitionId', isEqualTo: competitionId)
           .get();
 
       final allDocs = predictionsSnapshot.docs;
@@ -3053,9 +3154,10 @@ class FirestoreService {
 
           if (competition.sport == AppConstants.sportCricket) {
             // --- Cricket Scoring Logic ---
-            String? actualWinnerId = actualScore['winnerId'];
-            final String? predWinnerId = predScore['winnerId'];
-            String? startMarginType = actualScore['marginType'];
+            String? actualWinnerId = actualScore['winnerId']?.toString();
+            final String? predWinnerId = predScore['winnerId']?.toString();
+            final bool predIsTieMatch = predScore['isTie'] == true || predWinnerId == 'tied';
+            String? startMarginType = actualScore['marginType']?.toString();
             final String? actualMarginValue = actualScore['marginValue']
                 ?.toString();
 
@@ -3085,12 +3187,28 @@ class FirestoreService {
               }
             }
 
+            // Fallback: If winnerId is a foreign UUID that doesn't match either team,
+            // reset it and try to infer from runs.
+            if (actualWinnerId != null &&
+                actualWinnerId != 'tied' &&
+                actualWinnerId != 'no_result' &&
+                actualWinnerId != 'draw' &&
+                matchModel != null &&
+                actualWinnerId != matchModel.team1Id &&
+                actualWinnerId != matchModel.team2Id) {
+              debugPrint(
+                '⚠️ winnerId $actualWinnerId does not match team1=${matchModel.team1Id} or team2=${matchModel.team2Id}. Resetting to infer from scores.',
+              );
+              actualWinnerId = null;
+            }
+
+            // Handle Runs parsing for tie detection
+            final t1 = int.tryParse(actualScore['t1Runs']?.toString() ?? '-1') ?? -1;
+            final t2 = int.tryParse(actualScore['t2Runs']?.toString() ?? '-1') ?? -1;
+            final bool isTieByScore = (t1 != -1 && t2 != -1 && t1 == t2 && actualWinnerId != 'no_result');
+
             // Infer Winner from runs if missing
-            if (actualWinnerId == null && actualScore['t1Runs'] != null) {
-              final t1 =
-                  int.tryParse(actualScore['t1Runs']?.toString() ?? '0') ?? 0;
-              final t2 =
-                  int.tryParse(actualScore['t2Runs']?.toString() ?? '0') ?? 0;
+            if (actualWinnerId == null && t1 != -1) {
               if (t1 == t2)
                 actualWinnerId = 'tied';
               else if (t1 > t2)
@@ -3101,8 +3219,8 @@ class FirestoreService {
 
             // Check Winner
             if (actualWinnerId != null &&
-                predWinnerId != null &&
-                actualWinnerId == predWinnerId) {
+                ((actualWinnerId == 'tied' && predIsTieMatch) ||
+                    (predWinnerId != null && actualWinnerId == predWinnerId))) {
               points = pointsForWinner;
               isCorrectOutcome = true;
             }
@@ -3130,18 +3248,17 @@ class FirestoreService {
             final bool isSuperOver =
                 actualScore['marginType']?.toString().toLowerCase() ==
                 'super_over';
-            if ((actualWinnerId == 'tied' || isSuperOver) &&
-                predWinnerId == 'tied') {
+            if ((actualWinnerId == 'tied' || isSuperOver || isTieByScore) &&
+                predIsTieMatch) {
               points = pointsForWinner;
               isCorrectOutcome = true;
               marginCorrect =
                   true; // Predicting a tie in a tie match gets full points
             }
 
-            if (marginCorrect &&
-                (isCorrectOutcome || actualWinnerId == 'tied')) {
+            if (marginCorrect && isCorrectOutcome) {
               points += pointsForScore;
-              if (isCorrectOutcome) isPerfectScore = true;
+              isPerfectScore = true;
             }
           } else {
             // --- Football / Other Scoring Logic ---
@@ -3183,9 +3300,9 @@ class FirestoreService {
                 points += pointsForWinner;
                 isCorrectOutcome = true;
               }
-              if (scoreMatches) {
+              if (scoreMatches && outcomeMatches) {
                 points += pointsForScore;
-                if (isCorrectOutcome) isPerfectScore = true;
+                isPerfectScore = true;
               }
             } else {
               // Fallback to Winner ID only
@@ -3236,6 +3353,41 @@ class FirestoreService {
         }
 
         await batch.commit();
+      }
+
+      // 5. Update totalPredictions count for all affected users
+      final Set<String> affectedUserIds = allDocs
+          .map((doc) => doc.data()['userId'] as String)
+          .where((uid) => currentParticipantIds.contains(uid))
+          .toSet();
+
+      if (affectedUserIds.isNotEmpty) {
+        final predCountBatch = _firestore.batch();
+        int predBatchCount = 0;
+
+        for (final uid in affectedUserIds) {
+          // Count ALL predictions for this user in this competition
+          final userPredCount = await _firestore
+              .collection('predictions')
+              .where('userId', isEqualTo: uid)
+              .where('competitionId', isEqualTo: competitionId)
+              .count()
+              .get();
+
+          predCountBatch.update(participantsRef.doc(uid), {
+            'totalPredictions': userPredCount.count ?? 0,
+          });
+          predBatchCount++;
+
+          if (predBatchCount >= 400) {
+            await predCountBatch.commit();
+            predBatchCount = 0;
+          }
+        }
+
+        if (predBatchCount > 0) {
+          await predCountBatch.commit();
+        }
       }
     } catch (e) {
       debugPrint('🚨 ERROR in _processPredictions: $e');
@@ -3375,37 +3527,38 @@ class FirestoreService {
         if (match.actualScore == null) continue;
 
         // Robust parsing for scores (handle String or num)
-        var t1ScoreRaw = match.actualScore!['team1'] ?? 0;
-        var t2ScoreRaw = match.actualScore!['team2'] ?? 0;
-
         num t1Score = 0;
         num t2Score = 0;
 
-        if (t1ScoreRaw is String) {
-          t1Score = num.tryParse(t1ScoreRaw) ?? 0;
-        } else if (t1ScoreRaw is num) {
-          t1Score = t1ScoreRaw;
-        } else {
-          // Fallback for Cricket (t1Runs)
+        if (competition.sport == AppConstants.sportCricket) {
+          // Cricket: Read from t1Runs/t2Runs (not team1/team2)
           var t1Runs = match.actualScore!['t1Runs'];
           if (t1Runs != null) {
-            t1Score = t1Runs is String
-                ? (num.tryParse(t1Runs) ?? 0)
-                : (t1Runs as num);
+            t1Score = t1Runs is num
+                ? t1Runs
+                : (num.tryParse(t1Runs.toString()) ?? 0);
           }
-        }
-
-        if (t2ScoreRaw is String) {
-          t2Score = num.tryParse(t2ScoreRaw) ?? 0;
-        } else if (t2ScoreRaw is num) {
-          t2Score = t2ScoreRaw;
-        } else {
-          // Fallback for Cricket (t2Runs)
           var t2Runs = match.actualScore!['t2Runs'];
           if (t2Runs != null) {
-            t2Score = t2Runs is String
-                ? (num.tryParse(t2Runs) ?? 0)
-                : (t2Runs as num);
+            t2Score = t2Runs is num
+                ? t2Runs
+                : (num.tryParse(t2Runs.toString()) ?? 0);
+          }
+        } else {
+          // Other sports: Read from team1/team2
+          var t1ScoreRaw = match.actualScore!['team1'];
+          var t2ScoreRaw = match.actualScore!['team2'];
+
+          if (t1ScoreRaw is String) {
+            t1Score = num.tryParse(t1ScoreRaw) ?? 0;
+          } else if (t1ScoreRaw is num) {
+            t1Score = t1ScoreRaw;
+          }
+
+          if (t2ScoreRaw is String) {
+            t2Score = num.tryParse(t2ScoreRaw) ?? 0;
+          } else if (t2ScoreRaw is num) {
+            t2Score = t2ScoreRaw;
           }
         }
 
@@ -4319,7 +4472,7 @@ class FirestoreService {
   Future<void> createGlobalTeam(String organizerId, TeamModel team) async {
     try {
       await _firestore
-          .collection('organizers')
+          .collection('users')
           .doc(organizerId)
           .collection('team_library')
           .doc(team.id)
@@ -4333,7 +4486,7 @@ class FirestoreService {
   Future<void> updateGlobalTeam(String organizerId, TeamModel team) async {
     try {
       await _firestore
-          .collection('organizers')
+          .collection('users')
           .doc(organizerId)
           .collection('team_library')
           .doc(team.id)
@@ -4347,7 +4500,7 @@ class FirestoreService {
   Future<void> deleteGlobalTeam(String organizerId, String teamId) async {
     try {
       await _firestore
-          .collection('organizers')
+          .collection('users')
           .doc(organizerId)
           .collection('team_library')
           .doc(teamId)
@@ -4360,7 +4513,7 @@ class FirestoreService {
   // Get Global Teams
   Stream<List<TeamModel>> getGlobalTeams(String organizerId) {
     return _firestore
-        .collection('organizers')
+        .collection('users')
         .doc(organizerId)
         .collection('team_library')
         .orderBy('name')
@@ -4650,6 +4803,49 @@ class FirestoreService {
     await batch.commit();
   }
 
+  Future<List<OfficialTournamentModel>> getMajorTournaments() async {
+    final query = await _firestore
+        .collection('discovered_tournaments')
+        .where('isMajor', isEqualTo: true)
+        .get();
+
+    return query.docs.map((doc) {
+      final data = doc.data();
+      if (data['id'] == null) data['id'] = doc.id;
+      return OfficialTournamentModel.fromMap(data);
+    }).toList();
+  }
+
+  Future<void> toggleMajorStatus(
+    String leagueId,
+    bool isMajor, {
+    String? name,
+    String? sport,
+  }) async {
+    final Map<String, dynamic> data = {
+      'isMajor': isMajor,
+      'status': 'active',
+      'id': leagueId,
+    };
+    if (name != null) data['name'] = name;
+    if (sport != null) data['sport'] = sport;
+
+    final batch = _firestore.batch();
+    batch.set(
+      _firestore.collection('discovered_tournaments').doc(leagueId),
+      data,
+      SetOptions(merge: true),
+    );
+
+    if (isMajor) {
+      batch.delete(
+        _firestore.collection('blacklisted_tournaments').doc(leagueId),
+      );
+    }
+
+    await batch.commit();
+  }
+
   Future<List<OfficialTournamentModel>> getDiscoveredTournaments() async {
     final query = await _firestore
         .collection('discovered_tournaments')
@@ -4913,9 +5109,10 @@ class FirestoreService {
           final actualScore = match.actualScore!;
 
           // --- Calculation Logic ---
-          if (competition.sport == AppConstants.sportCricket) {
+          if (competition.sport.toLowerCase() == AppConstants.sportCricket.toLowerCase()) {
             String? actualWinnerId = actualScore['winnerId'];
             final String? predWinnerId = predScore['winnerId'];
+            final bool predIsTieMatch = predScore['isTie'] == true || predWinnerId == 'tied';
             String? startMarginType = actualScore['marginType'];
             final String? actualMarginValue = actualScore['marginValue']
                 ?.toString();
@@ -4973,12 +5170,27 @@ class FirestoreService {
               }
             }
 
-            // 2. Infer Winner if missing (for older/incomplete match data)
-            if (actualWinnerId == null && actualScore['t1Runs'] != null) {
-              final t1 =
-                  int.tryParse(actualScore['t1Runs']?.toString() ?? '0') ?? 0;
-              final t2 =
-                  int.tryParse(actualScore['t2Runs']?.toString() ?? '0') ?? 0;
+            // 1b. Fallback: If winnerId is a foreign UUID that doesn't match either team,
+            //     reset it and try to infer from runs.
+            if (actualWinnerId != null &&
+                actualWinnerId != 'tied' &&
+                actualWinnerId != 'no_result' &&
+                actualWinnerId != 'draw' &&
+                actualWinnerId != match.team1Id &&
+                actualWinnerId != match.team2Id) {
+              debugPrint(
+                '  ⚠️ winnerId "$actualWinnerId" does not match team1=${match.team1Id} or team2=${match.team2Id}. Resetting to infer from scores.',
+              );
+              actualWinnerId = null;
+            }
+
+            // 2. Handle Runs parsing for tie detection
+            final t1 = int.tryParse(actualScore['t1Runs']?.toString() ?? '-1') ?? -1;
+            final t2 = int.tryParse(actualScore['t2Runs']?.toString() ?? '-1') ?? -1;
+            final bool isTieByScore = (t1 != -1 && t2 != -1 && t1 == t2 && actualWinnerId != 'no_result');
+
+            // 2b. Infer Winner if missing (for older/incomplete match data)
+            if (actualWinnerId == null && t1 != -1) {
               if (t1 > t2) {
                 actualWinnerId = match.team1Id;
                 debugPrint(
@@ -4995,13 +5207,9 @@ class FirestoreService {
               }
             }
 
-            // 2. Check Winner Points
-            debugPrint(
-              '  WINNER CHECK: actual=$actualWinnerId vs pred=$predWinnerId => match=${actualWinnerId == predWinnerId}',
-            );
             if (actualWinnerId != null &&
-                predWinnerId != null &&
-                actualWinnerId == predWinnerId) {
+                ((actualWinnerId == 'tied' && predIsTieMatch) ||
+                    (predWinnerId != null && actualWinnerId == predWinnerId))) {
               points = pointsForWinner;
               isCorrectOutcome = true;
               debugPrint('  ✅ Winner CORRECT: +$pointsForWinner pts');
@@ -5108,27 +5316,20 @@ class FirestoreService {
             final String? actualMarginType = actualScore['marginType'];
             final bool isSuperOver =
                 actualMarginType?.toLowerCase() == 'super_over';
-
-            if (actualWinnerId == 'tied' && predWinnerId == 'tied') {
-              marginCorrect = true;
-              debugPrint(
-                '  Tied match + predicted tied => margin auto-correct',
-              );
-            } else if (isSuperOver && predWinnerId == 'tied') {
-              // Super over match: user predicted tie, award full points
+            // ✅ Robust Tie Handling (Award points if user predicted tie and match was tied by score or type)
+            final bool isActualTieMatch = (actualWinnerId == 'tied' || isSuperOver || isTieByScore);
+            if (isActualTieMatch && predIsTieMatch) {
               marginCorrect = true;
               isCorrectOutcome = true;
-              points =
-                  pointsForWinner; // Award winner points for predicting tie
+              points = pointsForWinner;
               debugPrint(
-                '  Super over match + predicted tied => awarding full 5 points (treating as tie)',
+                '  Match Tie Correct: User predicted tie and match results in tie/super over => awarding full points',
               );
             }
 
-            if (marginCorrect &&
-                (isCorrectOutcome || actualWinnerId == 'tied' || isSuperOver)) {
+            if (marginCorrect && isCorrectOutcome) {
               points += pointsForScore;
-              if (isCorrectOutcome) isPerfectScore = true;
+              isPerfectScore = true;
               debugPrint(
                 '  ✅ Margin CORRECT: +$pointsForScore pts (total=$points, perfect=$isPerfectScore)',
               );

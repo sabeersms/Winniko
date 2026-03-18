@@ -229,12 +229,14 @@ class AppDrawer extends StatelessWidget {
                     icon: Icons.library_books,
                     title: 'Team Library',
                     onTap: () {
+                      final authService = Provider.of<AuthService>(context, listen: false);
                       Navigator.pop(context); // Close drawer
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) =>
-                              TeamLibraryScreen(organizerId: user?.id ?? ''),
+                          builder: (_) => TeamLibraryScreen(
+                            organizerId: user?.id ?? authService.currentUserId ?? '',
+                          ),
                         ),
                       );
                     },

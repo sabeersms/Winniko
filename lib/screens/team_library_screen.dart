@@ -260,7 +260,7 @@ class _TeamLibraryScreenState extends State<TeamLibraryScreen> {
             itemCount: sortedTournamentNames.length + 1,
             itemBuilder: (context, index) {
               if (index == sortedTournamentNames.length) {
-                return const SizedBox(height: 80);
+                return const SizedBox(height: 120);
               }
 
               final tournamentName = sortedTournamentNames[index];
@@ -401,6 +401,7 @@ class _AddEditTeamDialog extends StatefulWidget {
 class _AddEditTeamDialogState extends State<_AddEditTeamDialog> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _shortNameController = TextEditingController();
+  final TextEditingController _competitionNameController = TextEditingController();
   XFile? _logoPreview;
   bool _isLoading = false;
   String? _errorMessage;
@@ -411,6 +412,7 @@ class _AddEditTeamDialogState extends State<_AddEditTeamDialog> {
     if (widget.team != null) {
       _nameController.text = widget.team!.name;
       _shortNameController.text = widget.team!.shortName;
+      _competitionNameController.text = widget.team!.competitionName ?? '';
     }
   }
 
@@ -418,6 +420,7 @@ class _AddEditTeamDialogState extends State<_AddEditTeamDialog> {
   void dispose() {
     _nameController.dispose();
     _shortNameController.dispose();
+    _competitionNameController.dispose();
     super.dispose();
   }
 
@@ -469,6 +472,9 @@ class _AddEditTeamDialogState extends State<_AddEditTeamDialog> {
         logoUrl: logoUrl,
         competitionId: 'library', // Placeholder for global items
         createdAt: widget.team?.createdAt ?? DateTime.now(),
+        competitionName: _competitionNameController.text.trim().isNotEmpty 
+            ? _competitionNameController.text.trim() 
+            : null,
       );
 
       if (widget.team == null) {
@@ -479,7 +485,8 @@ class _AddEditTeamDialogState extends State<_AddEditTeamDialog> {
 
       if (mounted) Navigator.pop(context);
     } catch (e) {
-      setState(() => _errorMessage = e.toString());
+      debugPrint('Library Error for ID ${widget.organizerId}: $e');
+      setState(() => _errorMessage = 'Error (UID: ${widget.organizerId}): $e');
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -578,6 +585,20 @@ class _AddEditTeamDialogState extends State<_AddEditTeamDialog> {
                         decoration: const InputDecoration(
                           hintText: 'Code (e.g. ARS)',
                           counterText: "",
+                          filled: true,
+                          fillColor: AppColors.inputBackground,
+                          isDense: true,
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      TextField(
+                        controller: _competitionNameController,
+                        style: const TextStyle(color: AppColors.textPrimary),
+                        decoration: const InputDecoration(
+                          hintText: 'Tournament / Category (Optional)',
+                          helperText: 'e.g. Local League, IPL 2025',
+                          helperStyle: TextStyle(color: Colors.white38, fontSize: 10),
                           filled: true,
                           fillColor: AppColors.inputBackground,
                           isDense: true,

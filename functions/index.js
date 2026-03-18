@@ -253,6 +253,33 @@ async function recalculateLeaderboard(competitionId) {
           else if (t1 === t2 && t1 !== 0) actWin = "tied";
         }
 
+        // Slug to UUID Resolution
+        if (actWin && actWin !== 'tied' && actWin !== 'no_result' && !actWin.includes('-')) {
+          const slug = (actWin || "").toLowerCase().replace(/_/g, '').replace(/ /g, '');
+          const t1n = (match.team1Name || "").toLowerCase().replace(/ /g, '').replace(/_/g, '');
+          const t2n = (match.team2Name || "").toLowerCase().replace(/ /g, '').replace(/_/g, '');
+
+          if (t1n.includes(slug) || slug.includes(t1n)) {
+            actWin = match.team1Id;
+          } else if (t2n.includes(slug) || slug.includes(t2n)) {
+            actWin = match.team2Id;
+          }
+        }
+
+        // Foreign UUID Fallback: if winnerId doesn't match either team, infer from runs
+        if (actWin && actWin !== 'tied' && actWin !== 'no_result' && actWin !== 'draw' &&
+            actWin !== match.team1Id && actWin !== match.team2Id) {
+          console.log(`winnerId "${actWin}" does not match team1=${match.team1Id} or team2=${match.team2Id}. Re-inferring.`);
+          actWin = null;
+          if (act.t1Runs !== undefined) {
+            const t1r = parseInt(act.t1Runs) || 0;
+            const t2r = parseInt(act.t2Runs) || 0;
+            if (t1r > t2r) actWin = match.team1Id;
+            else if (t2r > t1r) actWin = match.team2Id;
+            else if (t1r === t2r && t1r !== 0) actWin = "tied";
+          }
+        }
+
         if (actWin && actWin === prWin) { pts = pWinner; isOut = true; }
 
         let actMT = (act.marginType || "").toLowerCase();

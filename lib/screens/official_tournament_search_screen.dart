@@ -364,7 +364,7 @@ class _OfficialTournamentSearchScreenState
                     : _results.isEmpty
                     ? _buildEmptyState()
                     : ListView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 120),
                         itemCount: _results.length,
                         itemBuilder: (context, index) {
                           final t = _results[index];

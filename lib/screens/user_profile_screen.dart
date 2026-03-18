@@ -80,7 +80,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       body: _isLoading
           ? const Center(child: LoadingSpinner(color: AppColors.accentGreen))
           : SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 120),
               child: Column(
                 children: [
                   // Profile Header

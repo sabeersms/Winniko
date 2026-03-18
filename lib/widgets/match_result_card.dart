@@ -32,6 +32,97 @@ class MatchResultCard extends StatelessWidget {
     this.sport,
   });
 
+  String? resolveWinnerName(String? wId, {String? sport}) {
+    if (wId == null || (wId.trim().isEmpty)) return wId;
+    if (wId == 'tied' || wId == 'no_result' || wId == 'draw') return wId;
+
+    String cleanWId = wId.trim().toLowerCase();
+    if (cleanWId.contains(' ')) {
+      cleanWId = cleanWId.split(' ')[0];
+    }
+
+    String cleanT1Id = match.team1Id.trim().toLowerCase();
+    String cleanT2Id = match.team2Id.trim().toLowerCase();
+
+    // Secondary check: look for names in the actualScore metadata
+    if (match.actualScore != null) {
+      if (match.actualScore!['winnerName'] != null) {
+        return match.actualScore!['winnerName'].toString();
+      }
+      if (match.actualScore!['winner_name'] != null) {
+        return match.actualScore!['winner_name'].toString();
+      }
+    }
+
+    // Normalize all strings for comparison
+    String norm(String s) =>
+        s.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '');
+
+    final nWId = norm(cleanWId);
+    final nT1Id = norm(cleanT1Id);
+    final nT2Id = norm(cleanT2Id);
+    final nT1Name = norm(match.team1Name);
+    final nT2Name = norm(match.team2Name);
+
+    // 1. Precise or fuzzy ID match
+    if (nWId == nT1Id ||
+        (nT1Id.length > 5 && nWId.contains(nT1Id)) ||
+        (nWId.length > 5 && nT1Id.contains(nWId))) return match.team1Name;
+    if (nWId == nT2Id ||
+        (nT2Id.length > 5 && nWId.contains(nT2Id)) ||
+        (nWId.length > 5 && nT2Id.contains(nWId))) return match.team2Name;
+
+    // 2. Name-based match (sometimes ID is a slug/name)
+    if (nWId == nT1Name ||
+        (nT1Name.length > 3 && (nWId.contains(nT1Name) || nT1Name.contains(nWId)))) {
+      return match.team1Name;
+    }
+    if (nWId == nT2Name ||
+        (nT2Name.length > 3 && (nWId.contains(nT2Name) || nT2Name.contains(nWId)))) {
+      return match.team2Name;
+    }
+
+    // 3. Fallback: Check who won by looking at the score (only if not a literal TIE branch)
+    final rootWinnerId = match.winnerId?.toLowerCase();
+    if (rootWinnerId != null &&
+        rootWinnerId != 'tied' &&
+        rootWinnerId != 'draw') {
+      if (rootWinnerId == cleanT1Id || norm(rootWinnerId) == nT1Id) {
+        return match.team1Name;
+      }
+      if (rootWinnerId == cleanT2Id || norm(rootWinnerId) == nT2Id) {
+        return match.team2Name;
+      }
+    }
+
+    // 4. Last resort: If scores are NOT tied, infer from runs/points
+    if (match.actualScore != null) {
+      if (sport == AppConstants.sportCricket) {
+        final t1Runs =
+            int.tryParse(match.actualScore!['t1Runs']?.toString() ?? '0') ?? 0;
+        final t2Runs =
+            int.tryParse(match.actualScore!['t2Runs']?.toString() ?? '0') ?? 0;
+        if (t1Runs != t2Runs && t1Runs > 0 && t2Runs > 0) {
+          return t1Runs > t2Runs ? match.team1Name : match.team2Name;
+        }
+      } else {
+        final s1 =
+            int.tryParse(match.actualScore!['team1']?.toString() ?? '0') ?? 0;
+        final s2 =
+            int.tryParse(match.actualScore!['team2']?.toString() ?? '0') ?? 0;
+        if (s1 != s2 && (s1 > 0 || s2 > 0)) {
+          return s1 > s2 ? match.team1Name : match.team2Name;
+        }
+      }
+    }
+
+    // If it's a UUID and somehow didn't match, return Team 1 as a legacy visual fallback
+    // but try to keep the ID if it's very short.
+    if (wId.contains('-')) return match.team1Name;
+
+    return wId;
+  }
+
   /// Resolves a winner ID that may be an API name slug (e.g., "south_africa")
   /// OR a competition UUID. Returns the matching team1Id or team2Id,
   /// or the original value unchanged (for 'tied', 'no_result', already UUID, etc.)
@@ -41,20 +132,26 @@ class MatchResultCard extends StatelessWidget {
     if (wId == match.team1Id || wId == match.team2Id) {
       return wId; // already a UUID
     }
-    if (wId.contains('-')) return wId; // looks like a UUID, pass through
+
+    // Case-insensitive ID check
+    if (wId.toLowerCase() == match.team1Id.toLowerCase()) return match.team1Id;
+    if (wId.toLowerCase() == match.team2Id.toLowerCase()) return match.team2Id;
 
     // Looks like a slug — try to map to a team UUID via name fuzzy match
     final slug = wId.toLowerCase().replaceAll('_', '');
-    final t1n = match.team1Name
-        .toLowerCase()
-        .replaceAll(' ', '')
-        .replaceAll('_', '');
-    final t2n = match.team2Name
-        .toLowerCase()
-        .replaceAll(' ', '')
-        .replaceAll('_', '');
+    final t1n =
+        match.team1Name.toLowerCase().replaceAll(' ', '').replaceAll('_', '');
+    final t2n =
+        match.team2Name.toLowerCase().replaceAll(' ', '').replaceAll('_', '');
     if (t1n.contains(slug) || slug.contains(t1n)) return match.team1Id;
     if (t2n.contains(slug) || slug.contains(t2n)) return match.team2Id;
+
+    if (wId.contains('-')) {
+      // Fallback: If it's a UUID and somehow didn't match team1Id or team2Id,
+      // map it to team1Id so the UI doesn't print raw alphanumeric codes to the user
+      return match.team1Id;
+    }
+
     return wId; // unresolved, return as-is
   }
 
@@ -67,11 +164,9 @@ class MatchResultCard extends StatelessWidget {
     final team1Score = team1ScoreVal.toString();
     final team2Score = team2ScoreVal.toString();
 
-    final isLive =
-        match.status == AppConstants.matchStatusLive ||
+    final isLive = match.status == AppConstants.matchStatusLive ||
         match.status == AppConstants.matchStatusProgressing;
-    final isUpcoming =
-        match.status == AppConstants.matchStatusUpcoming ||
+    final isUpcoming = match.status == AppConstants.matchStatusUpcoming ||
         match.status == AppConstants.matchStatusScheduled;
 
     String dateStr;
@@ -85,39 +180,58 @@ class MatchResultCard extends StatelessWidget {
 
     final AutoSizeGroup teamNameGroup = AutoSizeGroup();
 
-    // Check winnerId from root OR inside actualScore (legacy/compat),
-    // and resolve any API name slugs (e.g., "south_africa") to team UUIDs.
-    String? rawWinnerId = _resolveWinnerId(match.winnerId);
-    if ((rawWinnerId == null || rawWinnerId.isEmpty) &&
-        match.actualScore != null) {
-      rawWinnerId = _resolveWinnerId(
-        match.actualScore!['winnerId']?.toString(),
-      );
+    // Resolve IDs
+    String? rawWinnerId = match.winnerId;
+    if (rawWinnerId == null || rawWinnerId.isEmpty) {
+      rawWinnerId = match.actualScore?['winnerId']?.toString();
     }
 
-    // Check if it was a tie-breaker (scores equal but winner exists)
+    // Check if it was a tie-breaker situation
     bool isScoreEqual;
     if (sport == 'Cricket') {
-      final t1Runs = match.actualScore?['t1Runs'] ?? 0;
-      final t2Runs = match.actualScore?['t2Runs'] ?? 0;
-      // If we have no run data, assume not equal to avoid false positive on 0-0
+      final t1Runs = int.tryParse(match.actualScore?['t1Runs']?.toString() ?? '0') ?? 0;
+      final t2Runs = int.tryParse(match.actualScore?['t2Runs']?.toString() ?? '0') ?? 0;
       if (match.actualScore?['t1Runs'] == null &&
           match.actualScore?['t2Runs'] == null) {
         isScoreEqual = false;
       } else {
-        isScoreEqual = (t1Runs == t2Runs);
+        isScoreEqual = (t1Runs == t2Runs && t1Runs > 0);
       }
     } else {
       isScoreEqual = (team1ScoreVal == team2ScoreVal);
     }
 
+    String? tbwId = match.actualScore?['tieBreakerWinnerId']?.toString();
+    if (tbwId == null || tbwId.isEmpty) {
+      tbwId = match.actualScore?['superOverWinnerId']?.toString();
+    }
+    if (tbwId == null || tbwId.isEmpty) {
+      tbwId = match.actualScore?['shootoutWinnerId']?.toString();
+    }
+    if (tbwId == null || tbwId.isEmpty) {
+      tbwId = match.actualScore?['tie_breaker_winner_id']?.toString();
+    }
+
+    if (tbwId != null && tbwId.isNotEmpty) {
+      isScoreEqual = true;
+    }
+    
+    if (rawWinnerId == 'tied' || rawWinnerId == 'draw') {
+      isScoreEqual = true;
+    }
+
+    if (isScoreEqual && (tbwId == null || tbwId.isEmpty)) {
+      if (rawWinnerId != null &&
+          rawWinnerId != 'tied' &&
+          rawWinnerId != 'no_result' &&
+          rawWinnerId != 'draw') {
+        tbwId = rawWinnerId;
+      }
+    }
+
     final bool isTieBreaker =
-        isScoreEqual &&
-        (rawWinnerId != null &&
-            rawWinnerId.isNotEmpty &&
-            rawWinnerId != 'tied' &&
-            rawWinnerId != 'no_result' &&
-            rawWinnerId != 'draw');
+        isScoreEqual && (tbwId != null && tbwId.isNotEmpty && tbwId != 'tied' && tbwId != 'draw' && tbwId != 'no_result');
+
 
     final gradient = _getGradient(match.competitionId);
 
@@ -193,6 +307,19 @@ class MatchResultCard extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  if (match.matchNumber != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12.0),
+                      child: Text(
+                        'MATCH ${match.matchNumber}',
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.6),
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 2,
+                        ),
+                      ),
+                    ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment:
@@ -288,264 +415,30 @@ class MatchResultCard extends StatelessWidget {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                if (isUpcoming)
-                                  Container(
-                                    width: 44,
-                                    height: 44,
-                                    decoration: BoxDecoration(
-                                      color: Colors.black.withValues(
-                                        alpha: 0.5,
-                                      ), // Dark background
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color:
-                                            Colors.amberAccent, // Gold Border
-                                        width: 2,
-                                      ),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withValues(
-                                            alpha: 0.3,
-                                          ),
-                                          blurRadius: 4,
-                                          offset: const Offset(0, 2),
-                                        ),
-                                      ],
-                                    ),
-                                    alignment: Alignment.center,
-                                    child: const Text(
-                                      'VS',
-                                      style: TextStyle(
-                                        color: Colors.amberAccent, // Gold Text
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w900,
-                                        fontStyle: FontStyle.italic,
-                                        letterSpacing: 0,
-                                      ),
+                                if (sport == 'Cricket' && match.isFinished &&
+                                    (rawWinnerId == 'tied' || rawWinnerId == 'draw' || isScoreEqual))
+                                  // Cricket tied: show TIED in center
+                                  const Text(
+                                    'TIED',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   )
-                                else if (sport == 'Cricket' &&
-                                    match.isFinished) ...[
-                                  // Cricket Completed State: Win Margin
-                                  if (match.actualScore?['winnerId'] ==
-                                          'tied' ||
-                                      isTieBreaker)
-                                    const Text(
-                                      'MATCH TIED',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    )
-                                  else if (match.actualScore?['winnerId'] ==
-                                      'no_result')
-                                    const Text(
-                                      'NO RESULT',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    )
-                                  else
-                                    Container(
-                                      constraints: const BoxConstraints(
-                                        maxWidth: 100,
-                                      ), // Prevent crushing logos
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          // Result Summary
-                                          if (match.actualScore != null &&
-                                              match.actualScore!['winnerId'] !=
-                                                  null &&
-                                              match.actualScore!['winnerId']
-                                                  .toString()
-                                                  .isNotEmpty &&
-                                              match.actualScore!['winnerId'] !=
-                                                  'tied' &&
-                                              match.actualScore!['winnerId'] !=
-                                                  'no_result')
-                                            AutoSizeText(
-                                              _resolveWinnerId(
-                                                        match
-                                                            .actualScore?['winnerId']
-                                                            ?.toString(),
-                                                      ) ==
-                                                      match.team1Id
-                                                  ? '${match.team1Name} Won'
-                                                  : '${match.team2Name} Won',
-                                              textAlign: TextAlign.center,
-                                              maxLines: 2,
-                                              minFontSize: 8,
-                                              wrapWords: true, // Allow wrapping
-                                              overflow: TextOverflow.visible,
-                                              style: const TextStyle(
-                                                color: Colors.amberAccent,
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          Builder(
-                                            builder: (context) {
-                                              final String rawType =
-                                                  match
-                                                      .actualScore?['marginType']
-                                                      ?.toString() ??
-                                                  '';
-                                              final String type = rawType
-                                                  .toLowerCase();
-                                              final String val =
-                                                  match
-                                                      .actualScore?['marginValue']
-                                                      ?.toString() ??
-                                                  '';
-
-                                              String marginText = '';
-                                              final t1r =
-                                                  int.tryParse(
-                                                    match.actualScore?['t1Runs']
-                                                            ?.toString() ??
-                                                        '0',
-                                                  ) ??
-                                                  0;
-                                              final t2r =
-                                                  int.tryParse(
-                                                    match.actualScore?['t2Runs']
-                                                            ?.toString() ??
-                                                        '0',
-                                                  ) ??
-                                                  0;
-                                              final t1w =
-                                                  int.tryParse(
-                                                    match.actualScore?['t1Wickets']
-                                                            ?.toString() ??
-                                                        '0',
-                                                  ) ??
-                                                  0;
-                                              final t2w =
-                                                  int.tryParse(
-                                                    match.actualScore?['t2Wickets']
-                                                            ?.toString() ??
-                                                        '0',
-                                                  ) ??
-                                                  0;
-
-                                              if (type == 'runs') {
-                                                final diff = (t1r - t2r).abs();
-                                                marginText =
-                                                    '${val.isNotEmpty && val != '?' ? val : diff} runs';
-                                              } else if (type == 'wickets' ||
-                                                  type == 'wicket') {
-                                                final wId = _resolveWinnerId(
-                                                  match.actualScore?['winnerId']
-                                                      ?.toString(),
-                                                );
-                                                final winnerWkts =
-                                                    wId == match.team1Id
-                                                    ? t1w
-                                                    : t2w;
-                                                final wLeft = (10 - winnerWkts)
-                                                    .clamp(0, 10);
-                                                final dVal =
-                                                    val.isNotEmpty && val != '?'
-                                                    ? val
-                                                    : wLeft.toString();
-                                                marginText =
-                                                    '$dVal ${dVal == '1' ? 'wicket' : 'wickets'}';
-                                              } else if (type.isEmpty) {
-                                                final wId = _resolveWinnerId(
-                                                  match.actualScore?['winnerId']
-                                                      ?.toString(),
-                                                );
-                                                final rawBattingFirstId = match
-                                                    .actualScore?['battingFirstId']
-                                                    ?.toString();
-                                                // battingFirstId may also be a slug — resolve it
-                                                final battingFirstId =
-                                                    _resolveWinnerId(
-                                                      rawBattingFirstId,
-                                                    );
-
-                                                if (battingFirstId != null &&
-                                                    battingFirstId.isNotEmpty) {
-                                                  if (wId == battingFirstId) {
-                                                    // Defender won: by runs
-                                                    marginText =
-                                                        '${(t1r - t2r).abs()} runs';
-                                                  } else {
-                                                    // Chaser won: by wickets
-                                                    final winnerWkts =
-                                                        (wId == match.team1Id)
-                                                        ? t1w
-                                                        : t2w;
-                                                    final wLeft =
-                                                        (10 - winnerWkts).clamp(
-                                                          0,
-                                                          10,
-                                                        );
-                                                    marginText =
-                                                        '$wLeft ${wLeft == 1 ? 'wicket' : 'wickets'}';
-                                                  }
-                                                } else {
-                                                  // Legacy Fallback: Guess based on which team won
-                                                  if (wId == match.team2Id) {
-                                                    // Traditional away win = chase
-                                                    final wLeft = (10 - t2w)
-                                                        .clamp(0, 10);
-                                                    marginText =
-                                                        '$wLeft ${wLeft == 1 ? 'wicket' : 'wickets'}';
-                                                  } else if (wId ==
-                                                      match.team1Id) {
-                                                    // Traditional home win = defense
-                                                    marginText =
-                                                        '${(t1r - t2r).abs()} runs';
-                                                  }
-                                                }
-                                              }
-
-                                              if (type.contains('super')) {
-                                                marginText = 'Super Over';
-                                              }
-
-                                              if (marginText.contains(
-                                                'Super Over',
-                                              )) {
-                                                return const AutoSizeText(
-                                                  '(Super Over)',
-                                                  textAlign: TextAlign.center,
-                                                  maxLines: 1,
-                                                  minFontSize: 10,
-                                                  style: TextStyle(
-                                                    color: Colors.amberAccent,
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                );
-                                              }
-
-                                              return AutoSizeText(
-                                                marginText.isNotEmpty
-                                                    ? 'by $marginText'
-                                                    : '',
-                                                textAlign: TextAlign.center,
-                                                maxLines: 1,
-                                                minFontSize: 10,
-                                                style: const TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                        ],
-                                      ),
+                                else if (sport == 'Cricket' && match.isFinished && rawWinnerId == 'no_result')
+                                  const Text(
+                                    'NO RESULT',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
                                     ),
-                                ] else if (sport != 'Cricket')
+                                  )
+                                else if (sport != 'Cricket' && !isUpcoming)
+                                  // Non-cricket finished/live: show score
                                   Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
@@ -584,41 +477,43 @@ class MatchResultCard extends StatelessWidget {
                                           ),
                                         ],
                                       ),
-                                      if (match.isFinished) ...[
-                                        const SizedBox(height: 4),
-                                        if (rawWinnerId == 'draw' ||
-                                            (isScoreEqual &&
-                                                (rawWinnerId == null ||
-                                                    rawWinnerId.isEmpty ||
-                                                    rawWinnerId == 'draw')))
-                                          const Text(
-                                            'DRAW',
-                                            style: TextStyle(
-                                              color: Colors.white70,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          )
-                                        else if (rawWinnerId == match.team1Id)
-                                          Text(
-                                            '${match.team1Name} Won',
-                                            style: const TextStyle(
-                                              color: Colors.amberAccent,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          )
-                                        else if (rawWinnerId == match.team2Id)
-                                          Text(
-                                            '${match.team2Name} Won',
-                                            style: const TextStyle(
-                                              color: Colors.amberAccent,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                      ],
                                     ],
+                                  )
+                                else
+                                  // Default: VS circle for upcoming, cricket finished with winner, etc.
+                                  Container(
+                                    width: 44,
+                                    height: 44,
+                                    decoration: BoxDecoration(
+                                      color: Colors.black.withValues(
+                                        alpha: 0.5,
+                                      ),
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: Colors.amberAccent,
+                                        width: 2,
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withValues(
+                                            alpha: 0.3,
+                                          ),
+                                          blurRadius: 4,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ],
+                                    ),
+                                    alignment: Alignment.center,
+                                    child: const Text(
+                                      'VS',
+                                      style: TextStyle(
+                                        color: Colors.amberAccent,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w900,
+                                        fontStyle: FontStyle.italic,
+                                        letterSpacing: 0,
+                                      ),
+                                    ),
                                   ),
                               ],
                             ),
@@ -675,39 +570,191 @@ class MatchResultCard extends StatelessWidget {
                       ),
                     ],
                   ),
-
-                  // Tie Breaker / Winner Text (MOVED HERE: below the main row inside the column)
-                  if (isTieBreaker && match.isFinished)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 12.0),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.amberAccent.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: Colors.amberAccent,
-                            width: 1,
+                  
+                  if (match.isFinished) ...[
+                    const SizedBox(height: 12),
+                    if (isTieBreaker)
+                      Builder(builder: (context) {
+                        // Resolve winner name directly from tbwId to avoid resolveWinnerName returning 'tied'
+                        final String resolvedTbwId = _resolveWinnerId(tbwId) ?? '';
+                        String winnerName;
+                        if (resolvedTbwId == match.team1Id) {
+                          winnerName = match.team1Name;
+                        } else if (resolvedTbwId == match.team2Id) {
+                          winnerName = match.team2Name;
+                        } else {
+                          // Fallback: try resolveWinnerName but skip if it returns tied/draw
+                          final resolved = resolveWinnerName(tbwId ?? rawWinnerId, sport: sport);
+                          if (resolved != null && resolved != 'tied' && resolved != 'draw') {
+                            winnerName = resolved;
+                          } else {
+                            winnerName = 'UNKNOWN';
+                          }
+                        }
+                        final String tieBreakerSuffix =
+                            (sport ?? '').toLowerCase().contains('football') ? 'P/K' : 'S/O';
+                        return Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.5),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: AppColors.accentGreen.withValues(alpha: 0.5),
+                            ),
                           ),
+                          child: Text(
+                            '${winnerName.toUpperCase()} WON BY $tieBreakerSuffix',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        );
+                      })
+                    else if ((rawWinnerId == 'draw' ||
+                        (isScoreEqual &&
+                            (rawWinnerId == null ||
+                                rawWinnerId.isEmpty ||
+                                rawWinnerId == 'draw'))) && sport != 'Cricket')
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.5),
+                          borderRadius: BorderRadius.circular(20),
                         ),
-                        child: AutoSizeText(
-                          (rawWinnerId == match.team1Id)
-                              ? '${match.team1Name} Won by Tie Breaker'
-                              : '${match.team2Name} Won by Tie Breaker',
-                          textAlign: TextAlign.center,
-                          maxLines: 1,
-                          minFontSize: 10,
-                          style: const TextStyle(
-                            color: Colors.amberAccent,
-                            fontSize: 12,
+                        child: const Text(
+                          'DRAW',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                      ),
-                    ),
+                      )
+                    else if ((rawWinnerId == match.team1Id || rawWinnerId == match.team2Id) && sport != 'Cricket')
+                      Container( // Standard winner pill for non-cricket
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.5),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          rawWinnerId == match.team1Id 
+                            ? '${match.team1Name} Won' 
+                            : '${match.team2Name} Won',
+                          style: const TextStyle(
+                            color: Colors.amberAccent,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      )
+                    // Cricket winner name + margin combined pill at bottom
+                    else if (sport == 'Cricket' &&
+                        match.actualScore != null &&
+                        match.actualScore!['winnerId'] != null &&
+                        match.actualScore!['winnerId'].toString().isNotEmpty &&
+                        match.actualScore!['winnerId'] != 'tied' &&
+                        match.actualScore!['winnerId'] != 'no_result')
+                      Builder(builder: (context) {
+                        final resolvedWId = _resolveWinnerId(
+                          match.actualScore?['winnerId']?.toString(),
+                        );
+                        final winnerName = resolvedWId == match.team1Id
+                            ? match.team1Name
+                            : match.team2Name;
+
+                        // Calculate margin text
+                        final String rawType =
+                            match.actualScore?['marginType']?.toString() ?? '';
+                        final String type = rawType.toLowerCase();
+                        final String val =
+                            match.actualScore?['marginValue']?.toString() ?? '';
+
+                        String marginText = '';
+                        final t1r = int.tryParse(
+                              match.actualScore?['t1Runs']?.toString() ?? '0') ?? 0;
+                        final t2r = int.tryParse(
+                              match.actualScore?['t2Runs']?.toString() ?? '0') ?? 0;
+                        final t1w = int.tryParse(
+                              match.actualScore?['t1Wickets']?.toString() ?? '0') ?? 0;
+                        final t2w = int.tryParse(
+                              match.actualScore?['t2Wickets']?.toString() ?? '0') ?? 0;
+
+                        if (type == 'runs') {
+                          final diff = (t1r - t2r).abs();
+                          marginText =
+                              '${val.isNotEmpty && val != '?' ? val : diff} runs';
+                        } else if (type == 'wickets' || type == 'wicket') {
+                          final winnerWkts =
+                              resolvedWId == match.team1Id ? t1w : t2w;
+                          final wLeft = (10 - winnerWkts).clamp(0, 10);
+                          final dVal = val.isNotEmpty && val != '?'
+                              ? val
+                              : wLeft.toString();
+                          marginText =
+                              '$dVal ${dVal == '1' ? 'wicket' : 'wickets'}';
+                        } else if (type.isEmpty) {
+                          final rawBattingFirstId =
+                              match.actualScore?['battingFirstId']?.toString();
+                          final battingFirstId =
+                              _resolveWinnerId(rawBattingFirstId);
+
+                          if (battingFirstId != null &&
+                              battingFirstId.isNotEmpty) {
+                            if (resolvedWId == battingFirstId) {
+                              marginText = '${(t1r - t2r).abs()} runs';
+                            } else {
+                              final winnerWkts =
+                                  (resolvedWId == match.team1Id) ? t1w : t2w;
+                              final wLeft =
+                                  (10 - winnerWkts).clamp(0, 10);
+                              marginText =
+                                  '$wLeft ${wLeft == 1 ? 'wicket' : 'wickets'}';
+                            }
+                          } else {
+                            if (resolvedWId == match.team2Id) {
+                              final wLeft = (10 - t2w).clamp(0, 10);
+                              marginText =
+                                  '$wLeft ${wLeft == 1 ? 'wicket' : 'wickets'}';
+                            } else if (resolvedWId == match.team1Id) {
+                              marginText = '${(t1r - t2r).abs()} runs';
+                            }
+                          }
+                        }
+
+                        if (type.contains('super')) {
+                          marginText = '';
+                        }
+
+                        // Build full result text: "Cagliari Won by 2 runs"
+                        final String fullText = marginText.isNotEmpty
+                            ? '$winnerName Won by $marginText'
+                            : '$winnerName Won';
+
+                        return Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.5),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: AutoSizeText(
+                            fullText,
+                            textAlign: TextAlign.center,
+                            maxLines: 2,
+                            minFontSize: 10,
+                            style: const TextStyle(
+                              color: Colors.amberAccent,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        );
+                      }),
+                  ],
+
                 ],
               ),
             ),
