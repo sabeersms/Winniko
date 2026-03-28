@@ -481,20 +481,32 @@ class TournamentDataService {
       );
 
       // --- DEDUPLICATION LOGIC ---
-      // Check if we already have this match representation (by teams + time proximity)
+      // Check if we already have this match representation (by Match Number, or Teams + Time proximity)
       int existingIdx = matches.indexWhere((m) {
-        bool teamsMatch =
-            (m.team1Name == currentMatch.team1Name &&
-                m.team2Name == currentMatch.team2Name) ||
-            (m.team1Name == currentMatch.team2Name &&
-                m.team2Name == currentMatch.team1Name);
-        if (!teamsMatch) return false;
+        // 1. High Priority: Match Number
+        if (m.matchNumber != null &&
+            currentMatch.matchNumber != null &&
+            m.matchNumber == currentMatch.matchNumber) {
+          return true;
+        }
 
-        final timeDiff = m.scheduledTime
-            .difference(currentMatch.scheduledTime)
-            .inHours
-            .abs();
-        return timeDiff < 12; // Same match within 12 hours
+        // 2. Fallback: Team IDs + Time window
+        bool teamsIdMatch =
+            (m.team1Id == currentMatch.team1Id &&
+                m.team2Id == currentMatch.team2Id) ||
+            (m.team1Id == currentMatch.team2Id &&
+                m.team2Id == currentMatch.team1Id);
+
+        if (teamsIdMatch) {
+          final timeDiff = m.scheduledTime
+              .difference(currentMatch.scheduledTime)
+              .inHours
+              .abs();
+          // Increase window to 48h to catch rescheduled matches or timezone ghosting
+          return timeDiff < 48;
+        }
+
+        return false;
       });
 
       if (existingIdx != -1) {

@@ -46,6 +46,8 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
   bool _isAdLoaded = false;
   late Stream<List<CompetitionModel>> _allCompetitionsStream;
   late Stream<List<CompetitionModel>> _officialCompetitionsStream;
+  late Stream<List<CompetitionModel>> _customCompetitionsStream;
+  late Stream<List<CompetitionModel>> _singleMatchCompetitionsStream;
 
   // Search State
   Timer? _debounce;
@@ -76,6 +78,9 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
     );
     _allCompetitionsStream = firestoreService.getAllCompetitions();
     _officialCompetitionsStream = firestoreService.getOfficialCompetitions();
+    _customCompetitionsStream = firestoreService.getCustomCompetitions();
+    _singleMatchCompetitionsStream =
+        firestoreService.getSingleMatchCompetitions();
     _searchScrollController.addListener(_onSearchScroll);
 
     _loadUserProfile();
@@ -764,21 +769,6 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
                           comp.joinCode.toLowerCase().contains(query);
                     }).toList();
 
-                    // Categorize: Custom = Not Official AND Not Single Match
-                    final singleMatchContests = allCompetitions
-                        .where(
-                          (c) => c.format == AppConstants.formatSingleMatch,
-                        )
-                        .toList();
-
-                    final customTournaments = allCompetitions
-                        .where(
-                          (c) =>
-                              (c.leagueId == null || c.leagueId!.isEmpty) &&
-                              c.format != AppConstants.formatSingleMatch,
-                        )
-                        .toList();
-
                     return SingleChildScrollView(
                       padding: const EdgeInsets.only(bottom: 120),
                       child: Column(
@@ -878,8 +868,7 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
                               }
                               final officialTournaments =
                                   officialSnapshot.data ?? [];
-                              if (officialTournaments.isEmpty)
-                                return const SizedBox.shrink();
+                              if (officialTournaments.isEmpty) return const SizedBox.shrink();
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -892,18 +881,53 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
                           ),
 
                           // ROW 3: Custom Tournaments
-                          if (customTournaments.isNotEmpty) ...[
-                            _buildSectionHeader('Custom Tournaments'),
-                            _buildHorizontalList(customTournaments),
-                            const SizedBox(height: 24),
-                          ],
+                          StreamBuilder<List<CompetitionModel>>(
+                            stream: _customCompetitionsStream,
+                            builder: (context, customSnapshot) {
+                              if (customSnapshot.hasError) {
+                                debugPrint(
+                                  'Error loading custom tournaments: ${customSnapshot.error}',
+                                );
+                                return const SizedBox.shrink();
+                              }
+                              final customTournaments =
+                                  customSnapshot.data ?? [];
+                              if (customTournaments.isEmpty) return const SizedBox.shrink();
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  _buildSectionHeader('Custom Tournaments'),
+                                  _buildHorizontalList(customTournaments),
+                                  const SizedBox(height: 24),
+                                ],
+                              );
+                            },
+                          ),
 
-                          // ROW 3: Single Match Contests
-                          if (singleMatchContests.isNotEmpty) ...[
-                            _buildSectionHeader('Single Match Contests'),
-                            _buildHorizontalList(singleMatchContests),
-                            const SizedBox(height: 24),
-                          ],
+                          // ROW 4: Single Match Contests
+                          StreamBuilder<List<CompetitionModel>>(
+                            stream: _singleMatchCompetitionsStream,
+                            builder: (context, singleSnapshot) {
+                              if (singleSnapshot.hasError) {
+                                debugPrint(
+                                  'Error loading single match contests: ${singleSnapshot.error}',
+                                );
+                                return const SizedBox.shrink();
+                              }
+                              final singleMatchContests =
+                                  singleSnapshot.data ?? [];
+                              if (singleMatchContests.isEmpty) return const SizedBox.shrink();
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  _buildSectionHeader('Single Match Contests'),
+                                  _buildHorizontalList(singleMatchContests),
+                                  const SizedBox(height: 24),
+                                ],
+                              );
+                            },
+                          ),
+
 
                           if (filteredCompetitions.isEmpty)
                             Center(

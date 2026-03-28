@@ -133,21 +133,6 @@ class _TournamentSelectionScreenState extends State<TournamentSelectionScreen>
 
   bool _isBlacklisted(String id) {
     if (_blacklist.contains(id)) return true;
-    // Map internal UI keys to blacklisted official external IDs
-    final mappings = {
-      'pl': 'epl-2025',
-      'ucl': 'champions-league-2025',
-      'laliga': 'la-liga-2025',
-      'bundesliga': 'bundesliga-2025',
-      'seriea': 'serie-a-2025',
-      'ligue1': 'ligue-1-2025',
-      'wc2026': 'fifa-world-cup-2026',
-      'ipl': 'ipl-2025',
-    };
-    final officialId = mappings[id];
-    if (officialId != null && _blacklist.contains(officialId)) {
-      return true;
-    }
     return false;
   }
 
@@ -218,8 +203,13 @@ class _TournamentSelectionScreenState extends State<TournamentSelectionScreen>
       duration: const Duration(milliseconds: 800),
     );
     _controller.forward();
-    _loadBlacklist();
-    _loadGlobalTournaments();
+    _refreshData();
+  }
+
+  Future<void> _refreshData() async {
+    // Sequentially load to avoid race conditions in SnackBar calculation vs UI filter
+    await _loadBlacklist();
+    await _loadGlobalTournaments();
   }
 
   Future<void> _loadBlacklist() async {
@@ -250,6 +240,8 @@ class _TournamentSelectionScreenState extends State<TournamentSelectionScreen>
         combined.contains('cric') ||
         combined.contains('crik') ||
         combined.contains('ipl') ||
+        combined.contains('indian premier league') ||
+        combined.contains('indian-premier-league') ||
         combined.contains('t20') ||
         combined.contains('t10') ||
         combined.contains('bbl') ||
@@ -568,10 +560,7 @@ class _TournamentSelectionScreenState extends State<TournamentSelectionScreen>
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: () {
-              _loadBlacklist();
-              _loadGlobalTournaments();
-            },
+            onPressed: _refreshData,
           ),
         ],
       ),
@@ -670,10 +659,7 @@ class _TournamentSelectionScreenState extends State<TournamentSelectionScreen>
           ),
           const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: () {
-              _loadBlacklist();
-              _loadGlobalTournaments();
-            },
+            onPressed: _refreshData,
             child: const Text('Try Refresh'),
           ),
         ],

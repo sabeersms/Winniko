@@ -808,6 +808,49 @@ class FirestoreService {
         });
   }
 
+  // Get custom competitions (Stream)
+  Stream<List<CompetitionModel>> getCustomCompetitions() {
+    return _firestore
+        .collection('competitions')
+        .where('status', isEqualTo: 'active')
+        .orderBy('participantCount', descending: true)
+        .limit(50)
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs
+              .map((doc) => CompetitionModel.fromSnapshot(doc))
+              .where(
+                (comp) =>
+                    (comp.leagueId == null || comp.leagueId!.isEmpty) &&
+                    comp.format != AppConstants.formatSingleMatch &&
+                    comp.deletedAt == null,
+              )
+              .take(20)
+              .toList();
+        });
+  }
+
+  // Get single match contests (Stream)
+  Stream<List<CompetitionModel>> getSingleMatchCompetitions() {
+    return _firestore
+        .collection('competitions')
+        .where('status', isEqualTo: 'active')
+        .orderBy('participantCount', descending: true)
+        .limit(50)
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs
+              .map((doc) => CompetitionModel.fromSnapshot(doc))
+              .where(
+                (comp) =>
+                    comp.format == AppConstants.formatSingleMatch &&
+                    comp.deletedAt == null,
+              )
+              .take(20)
+              .toList();
+        });
+  }
+
   // Get competitions by organizer (Excluding deleted)
   Stream<List<CompetitionModel>> getCompetitionsByOrganizer(
     String organizerId,
@@ -2282,7 +2325,20 @@ class FirestoreService {
   }
 
   String _generateMatchKey(MatchModel m) {
-    // Use Primary Name to ensure "SC East Bengal" and "East Bengal FC" produce the same key
+    // Priority 1: Match Number (Strongest Link)
+    if (m.matchNumber != null && m.matchNumber! > 0) {
+      // Helper to normalize names for keys (e.g., "South Africa" -> "southafrica")
+      String norm(String name) =>
+          name.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '');
+
+      final t1 = norm(TeamsDataService.getPrimaryName(m.team1Name));
+      final t2 = norm(TeamsDataService.getPrimaryName(m.team2Name));
+      final teams = [t1, t2]..sort();
+
+      return 'm#${m.matchNumber}_${teams[0]}_v_${teams[1]}';
+    }
+
+    // Fallback: Primary Name + Date to ensure "SC East Bengal" and "East Bengal FC" produce the same key
     final p1 = TeamsDataService.getPrimaryName(m.team1Name);
     final p2 = TeamsDataService.getPrimaryName(m.team2Name);
 
@@ -2318,9 +2374,9 @@ class FirestoreService {
 
     if (!teamsMatch) return false;
 
-    // 2. Time Match (Within 12 hours) - handles most timezone/day shifts
+    // 2. Time Match (Within 48 hours) - handles rescheduled matches, timezone/day shifts
     final diff = m1.scheduledTime.difference(m2.scheduledTime).inHours.abs();
-    if (diff < 12) return true;
+    if (diff < 48) return true;
 
     // 3. Fallback: Match Number (if both have one and they match)
     if (m1.matchNumber != null &&
@@ -2774,8 +2830,10 @@ class FirestoreService {
               final t1 = (d['team1Name'] ?? '').toString().toLowerCase().trim();
               final t2 = (d['team2Name'] ?? '').toString().toLowerCase().trim();
               final teamsMatch =
-                  (t1 == matchT1 && t2 == matchT2) ||
-                  (t1 == matchT2 && t2 == matchT1);
+                  (TeamsDataService.areTeamNamesEquivalent(t1, matchT1) &&
+                      TeamsDataService.areTeamNamesEquivalent(t2, matchT2)) ||
+                  (TeamsDataService.areTeamNamesEquivalent(t1, matchT2) &&
+                      TeamsDataService.areTeamNamesEquivalent(t2, matchT1));
               if (!teamsMatch) {
                 debugPrint(
                   '🔍 Filter: Skipping match in competition $compId because team names do not match: ${d['team1Name']} vs ${d['team2Name']} (expected $matchT1 vs $matchT2)',

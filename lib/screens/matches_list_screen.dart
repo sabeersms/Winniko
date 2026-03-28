@@ -948,6 +948,44 @@ class _MatchCardWidgetState extends State<MatchCardWidget> {
                     ),
                     ListTile(
                       leading: const Icon(
+                        Icons.numbers,
+                        color: AppColors.accentGreen,
+                      ),
+                      title: const Text(
+                        'Edit Match Number',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      onTap: () async {
+                        Navigator.pop(ctx);
+                        _showEditMatchNumberDialog(
+                          context,
+                          widget.match,
+                          widget.firestore,
+                          widget.competition.id,
+                        );
+                      },
+                    ),
+                    ListTile(
+                      leading: const Icon(
+                        Icons.swap_horiz,
+                        color: AppColors.accentGreen,
+                      ),
+                      title: const Text(
+                        'Edit Teams',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      onTap: () async {
+                        Navigator.pop(ctx);
+                        _showEditTeamsDialog(
+                          context,
+                          widget.match,
+                          widget.firestore,
+                          widget.competition.id,
+                        );
+                      },
+                    ),
+                    ListTile(
+                      leading: const Icon(
                         Icons.scoreboard,
                         color: AppColors.accentGreen,
                       ),
@@ -992,6 +1030,25 @@ class _MatchCardWidgetState extends State<MatchCardWidget> {
                               sport: widget.competition.sport,
                             ),
                           ),
+                        );
+                      },
+                    ),
+                    ListTile(
+                      leading: const Icon(
+                        Icons.delete_outline,
+                        color: AppColors.error,
+                      ),
+                      title: const Text(
+                        'Delete Match',
+                        style: TextStyle(color: AppColors.error),
+                      ),
+                      onTap: () async {
+                        Navigator.pop(ctx);
+                        _showDeleteMatchConfirmation(
+                          context,
+                          widget.match,
+                          widget.firestore,
+                          widget.competition.id,
                         );
                       },
                     ),
@@ -1338,6 +1395,214 @@ class _MatchCardWidgetState extends State<MatchCardWidget> {
           ),
         ),
       ),
+    );
+  }
+
+  void _showEditMatchNumberDialog(
+    BuildContext context,
+    MatchModel match,
+    FirestoreService firestore,
+    String competitionId,
+  ) {
+    final controller = TextEditingController(
+      text: match.matchNumber?.toString() ?? '',
+    );
+    showDialog(
+      context: context,
+      builder:
+          (ctx) => AlertDialog(
+            backgroundColor: AppColors.cardBackground,
+            title: const Text(
+              'Edit Match Number',
+              style: TextStyle(color: Colors.white),
+            ),
+            content: TextField(
+              controller: controller,
+              keyboardType: TextInputType.number,
+              style: const TextStyle(color: Colors.white),
+              decoration: const InputDecoration(
+                labelText: 'Match Number',
+                labelStyle: TextStyle(color: Colors.white70),
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  final newNum = int.tryParse(controller.text);
+                  if (newNum != null) {
+                    final updated = match.copyWith(matchNumber: newNum);
+                    await firestore.updateBatchMatches(competitionId, [
+                      updated,
+                    ]);
+                    if (context.mounted) Navigator.pop(ctx);
+                  }
+                },
+                child: const Text(
+                  'Save',
+                  style: TextStyle(color: AppColors.accentGreen),
+                ),
+              ),
+            ],
+          ),
+    );
+  }
+
+  void _showEditTeamsDialog(
+    BuildContext context,
+    MatchModel match,
+    FirestoreService firestore,
+    String competitionId,
+  ) async {
+    final teams = await firestore.getTeams(competitionId).first;
+    if (!context.mounted) return;
+
+    String team1Id = match.team1Id;
+    String team2Id = match.team2Id;
+
+    showDialog(
+      context: context,
+      builder:
+          (ctx) => StatefulBuilder(
+            builder:
+                (context, setState) => AlertDialog(
+                  backgroundColor: AppColors.cardBackground,
+                  title: const Text(
+                    'Edit Teams',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      DropdownButtonFormField<String>(
+                        value: team1Id,
+                        dropdownColor: AppColors.cardBackground,
+                        items:
+                            teams
+                                .map(
+                                  (t) => DropdownMenuItem(
+                                    value: t.id,
+                                    child: Text(
+                                      t.name,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                        onChanged: (val) => setState(() => team1Id = val!),
+                        decoration: const InputDecoration(
+                          labelText: 'Team 1',
+                          labelStyle: TextStyle(color: Colors.white70),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      DropdownButtonFormField<String>(
+                        value: team2Id,
+                        dropdownColor: AppColors.cardBackground,
+                        items:
+                            teams
+                                .map(
+                                  (t) => DropdownMenuItem(
+                                    value: t.id,
+                                    child: Text(
+                                      t.name,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                        onChanged: (val) => setState(() => team2Id = val!),
+                        decoration: const InputDecoration(
+                          labelText: 'Team 2',
+                          labelStyle: TextStyle(color: Colors.white70),
+                        ),
+                      ),
+                    ],
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(ctx),
+                      child: const Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () async {
+                        if (team1Id == team2Id) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Teams must be different'),
+                            ),
+                          );
+                          return;
+                        }
+                        final t1 = teams.firstWhere((t) => t.id == team1Id);
+                        final t2 = teams.firstWhere((t) => t.id == team2Id);
+                        final updated = match.copyWith(
+                          team1Id: t1.id,
+                          team1Name: t1.name,
+                          team1LogoUrl: t1.logoUrl,
+                          team2Id: t2.id,
+                          team2Name: t2.name,
+                          team2LogoUrl: t2.logoUrl,
+                        );
+                        await firestore.updateBatchMatches(competitionId, [
+                          updated,
+                        ]);
+                        if (context.mounted) Navigator.pop(ctx);
+                      },
+                      child: const Text(
+                        'Save',
+                        style: TextStyle(color: AppColors.accentGreen),
+                      ),
+                    ),
+                  ],
+                ),
+          ),
+    );
+  }
+
+  void _showDeleteMatchConfirmation(
+    BuildContext context,
+    MatchModel match,
+    FirestoreService firestore,
+    String competitionId,
+  ) {
+    showDialog(
+      context: context,
+      builder:
+          (ctx) => AlertDialog(
+            backgroundColor: AppColors.cardBackground,
+            title: const Text(
+              'Delete Match?',
+              style: TextStyle(color: Colors.white),
+            ),
+            content: const Text(
+              'This action cannot be undone.',
+              style: TextStyle(color: Colors.white70),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  await firestore.deleteMatch(competitionId, match.id);
+                  if (context.mounted) Navigator.pop(ctx);
+                },
+                child: const Text(
+                  'Delete',
+                  style: TextStyle(color: AppColors.error),
+                ),
+              ),
+            ],
+          ),
     );
   }
 
